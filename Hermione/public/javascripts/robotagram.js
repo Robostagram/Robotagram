@@ -13,10 +13,12 @@
     // 106: j : left
     // 107: k : down
     // 108: l : right
-    var DIRECTION_UP = 105
-    var DIRECTION_LEFT = 106
-    var DIRECTION_DOWN = 107
-    var DIRECTION_RIGHT = 108
+    var DIRECTION_UP = 105;
+    var DIRECTION_LEFT = 106;
+    var DIRECTION_DOWN = 107;
+    var DIRECTION_RIGHT = 108;
+
+    var moves = 0;
 
     function moveRobot(direction){
         var robot = null;
@@ -29,7 +31,7 @@
             robot.detach();
             robot.appendTo($(destinationCell))
         } while(destinationCell !== parentCell)
-
+        $("#moves").val(++moves);
         if(hasReachedObjective(parentCell)){
             $("#winModal").modal('show');
         }
@@ -71,6 +73,7 @@
             break;
         }
         if(nextCell != null && !hasRobot(nextCell)) {
+
             return nextCell
         } else {
             return td;
