@@ -5,6 +5,6 @@ target
 tmp
 .history
 dist
-.iml
-.ipr
-.iws
+*.iml
+*.ipr
+*.iws

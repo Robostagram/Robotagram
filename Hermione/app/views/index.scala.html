@@ -1,7 +1,44 @@
-@(message: String)
+@(board: String)
 
-@main("Welcome to Play 2.0") {
-    
-    @play20.welcome(message)
-    
+@main("Robotagram Rocks !!!") {
+
+<table id="boardGame">
+    <tr>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell wall-top">&nbsp;</td>
+        <td class="cell wall-left"><div id="robot-red" class="robot"/></td>
+        <td class="cell">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell wall-bottom"><div id="robot-green" class="robot"/></td>
+        <td class="cell wall-right">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="cell">&nbsp;</td>
+        <td class="cell"><div id="robot-blue" class="robot"/></td>
+        <td class="cell">&nbsp;</td>
+        <td class="cell"><div id="robot-yellow" class="robot"/></td>
+        <td class="cell">&nbsp;</td>
+    </tr>
+
+</table>
+
 }
