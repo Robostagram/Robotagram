@@ -12,6 +12,6 @@ object Application extends Controller {
 
 
   def board = Action {
-    Ok(views.html.board(DefaultBoard))
+    Ok(views.html.board(DefaultBoard,null))
   }
 }
