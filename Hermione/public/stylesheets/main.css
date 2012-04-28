@@ -82,7 +82,7 @@ td.cell.wall-right {
     border-right: 2px solid black;
 }
 
-div.robot {
+div.robot::before {
     width: 15px;
     height: 15px;
     margin: auto;
