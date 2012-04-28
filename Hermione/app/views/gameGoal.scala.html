@@ -1,0 +1,8 @@
+@(goal: Goal)
+@import models._
+
+@renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
+@renderGoalColor() = {@renderColor(goal.color)}
+@renderSymbol() = {@if(goal.symbol == Symbol.Star){star}@if(goal.symbol == Symbol.Planet){planet}@if(goal.symbol == Symbol.Gear){gear}@if(goal.symbol == Symbol.Moon){moon}@if(goal.symbol == Symbol.Sun){sun}}
+
+<h3>Current game goal : </h3><div class="symbol @renderGoalColor() @renderSymbol()"/>
