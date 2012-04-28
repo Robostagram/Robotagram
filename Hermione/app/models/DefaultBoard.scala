@@ -22,7 +22,7 @@ object DefaultBoard extends Board(16, 16) {
     //TODO : (2, 7) ->   Tourbillon de la mort ....
     (3, 14) -> new Goal(Color.Green, Symbol.Gear),
     (4, 3) -> new Goal(Color.Red, Symbol.Star),
-    (4, 9) -> new Goal(Color.Red, Symbol.Planet),
+    (4, 9) -> new Goal(Color.Blue, Symbol.Planet),
     (5, 6) -> new Goal(Color.Green, Symbol.Planet),
     (6, 1) -> new Goal(Color.Yellow, Symbol.Gear),
     (6, 12) -> new Goal(Color.Yellow, Symbol.Star),
