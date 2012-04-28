@@ -2,6 +2,9 @@
 
 @import models._
 
-<td class="cell @if(c.wallTop){wall-top} @if(c.wallLeft){wall-left} @if(c.wallBottom){wall-bottom} @if(c.wallRight){wall-right}">
+@renderWalls(cell: Cell) = {
+@if(cell.wallTop){wall-top} @if(cell.wallLeft){wall-left} @if(cell.wallBottom){wall-bottom} @if(cell.wallRight){wall-right}
+}
+<td class="cell @renderWalls(c)">
 
 </td>
