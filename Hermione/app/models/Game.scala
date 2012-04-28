@@ -2,7 +2,7 @@ package models
 
 import util.Random
 
-class Game(val board:Board, val robots:List[Robot], goal: Goal, durationInSeconds:Int)
+class Game(val board:Board, val robots:List[Robot], val goal: Goal, val durationInSeconds:Int)
 
 object Game {
   def randomGame():Game = {

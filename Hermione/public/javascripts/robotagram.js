@@ -29,10 +29,19 @@
             robot.detach();
             robot.appendTo($(destinationCell))
         } while(destinationCell !== parentCell)
+
+        if(hasReachedObjective(parentCell)){
+            alert("WIN !!!!");
+        }
     }
 
     function hasRobot(td) {
-        return $(td).children().index(".robot") >= 0;
+        console.debug($(td).children().filter(".robot").length);
+        return $(td).children().filter(".robot").length > 0;
+    }
+
+    function hasReachedObjective(td) {
+        return $(td).children().index("#objective") >= 0;
     }
 
     function nextCell(td, direction) {

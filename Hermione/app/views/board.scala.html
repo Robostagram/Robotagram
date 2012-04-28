@@ -11,18 +11,18 @@
             <tr>
                 @for(y:Int <- 0 until game.board.cells(x).length) {
                     @if(game.robots(0).posX == x && game.robots(0).posY == y){
-                        @cell(game.board.cells(x)(y), game.robots(0))
+                        @cell(game.board.cells(x)(y), game.robots(0), game.goal)
                     } else {
                         @if(game.robots(1).posX == x && game.robots(1).posY == y){
-                            @cell(game.board.cells(x)(y), game.robots(1))
+                            @cell(game.board.cells(x)(y), game.robots(1), game.goal)
                         } else {
                             @if(game.robots(2).posX == x && game.robots(2).posY == y){
-                                @cell(game.board.cells(x)(y), game.robots(2))
+                                @cell(game.board.cells(x)(y), game.robots(2), game.goal)
                             } else {
                                 @if(game.robots(3).posX == x && game.robots(3).posY == y){
-                                    @cell(game.board.cells(x)(y), game.robots(3))
+                                    @cell(game.board.cells(x)(y), game.robots(3), game.goal)
                                 } else {
-                                    @cell(game.board.cells(x)(y), null)
+                                    @cell(game.board.cells(x)(y), null, game.goal)
                                 }
                             }
                         }
@@ -33,6 +33,9 @@
         </table>
     </div>
     <div class="span4" id="gameZone">
+        <h3>Current Game</h3>
+        @gameGoal(game.goal)
+
         <h3>Submit</h3>
 
         on met des trucs ici ?
