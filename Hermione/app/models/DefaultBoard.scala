@@ -1,6 +1,5 @@
 package models
 
-
 object DefaultBoard extends Board(16, 16){
 
   // murs sur la droite
