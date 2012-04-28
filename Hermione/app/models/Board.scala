@@ -26,6 +26,10 @@ class Board(val width: Int, val height: Int) {
     if (x > 0) applyChange(x-1,y,c=> c.withRight(wall))
   }
 
+  def setGoal(x:Int, y:Int, goal:Goal){
+    applyChange(x,y, c=> c.withGoal(goal))
+  }
+
   // pour pouvoir faire board(1,2)
   def getCell(x:Int, y:Int) : Cell ={
     cells(y)(x)
