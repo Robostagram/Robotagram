@@ -1,6 +1,5 @@
 package models
 
-class Goal(c:Color, s:Symbol) {
-  val color:Color = c;
-  val symbol:Symbol = s;
+class Goal(val color:Color.Color, val symbol:Symbol.Symbol) {
+
 }
