@@ -1,6 +1,8 @@
-package model
+package models
 
-class Board(w: Int, h: Int) {
+import play.db.ebean.Model
+
+class Board(w: Int, h: Int) extends Model{
   val width: Int = w
   val height: Int = h
 

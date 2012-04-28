@@ -1,4 +1,4 @@
-package model
+package models
 
 abstract class Color {
          case class Red() extends Color

@@ -1,4 +1,4 @@
-package model
+package models
 
 class Goal(c:Color, s:Symbol) {
   val color:Color = c;
