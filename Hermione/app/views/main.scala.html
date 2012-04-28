@@ -3,26 +3,33 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>@title</title>
-        <meta charset="utf-8"/>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/reset.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.ico")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<head>
+    <title>@title</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/reset.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.ico")">
+    <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src = "@routes.Assets.at("javascripts/robotagram.js")" type = "text/javascript"></script>
+</head>
+<body>
 
-        <script src="@routes.Assets.at("javascripts/robotagram.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        <header>
-            <h1>Welcome to Robotagram !</h1>
-        </header>
-        <section id="content">
-            @content
-        </section>
-    <footer>
+<header>
+    <div class="container">
+        <h1>Welcome to Robotagram !</h1>
+    </div>
+</header>
+<section id="content">
+    <div class="container">
+        @content
+    </div>
+</section>
+<footer>
+    <div class="container">
         le footer
-    </footer>
-    </body>
+    </div>
+</footer>
+</div>
+</body>
 </html>
