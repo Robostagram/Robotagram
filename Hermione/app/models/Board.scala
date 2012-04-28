@@ -9,7 +9,8 @@ class Board(val width: Int, val height: Int) {
   }
 
   def withBottom(x:Int, y:Int, wall:Boolean = true){
-    // TODO
+    cells(x)(y) = cells(x)(y).withBottom(wall)
+    if (y < height-1) cells(x)(y+1) = cells(x)(y+1).withTop(wall)
   }
 
   def withRight(x:Int, y:Int, wall:Boolean = true){
