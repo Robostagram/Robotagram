@@ -16,10 +16,28 @@ object DefaultBoard extends Board(16, 16) {
   }
 
   // mapping (coords) -> goal ... pour remplir la board après coup
-  var goalsToAdd = Map((5, 1) -> new Goal(Color.Red, Symbol.Star))
+  var goalsToAdd = Map(
+    (1, 5) -> new Goal(Color.Blue, Symbol.Moon),
+    (1, 11) -> new Goal(Color.Red, Symbol.Moon),
+    //TODO : (2, 7) ->   Tourbillon de la mort ....
+    (3, 14) -> new Goal(Color.Green, Symbol.Gear),
+    (4, 3) -> new Goal(Color.Red, Symbol.Star),
+    (4, 9) -> new Goal(Color.Red, Symbol.Planet),
+    (5, 6) -> new Goal(Color.Green, Symbol.Planet),
+    (6, 1) -> new Goal(Color.Yellow, Symbol.Gear),
+    (6, 12) -> new Goal(Color.Yellow, Symbol.Star),
+    (9, 12) -> new Goal(Color.Blue, Symbol.Star),
+    (10, 3) -> new Goal(Color.Blue, Symbol.Gear),
+    (10, 10) -> new Goal(Color.Yellow, Symbol.Planet),
+    (11, 5) -> new Goal(Color.Green, Symbol.Star),
+    (12, 2) -> new Goal(Color.Yellow, Symbol.Moon),
+    (12, 14) -> new Goal(Color.Red, Symbol.Gear),
+    (13, 4) -> new Goal(Color.Red, Symbol.Planet),
+    (14, 11) -> new Goal(Color.Green, Symbol.Moon)
+  )
 
   for (((x, y), v) <- goalsToAdd) {
-    setGoal(x, y, v)
+    setGoal(y, x, v)
   }
 
   var rightWalls = Array(
@@ -50,7 +68,7 @@ object DefaultBoard extends Board(16, 16) {
     (1, 5), (1, 15),
     (2, 7), (2, 14),
     (3, 0),
-    (4, 3), (4, 9),
+    (4, 3), (4, 6), (4, 9),
     (5, 1),
     (6, 7), (6, 8), (6, 12),
     (8, 7), (8, 8), (8, 12),
