@@ -41,6 +41,10 @@ div#gameZone{
     background-color: white;
 }
 
+div#currentGameZone{
+    text-align: center;
+}
+
 h2{
     margin-bottom: 1em;
 }
@@ -53,7 +57,7 @@ table#boardGame{
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
 
-    margin:15px auto;
+    margin:0px auto;
 }
 
 td.cell {

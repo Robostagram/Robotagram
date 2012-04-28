@@ -8,7 +8,7 @@
         <h2>Let's play !</h2>
     </div>
     <div class="span4" style="text-align: right;">
-        Objectif !!!
+        on n'a rien d'intéressant à afficher ici ?
     </div>
 </div>
 <div class="row">
@@ -40,14 +40,16 @@
         </table>
     </div>
     <div class="span4" id="gameZone">
-        <h3>Current Game</h3>
-        @gameGoal(game.goal)
+        <form class="form-inline" >
+            <div id="currentGameZone" class="well">
+                <h3>Current Game</h3>
+                @gameGoal(game.goal)
 
-        <h3>Submit</h3>
-        on met des trucs ici ?
-        <form class="well form-inline" style="text-align: center;">
-            <input type="text" class="input input-medium" placeholder="moves?">
-            <button type="submit" class="btn btn-primary">Submit</button>
+                <h3>Submit</h3>
+
+                <input type="text" class="input input-medium" placeholder="moves?">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
         </form>
         <hr/>
 
