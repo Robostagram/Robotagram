@@ -2,16 +2,40 @@
 
 
 body{
-    margin:auto;
-    padding:15px;
-    background-color: #F0F0F0;
+    /*margin:auto;*/
+    /*padding:15px;*/
+    /*background-color: #F0F0F0;*/
 }
 
 /*
-structure de la page
-
+    structure de la page
 */
 
+header {
+    padding:0px;
+
+    display:block;
+}
+
+header h1{
+    display: inline-block;
+    color: white;
+    font-size: 1em;
+    background-color: black;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+
+div#boardZone{
+
+}
+
+
+div#gameZone{
+    background-color:white;
+}
 
 /* board cells */
 
@@ -20,6 +44,7 @@ table#boardGame{
     -moz-box-shadow: 4px 4px 12px #aaa;
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
+    margin:auto; /*center in container */
 }
 
 td.cell {
@@ -103,3 +128,6 @@ div.gear:before{
 div.sun:before{
     content: "\2742";
 }
+
+
+
