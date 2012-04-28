@@ -2,39 +2,49 @@
 
 
 body{
-    /*margin:auto;*/
-    /*padding:15px;*/
-    /*background-color: #F0F0F0;*/
+    padding-top: 47px; /*pour ne pas etre sous la nav*/
+    background-color: #f5f5f5;
 }
 
 /*
     structure de la page
 */
 
-header {
-    padding:0px;
-
-    display:block;
+header{
+    background-color: white;
 }
 
-header h1{
-    display: inline-block;
-    color: white;
-    font-size: 1em;
-    background-color: black;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
+section#content{
+    background-color: white;
+    height: 100%;
 }
 
+/*product name in header */
+.navbar a.brand{
+    font-size: 2em;
+}
+
+footer{
+    margin-top: 3em;
+    background-color:#f5f5f5;
+    color: #DDD;
+    text-align: center;
+    height: 40px;
+    padding-top: 60px;
+    margin: -50px auto 0 auto;
+    margin-bottom: 0px;
+}
 
 div#boardZone{
-
 }
 
 
 div#gameZone{
     background-color:white;
+}
+
+h2{
+    margin-bottom: 1em;
 }
 
 /* board cells */
@@ -44,6 +54,8 @@ table#boardGame{
     -moz-box-shadow: 4px 4px 12px #aaa;
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
+
+    margin:15px auto;
 }
 
 td.cell {
