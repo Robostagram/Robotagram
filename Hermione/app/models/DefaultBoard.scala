@@ -4,12 +4,14 @@ package models
 object DefaultBoard extends Board(16, 16) {
 
   // murs sur la droite
-  for (i <- 0 until width) {
-    withRight(i, 0, true)
-  }
+    for ( i <- 0 until height){
+      withRight(i, 0)
+
+    }
   // murs en haut
-  for (j <- 0 until height) {
-    withTop(0, j, true);
+  for ( j <- 0 until width){
+     withTop(0,j);
+     withBottom(height-1, j)
   }
 
   // mapping (coords) -> goal ... pour remplir la board après coup
