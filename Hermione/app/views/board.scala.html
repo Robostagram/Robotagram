@@ -7,7 +7,7 @@
 <table id="boardGame">
     @for(line:Array[Cell] <- board.cells) {
     <tr>
-        @line.map { c => @cell(c) }
+        @line.map { c => @cell(c, null) }
     </tr>
     }
 </table>
