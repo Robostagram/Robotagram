@@ -1,13 +1,17 @@
 (function(){
     function keypressHandler(event){
-        if(DIRECTION_UP<=event.which && event.which<=DIRECTION_RIGHT){
-            moveRobot(event.which);
-        }
+        moveRobot(event.which);
     }
 
     function robotClickHandler(event){
         $(".selected").removeClass("selected");
         $(this).addClass("selected");
+    }
+
+    function retryClick(event){
+        $("#boardZone").load("/current/reload", function(){
+            $(".robot").click(robotClickHandler);
+        });
     }
 
     // direction:
@@ -85,6 +89,7 @@
     $(document).ready(function(){
         $(window).keypress(keypressHandler);
         $(".robot").click(robotClickHandler);
+        $("#retry").click(retryClick);
 
         //on triche, et les touches affichées marchent comme un clavier
         $("#key-up").click(function(){

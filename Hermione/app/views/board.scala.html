@@ -5,31 +5,7 @@
 @main("Robotagram Rocks !!!") {
 <div class="row">
     <div class="span8" id="boardZone">
-        <table id="boardGame">
-            @for(x:Int <- 0 until game.board.cells.length) {
-            <tr>
-                @for(y:Int <- 0 until game.board.cells(x).length) {
-                    @if(game.robots(0).posX == x && game.robots(0).posY == y){
-                        @cell(game.board.cells(x)(y), game.robots(0), game.goal)
-                    } else {
-                        @if(game.robots(1).posX == x && game.robots(1).posY == y){
-                            @cell(game.board.cells(x)(y), game.robots(1), game.goal)
-                        } else {
-                            @if(game.robots(2).posX == x && game.robots(2).posY == y){
-                                @cell(game.board.cells(x)(y), game.robots(2), game.goal)
-                            } else {
-                                @if(game.robots(3).posX == x && game.robots(3).posY == y){
-                                    @cell(game.board.cells(x)(y), game.robots(3), game.goal)
-                                } else {
-                                    @cell(game.board.cells(x)(y), null, game.goal)
-                                }
-                            }
-                        }
-                    }
-                }
-            </tr>
-            }
-        </table>
+        @renderBoard(game)
     </div>
     <div class="span4" id="gameZone">
         <form class="form-inline" >
@@ -55,12 +31,12 @@
             </thead>
             <tbody>
                 <tr>
-                    <th>jkhlkjh</th>
-                    <td>tototo</td>
+                    <th>Emma</th>
+                    <td>69</td>
                 </tr>
                 <tr>
-                    <th>jkhlkjh</th>
-                    <td>tototo</td>
+                    <th>d[ o_0 ]b</th>
+                    <td>51</td>
                 </tr>
             </tbody>
         </table>
@@ -114,7 +90,8 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal" >Close</a>
-            <a href="#" class="btn btn-primary">Save changes</a>
+            <a id="retry" class="btn btn-success" data-dismiss="modal" >Retry</a>
+            <a href="." class="btn btn-primary">New game</a>
         </div>
     </div>
 </div>
