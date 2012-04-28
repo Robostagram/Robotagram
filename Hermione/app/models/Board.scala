@@ -18,9 +18,9 @@ object Board {
     for(line <- lines) {
          for(char <- line.split("")) {
            char match {
-              // case "-" => cells(w)(h) = new Cell(true, false, null)
-               //case "|" => cells(w)(h) = new Cell(false, true, null)
-               //case "T" => cells(w)(h) = new Cell(true, true, null)
+               case "-" => board.cells(w)(h) = new Cell(true, false, null)
+               case "|" => board.cells(w)(h) = new Cell(false, true, null)
+               case "T" => board.cells(w)(h) = new Cell(true, true, null)
                case _ => ()
            }
          }
