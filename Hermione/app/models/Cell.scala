@@ -21,6 +21,10 @@ class Cell(val wallTop: Boolean, val wallRight: Boolean, val wallBottom: Boolean
   def withGoal(g: Goal): Cell = {
     new Cell(wallTop, wallRight, wallBottom, wallLeft, g)
   }
+
+  def rotate90deg(): Cell = {
+    new Cell(wallLeft, wallTop, wallRight, wallBottom, goal)
+  }
 }
 
 object EmptyCell extends Cell(false, false, false, false, null)

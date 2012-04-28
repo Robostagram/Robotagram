@@ -6,7 +6,8 @@ class Game(val board:Board, val robots:List[Robot], goal: Goal, durationInSecond
 
 object Game {
   def randomGame():Game = {
-    new Game(DefaultBoard, randomRobots(DefaultBoard), Goal.randomGoal(), 120);
+    val board = Board.boardFromFile("app/resources/Standard.board").randomizeQuarters()
+    new Game(board, randomRobots(board), Goal.randomGoal(), 120);
   }
 
   def randomRobots(board:Board): List[Robot] = {
