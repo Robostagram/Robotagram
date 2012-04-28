@@ -1,6 +1,7 @@
 package models
 
 import util.Random
+import collection.immutable.HashSet
 
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 
@@ -14,13 +15,15 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 
   def randomRobots(board:Board): List[Robot] = {
     var robots = List[Robot]()
+    var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
     for(c <- Color.values){
       var posX:Int = getRandomPosition(board.width)
       var posY:Int = getRandomPosition(board.height)
-      while(unacceptableValue(posX, posY, board.width, board.height)){
+      while(setPos.contains((posX,posY)) || unacceptableValue(posX, posY, board.width, board.height)){
         posX = getRandomPosition(board.width)
         posY = getRandomPosition(board.width)
       }
+      setPos+=((posX,posY))
       robots ::=  new Robot(c,posX,posY)
     }
     robots
