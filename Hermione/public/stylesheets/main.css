@@ -85,18 +85,32 @@ div.robot {
     margin: auto;
 }
 
-div#robot-blue {
+div.blue {
     background-color: blue;
 }
 
-div#robot-green {
+div.green {
     background-color: #90ee90;
 }
 
-div#robot-red {
+div.red {
     background-color: #f08080;
 }
 
-div#robot-yellow {
+div.yellow {
     background-color: #fafad2;
+}
+
+div.symbol {
+    border-radius: 50%;
+    height: 60%;
+    width: 60%;
+    margin: auto;
+    vertical-align: middle;
+    line-height:150%;
+    font-size: large;
+}
+
+div.star::before{
+    content: "\2623";
 }
