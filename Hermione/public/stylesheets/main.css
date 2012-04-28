@@ -104,13 +104,15 @@ div.cell {
 /*robots */
 
 div.robot {
-    width: 90%;
-    height: 90%;
+    width: 95%;
+    height: 95%;
     margin: auto;
     display: block;
     font-size: x-large;
     z-index: 20;
     position: absolute;
+    top: 5%;
+    left: 5%;
 }
 
 div.robot:before {
@@ -120,14 +122,16 @@ div.robot:before {
 
 div.symbol {
     border-radius: 50%;
-    height: 90%;
-    width: 90%;
+    height: 95%;
+    width: 95%;
     margin: auto;
     vertical-align: middle;
     font-size: x-large;
     display: block;
     z-index: 10;
     position: absolute;
+    top: 5%;
+    left: 5%;
 }
 
 /*color items (goals)*/
@@ -167,5 +171,5 @@ div.symbol {
 }
 
 div.selected{
-    border: 2px solid red;
+    outline: 2px solid red;
 }
