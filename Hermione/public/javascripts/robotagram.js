@@ -32,7 +32,7 @@
             robot.appendTo($(destinationCell))
         } while(destinationCell !== parentCell)
         $("#moves").val(++moves);
-        if(hasReachedObjective(parentCell)){
+        if(hasReachedObjective(robot, parentCell)){
             $("#winModal").modal('show');
         }
     }
@@ -41,11 +41,11 @@
         return $(td).children().filter(".robot").length > 0;
     }
 
-    function hasReachedObjective(td) {
-        if($(td).children().filter("#objective").length > 0){
-            console.debug("win");
-        }
-        return $(td).children().filter("#objective").length > 0;
+    function hasReachedObjective(robot, td) {
+        var robotClass = $(robot).attr("class");
+        var robotColor = robotClass.substr(6); //remove "robot "
+        robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
+        return $(td).children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
     }
 
     function nextCell(td, direction) {

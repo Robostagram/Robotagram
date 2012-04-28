@@ -4,14 +4,6 @@
 
 @main("Robotagram Rocks !!!") {
 <div class="row">
-    <div class="span7">
-        <h2>Let's play !</h2>
-    </div>
-    <div class="span5" style="text-align: right;">
-        on n'a rien d'intéressant à afficher ici ?
-    </div>
-</div>
-<div class="row">
     <div class="span8" id="boardZone">
         <table id="boardGame">
             @for(x:Int <- 0 until game.board.cells.length) {
@@ -54,37 +46,73 @@
         <hr/>
 
         <h3>Leaderboard ?</h3>
-        <table class="table">
+        <table class="table table-condensed">
             <thead>
-            <tr>
-                <th>user</th>
-                <th>score</th>
-            </tr>
+                <tr>
+                    <th>user</th>
+                    <th>score</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <th>jkhlkjh</th>
-                <td>tototo</td>
-            </tr>
-            <tr>
-                <th>jkhlkjh</th>
-                <td>tototo</td>
-            </tr>
+                <tr>
+                    <th>jkhlkjh</th>
+                    <td>tototo</td>
+                </tr>
+                <tr>
+                    <th>jkhlkjh</th>
+                    <td>tototo</td>
+                </tr>
             </tbody>
         </table>
 
-        <div id="winModal" class="modal hide fade">
-            <div class="modal-header">
-                <button class="close" data-dismiss="modal">&times;</button>
-                <h3>Solution found !</h3>
-            </div>
-            <div class="modal-body" align="center">
-                <img src="http://img.bollywoodsargam.com/albumsbolly/Emma_Watson/Emma_Watson_BollywoodSargam_hot_762997.jpg" alt="Wouhou!" height="50%" width="50%">
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="btn" data-dismiss="modal" >Close</a>
-                <a href="#" class="btn btn-primary">Save changes</a>
-            </div>
+        <h3>How to play</h3>
+        <table>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td><kbd>I</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>J</kbd></td>
+                            <td><kbd>K</kbd></td>
+                            <td><kbd>L</kbd></td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="vertical-align: middle;padding:5px;">=</td>
+                <td>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td><kbd>&uarr;</kbd></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>&larr;</kbd></td>
+                            <td><kbd>&darr;</kbd></td>
+                            <td><kbd>&rarr;</kbd></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div id="winModal" class="modal hide fade">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">&times;</button>
+            <h3>Solution found !</h3>
+        </div>
+        <div class="modal-body" align="center">
+            <img src="http://img.bollywoodsargam.com/albumsbolly/Emma_Watson/Emma_Watson_BollywoodSargam_hot_762997.jpg" alt="Wouhou!" height="50%" width="50%">
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal" >Close</a>
+            <a href="#" class="btn btn-primary">Save changes</a>
         </div>
     </div>
 </div>
