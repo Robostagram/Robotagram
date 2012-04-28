@@ -13,6 +13,12 @@ class Cell(wallNorth:Boolean,wallEast:Boolean,goal:Goal) {
   def withGoal(g : Goal): Cell ={
     new Cell(wallNorth, wallEast, g)
   }
+
+  def wallTop:Boolean = wallNorth;
+  def wallRight:Boolean = wallEast;
+  def wallLeft:Boolean = wallNorth;  // TODO : compute it !
+  def wallBottom:Boolean = wallNorth; // TODO : compute it !
+
 }
 
 object Cell{
