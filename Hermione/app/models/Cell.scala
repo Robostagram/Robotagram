@@ -21,11 +21,12 @@ class Cell(val wallTop: Boolean, val wallRight: Boolean, val wallBottom: Boolean
   def withGoal(g: Goal): Cell = {
     new Cell(wallTop, wallRight, wallBottom, wallLeft, g)
   }
+
+
+
 }
 
-object Cell {
-  def Empty = {
-    new Cell(false, false, false, false, null)
-  }
-}
+object EmptyCell extends Cell(false, false, false, false, null)
+
+
 

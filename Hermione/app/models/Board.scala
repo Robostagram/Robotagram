@@ -1,28 +1,42 @@
 package models
 
+
 class Board(val width: Int, val height: Int) {
   val cells: Array[Array[Cell]] = Array.fill(height, width) {
-    Cell.Empty
+    EmptyCell
   }
 
   def setTop(x:Int, y:Int, wall:Boolean = true){
-    cells(x)(y) = cells(x)(y).withTop(wall)
-    if (y > 0) cells(x)(y - 1) = cells(x)(y - 1).withBottom(wall)
+    applyChange(x,y,c=> c.withTop(wall))
+    if (y > 0) applyChange(x,y-1,c=> c.withBottom(wall))
   }
 
   def setBottom(x:Int, y:Int, wall:Boolean = true){
-    cells(x)(y) = cells(x)(y).withBottom(wall)
-    if (y < height-1) cells(x)(y+1) = cells(x)(y+1).withTop(wall)
+    applyChange(x,y,c=> c.withBottom(wall))
+    if (y < height-1) applyChange(x,y+1,c=> c.withTop(wall))
   }
 
   def setRight(x:Int, y:Int, wall:Boolean = true){
-    cells(x)(y) = cells(x)(y).withRight(wall)
-    if (x < width-1) cells(x+1)(y) = cells(x+1)(y).withLeft(wall)
+    applyChange(x,y,c=> c.withRight(wall))
+    if (x < width-1) applyChange(x+1,y,c=> c.withLeft(wall))
   }
 
   def setLeft(x:Int, y:Int, wall:Boolean = true){
-    cells(x)(y) = cells(x)(y).withLeft(wall)
-    if (x > 0) cells(x-1)(y) = cells(x-1)(y).withRight(wall)
+    applyChange(x,y,c=> c.withLeft(wall))
+    if (x > 0) applyChange(x-1,y,c=> c.withRight(wall))
+  }
+
+  // pour pouvoir faire board(1,2)
+  def getCell(x:Int, y:Int) : Cell ={
+    cells(y)(x)
+  }
+
+  def setCell(x:Int, y:Int, cell: Cell){
+    cells(y)(x) = cell
+  }
+
+  private def applyChange(x: Int, y:Int, map: Cell => Cell){
+    setCell(x, y, map( getCell(x, y)))
   }
 }
 
