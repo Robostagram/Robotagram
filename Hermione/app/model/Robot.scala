@@ -1,5 +1,5 @@
 package model
 
-class Robot(val color: Color) {
+class Robot(val color: Color.Color) {
 
 }
