@@ -27,6 +27,31 @@ class TestCellTemplate extends Specification {
     contentAsString(html) must contain("symbol")
     contentAsString(html) must contain("red")
     contentAsString(html) must contain("star")
+
+    html = views.html.cell(Cell.Empty.withGoal(new Goal(Color.Blue,Symbol.Gear)))
+
+    contentAsString(html) must contain("symbol")
+    contentAsString(html) must contain("blue")
+    contentAsString(html) must contain("gear")
+
+    html = views.html.cell(Cell.Empty.withGoal(new Goal(Color.Yellow,Symbol.Planet)))
+
+    contentAsString(html) must contain("symbol")
+    contentAsString(html) must contain("yellow")
+    contentAsString(html) must contain("planet")
+
+    html = views.html.cell(Cell.Empty.withGoal(new Goal(Color.Green,Symbol.Moon)))
+
+    contentAsString(html) must contain("symbol")
+    contentAsString(html) must contain("green")
+    contentAsString(html) must contain("moon")
+
+    html = views.html.cell(Cell.Empty.withGoal(new Goal(Color.Blue,Symbol.Sun)))
+
+    contentAsString(html) must contain("symbol")
+    contentAsString(html) must contain("blue")
+    contentAsString(html) must contain("sun")
+
   }
 
 }
