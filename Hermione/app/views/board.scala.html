@@ -4,25 +4,24 @@
 
 @main("Robotagram Rocks !!!") {
 <div class="row">
-    <div class="span7" id="boardZone">
-        <h2>Let's play !</h2>
+    <div class="span8" id="boardZone">
         <table id="boardGame">
             @for(x:Int <- 0 until game.board.cells.length) {
             <tr>
                 @for(y:Int <- 0 until game.board.cells(x).length) {
                     @if(game.robots(0).posX == x && game.robots(0).posY == y){
-                        @cell(game.board.cells(x)(y), game.robots(0))
+                        @cell(game.board.cells(x)(y), game.robots(0), game.goal)
                     } else {
                         @if(game.robots(1).posX == x && game.robots(1).posY == y){
-                            @cell(game.board.cells(x)(y), game.robots(1))
+                            @cell(game.board.cells(x)(y), game.robots(1), game.goal)
                         } else {
                             @if(game.robots(2).posX == x && game.robots(2).posY == y){
-                                @cell(game.board.cells(x)(y), game.robots(2))
+                                @cell(game.board.cells(x)(y), game.robots(2), game.goal)
                             } else {
                                 @if(game.robots(3).posX == x && game.robots(3).posY == y){
-                                    @cell(game.board.cells(x)(y), game.robots(3))
+                                    @cell(game.board.cells(x)(y), game.robots(3), game.goal)
                                 } else {
-                                    @cell(game.board.cells(x)(y), null)
+                                    @cell(game.board.cells(x)(y), null, game.goal)
                                 }
                             }
                         }
@@ -33,35 +32,90 @@
         </table>
     </div>
     <div class="span4" id="gameZone">
-        <h2>Submit</h2>
+        <form class="form-inline" >
+            <div id="currentGameZone" class="well">
+                <h3>Current Game</h3>
+                @gameGoal(game.goal)
 
-        on met des trucs ici ?
+                <h3>Submit</h3>
 
-        <form class="well form-inline">
-            <input type="text" class="input-small" placeholder="moves?">
-            <button type="submit" class="btn btn-large btn-primary">Submit</button>
+                <input id="moves" type="text" class="input input-medium" placeholder="moves?">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
         </form>
         <hr/>
 
-        <h2>Leaderboard ?</h2>
-        <table class="table">
+        <h3>Leaderboard ?</h3>
+        <table class="table table-condensed">
             <thead>
-            <tr>
-                <th>user</th>
-                <th>score</th>
-            </tr>
+                <tr>
+                    <th>user</th>
+                    <th>score</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <th>jkhlkjh</th>
-                <td>tototo</td>
-            </tr>
-            <tr>
-                <th>jkhlkjh</th>
-                <td>tototo</td>
-            </tr>
+                <tr>
+                    <th>jkhlkjh</th>
+                    <td>tototo</td>
+                </tr>
+                <tr>
+                    <th>jkhlkjh</th>
+                    <td>tototo</td>
+                </tr>
             </tbody>
         </table>
+
+        <h3>How to play</h3>
+        <div id="howToPlay">
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td></td>
+                                <td><kbd>I</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><kbd>J</kbd></td>
+                                <td><kbd>K</kbd></td>
+                                <td><kbd>L</kbd></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="vertical-align: middle;padding:5px;">=</td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td></td>
+                                <td><kbd>&uarr;</kbd></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><kbd>&larr;</kbd></td>
+                                <td><kbd>&darr;</kbd></td>
+                                <td><kbd>&rarr;</kbd></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div id="winModal" class="modal hide fade">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">&times;</button>
+            <h3>Solution found !</h3>
+        </div>
+        <div class="modal-body" align="center">
+            <img src="http://img.bollywoodsargam.com/albumsbolly/Emma_Watson/Emma_Watson_BollywoodSargam_hot_762997.jpg" alt="Wouhou!" height="50%" width="50%">
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal" >Close</a>
+            <a href="#" class="btn btn-primary">Save changes</a>
+        </div>
     </div>
 </div>
 }

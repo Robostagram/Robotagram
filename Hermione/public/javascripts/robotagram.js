@@ -1,6 +1,8 @@
 (function(){
     function keypressHandler(event){
-        moveRobot(event.which);
+        if(DIRECTION_UP<=event.which && event.which<=DIRECTION_RIGHT){
+            moveRobot(event.which);
+        }
     }
 
     function robotClickHandler(event){
@@ -13,10 +15,12 @@
     // 106: j : left
     // 107: k : down
     // 108: l : right
-    var DIRECTION_UP = 105
-    var DIRECTION_LEFT = 106
-    var DIRECTION_DOWN = 107
-    var DIRECTION_RIGHT = 108
+    var DIRECTION_UP = 105;
+    var DIRECTION_LEFT = 106;
+    var DIRECTION_DOWN = 107;
+    var DIRECTION_RIGHT = 108;
+
+    var moves = 0;
 
     function moveRobot(direction){
         var robot = null;
@@ -24,37 +28,58 @@
         var destinationCell = null;
         do{
             robot = $(".selected");
-            parentCell = robot.parent()
+            parentCell = robot.parent().parent()
             destinationCell = nextCell(parentCell, direction);
             robot.detach();
-            robot.appendTo($(destinationCell))
+            robot.appendTo($(destinationCell).children()[0])
         } while(destinationCell !== parentCell)
+        $("#moves").val(++moves);
+        if(hasReachedObjective(robot, parentCell)){
+            $("#winModal").modal('show');
+        }
+    }
+
+    function hasRobot(td) {
+        return $(td).children().children().filter(".robot").length > 0;
+    }
+
+    function hasReachedObjective(robot, td) {
+        var robotClass = $(robot).attr("class");
+        var robotColor = robotClass.substr(6); //remove "robot "
+        robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
+        return $(td).children().children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
     }
 
     function nextCell(td, direction) {
+        var nextCell = null;
         switch(direction){
         case DIRECTION_UP:
             if(!td.is(".wall-top")){
-                return td.parent().prev().children()[td.parent().children().index(td)];
+                nextCell = td.parent().prev().children()[td.parent().children().index(td)];
             }
             break;
         case DIRECTION_DOWN:
             if(!td.is(".wall-bottom")){
-                return td.parent().next().children()[td.parent().children().index(td)];
+                nextCell = td.parent().next().children()[td.parent().children().index(td)];
             }
             break;
         case DIRECTION_LEFT:
             if(!td.is(".wall-left")){
-                return td.prev();
+                nextCell = td.prev();
             }
             break;
         case DIRECTION_RIGHT:
             if(!td.is(".wall-right")){
-                return td.next();
+                nextCell = td.next();
             }
             break;
         }
-        return td;
+        if(nextCell != null && !hasRobot(nextCell)) {
+
+            return nextCell
+        } else {
+            return td;
+        }
     }
 
     $(document).ready(function(){

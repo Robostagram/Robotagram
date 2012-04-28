@@ -1,40 +1,66 @@
 
-
-
 body{
-    /*margin:auto;*/
-    /*padding:15px;*/
-    /*background-color: #F0F0F0;*/
+    padding-top: 47px; /*pour ne pas etre sous la nav*/
+    background-color: #f5f5f5;
 }
 
 /*
     structure de la page
 */
 
-header {
-    padding:0px;
-
-    display:block;
+header{
+    background-color: white;
 }
 
-header h1{
-    display: inline-block;
-    color: white;
-    font-size: 1em;
-    background-color: black;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
+section#content{
+    background-color: white;
+    height: 100%;
+    padding-top:1em;
 }
 
+/*product name in header */
+.navbar a.brand{
+    font-size: 2em;
+}
+
+footer{
+    margin-top: 3em;
+    background-color:#f5f5f5;
+    color: #DDD;
+    text-align: center;
+    height: 40px;
+    padding-top: 60px;
+    margin: -50px auto 0 auto;
+    margin-bottom: 0px;
+}
 
 div#boardZone{
-
 }
 
 
 div#gameZone{
-    background-color:white;
+    background-color: white;
+}
+
+div#currentGameZone{
+    text-align: center;
+}
+
+div#howToPlay{
+    font-size: 1.5em;
+}
+
+div#howToPlay table{
+    margin:0.2em auto
+}
+
+kbd{
+    padding:6px;
+    margin: 2px 1px;
+}
+
+h2{
+    margin-bottom: 1em;
 }
 
 /* board cells */
@@ -44,90 +70,111 @@ table#boardGame{
     -moz-box-shadow: 4px 4px 12px #aaa;
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
+
+    margin:0px auto;
 }
 
 td.cell {
-    border:1px solid #c0c0c0;
-    width: 20px;
-    height: 20px;
+    border:1px groove #FFFFFF;
+    width: 30px;
+    height: 30px;
     text-align: center;
     vertical-align: middle;
-    background-color: #
+    background-color: whiteSmoke;
 }
 
 /* cells with walls */
 td.cell.wall-top {
-    border-top: 2px solid black;
+    border-top: 3px groove #a0a0a0;
 }
 
 td.cell.wall-bottom {
-    border-bottom: 2px solid black;
+    border-bottom: 3px groove #a0a0a0;
 }
 
 td.cell.wall-left {
-    border-left: 2px solid black;
+    border-left: 3px groove #a0a0a0;
 }
 
 td.cell.wall-right {
-    border-right: 2px solid black;
+    border-right: 3px groove #a0a0a0;
+}
+
+div.cell {
+    height: 100%;
+    width: 100%;
+    position: relative;
 }
 
 /*robots */
 
-div.robot:before {
-    width: 15px;
-    height: 15px;
+div.robot {
+    width: 95%;
+    height: 95%;
     margin: auto;
+    display: block;
+    font-size: x-large;
+    z-index: 20;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+}
+
+div.robot:before {
     content: "\267F";
 }
 
 
 div.symbol {
     border-radius: 50%;
-    height: 60%;
-    width: 60%;
+    height: 95%;
+    width: 95%;
     margin: auto;
     vertical-align: middle;
-    line-height:150%;
-    font-size: large;
+    font-size: x-large;
+    display: block;
+    z-index: 10;
+    position: absolute;
+    top: 5%;
+    left: 5%;
 }
 
 /*color items (goals)*/
 
-div.blue {
+.blue {
     background-color: blue;
 }
 
-div.green {
+.green {
     background-color: #90ee90;
 }
 
-div.red {
+.red {
     background-color: #f08080;
 }
 
-div.yellow {
+.yellow {
     background-color: #fafad2;
 }
 
 
 /* symbols for goals */
-div.star:before{
+.star:before{
     content: "\272E";
 }
-div.moon:before{
+.moon:before{
     content: "\263D";
 }
-div.planet:before{
+.planet:before{
     content: "\2641";
 }
-div.gear:before{
+.gear:before{
     content: "\2699";
 }
-div.sun:before{
+.sun:before{
     content: "\2742";
 }
 
 div.selected{
-    border: 2px solid red;
+    outline: 2px solid red;
 }

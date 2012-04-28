@@ -1,4 +1,4 @@
-@(c: Cell, robot: Robot)
+@(c: Cell, robot: Robot, objective: Goal)
 
 @import models._
 
@@ -13,6 +13,8 @@
 @renderSymbol() = {@if(c.goal.symbol == Symbol.Star){star}@if(c.goal.symbol == Symbol.Planet){planet}@if(c.goal.symbol == Symbol.Gear){gear}@if(c.goal.symbol == Symbol.Moon){moon}@if(c.goal.symbol == Symbol.Sun){sun}}
 
 <td class="cell @renderWalls(c)">
-    @if(c.goal != null && robot == null) {<div class="symbol @renderGoalColor() @renderSymbol()"/>}
+<div class="cell">
+    @if(c.goal != null && robot == null) {<div @if(c.goal.color == objective.color && c.goal.symbol == objective.symbol){id="objective"} class="symbol @renderGoalColor() @renderSymbol()"/>}
     @if(robot != null) {<div class="robot @renderRobotColor()"/>}
+</div>
 </td>

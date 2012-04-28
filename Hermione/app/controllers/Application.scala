@@ -12,7 +12,6 @@ object Application extends Controller {
     Ok(views.html.index("my application is ready."))
   }
 
-
   def newGame = Action {
     Ok(views.html.board(Game.randomGame()))
   }
