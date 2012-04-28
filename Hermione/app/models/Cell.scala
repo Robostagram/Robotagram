@@ -1,10 +1,6 @@
 package models
 
-class Cell(north:Boolean,east:Boolean,g:Goal) {
-  val wallNorth:Boolean = north;
-  val wallEast:Boolean = east;
-  val goal:Goal = g;
-
+class Cell(wallNorth:Boolean,wallEast:Boolean,goal:Goal) {
 
   def withEastWall(yesOrNo : Boolean = true): Cell ={
     new Cell(wallNorth, yesOrNo, goal)
@@ -17,5 +13,9 @@ class Cell(north:Boolean,east:Boolean,g:Goal) {
   def withGoal(g : Goal): Cell ={
     new Cell(wallNorth, wallEast, g)
   }
+}
+
+object Cell{
+  def Empty = {new Cell(false, false, null)}
 }
 
