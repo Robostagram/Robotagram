@@ -1,0 +1,25 @@
+/*loaded on small screens - typically iPhones/iPads*/
+
+
+body{
+    padding-top: 0px;
+}
+
+div#howToPlay{
+    font-size: 5em;
+}
+
+
+// Landscape phone to portrait tablet
+/*kbd{
+    font-size: 100px;
+} */
+
+table#keyboard-keys
+   {
+       display: none;
+       visibility: hidden;
+   }
+td#key-mapping{
+     visibility: hidden;
+}

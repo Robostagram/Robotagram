@@ -83,5 +83,20 @@
     $(document).ready(function(){
         $(window).keypress(keypressHandler);
         $(".robot").click(robotClickHandler);
+
+        //on triche, et les touches affichées marchent comme un clavier
+        $("#key-up").click(function(){
+           moveRobot(DIRECTION_UP)
+        });
+        $("#key-down").click(function(){
+            moveRobot(DIRECTION_DOWN)
+        });
+        $("#key-left").click(function(){
+            moveRobot(DIRECTION_LEFT)
+        });
+        $("#key-right").click(function(){
+            moveRobot(DIRECTION_RIGHT)
+        });
+
     })
 })();

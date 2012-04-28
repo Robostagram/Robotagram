@@ -54,10 +54,16 @@ div#howToPlay table{
     margin:0.2em auto
 }
 
+table#key-mapping{
+    vertical-align: middle;
+    padding:5px;
+}
+
 kbd{
     padding:6px;
     margin: 2px 1px;
 }
+
 
 h2{
     margin-bottom: 1em;
