@@ -3,6 +3,9 @@ package controllers
 import play.api._
 import play.api.mvc._
 import models.DefaultBoard
+import models.Robot
+import models.Color
+
 
 object Application extends Controller {
 
@@ -12,6 +15,10 @@ object Application extends Controller {
 
 
   def board = Action {
-    Ok(views.html.board(DefaultBoard,null))
+
+    val robots:Array[Robot] =   Array(new Robot(Color.Red),new Robot(Color.Blue),new Robot(Color.Yellow),new Robot(Color.Green))
+
+    Ok(views.html.board(DefaultBoard,robots))
   }
+
 }
