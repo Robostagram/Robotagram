@@ -31,7 +31,7 @@
         } while(destinationCell !== parentCell)
 
         if(hasReachedObjective(parentCell)){
-            alert("WIN !!!!");
+            $('#winModal').modal(true, true, true);
         }
     }
 
