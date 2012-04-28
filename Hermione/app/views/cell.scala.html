@@ -1,33 +1,18 @@
-@(c: Cell)
+@(c: Cell, robot: Robot)
 
 @import models._
 
-@renderWalls(cell: Cell) = {
-@if(cell.wallTop){wall-top} @if(cell.wallLeft){wall-left} @if(cell.wallBottom){wall-bottom} @if(cell.wallRight){wall-right}
-}
+@renderWalls(cell: Cell) = {@if(cell.wallTop){wall-top} @if(cell.wallLeft){wall-left} @if(cell.wallBottom){wall-bottom} @if(cell.wallRight){wall-right}}
 
+@renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
 
-@renderColor(goal: Goal) = {
-@goal.color match {
-    case Color.Red => red
-    case Color.Green => green
-    case Color.Blue => blue
-    case Color.Yellow => yellow
-}
-}
+@renderGoalColor() = {@renderColor(c.goal.color)}
 
-@renderSymbol(goal: Goal) = {
-@goal.symbol match {
-        case Symbol.Star => star
-        case Symbol.Planet => planet
-        case Symbol.Gear => gear
-        case Symbol.Moon => moon
-        case Symbol.Sun => sun
-}
-}
+@renderRobotColor() = {@renderColor(robot.color)}
+
+@renderSymbol() = {@if(c.goal.symbol == Symbol.Star){star}@if(c.goal.symbol == Symbol.Planet){planet}@if(c.goal.symbol == Symbol.Gear){gear}@if(c.goal.symbol == Symbol.Moon){moon}@if(c.goal.symbol == Symbol.Sun){sun}}
 
 <td class="cell @renderWalls(c)">
-    @if(c.goal != null) {
-        <div class="symbol @renderColor(c.goal) @renderSymbol(c.goal)"/>
-   }
+    @if(c.goal != null && robot == null) {<div class="symbol @renderGoalColor() @renderSymbol()"/>}
+    @if(robot != null) {<div class="robot @renderRobotColor()"/>}
 </td>

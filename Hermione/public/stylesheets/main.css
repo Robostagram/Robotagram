@@ -54,7 +54,10 @@ table {
 }
 
 /****************** END RESET ******************/
-
+body{
+    margin:auto;
+    padding:15px;
+}
 td.cell {
     border:1px solid #c0c0c0;
     width: 20px;
@@ -79,7 +82,7 @@ td.cell.wall-right {
     border-right: 2px solid black;
 }
 
-div.robot {
+div.robot::before {
     width: 15px;
     height: 15px;
     margin: auto;
