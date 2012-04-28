@@ -4,8 +4,15 @@
 
 @main("Robotagram Rocks !!!") {
 <div class="row">
-    <div class="span8" id="boardZone">
+    <div class="span6 offset1">
         <h2>Let's play !</h2>
+    </div>
+    <div class="span4" style="text-align: right;">
+        Objectif !!!
+    </div>
+</div>
+<div class="row">
+    <div class="span6 offset1" id="boardZone">
         <table id="boardGame">
             @for(x:Int <- 0 until game.board.cells.length) {
             <tr>
@@ -34,12 +41,10 @@
     </div>
     <div class="span4" id="gameZone">
         <h3>Submit</h3>
-
         on met des trucs ici ?
-
-        <form class="well form-inline">
-            <input type="text" class="input-small" placeholder="moves?">
-            <button type="submit" class="btn btn-large btn-primary">Submit</button>
+        <form class="well form-inline" style="text-align: center;">
+            <input type="text" class="input input-medium" placeholder="moves?">
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         <hr/>
 

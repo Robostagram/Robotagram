@@ -1,6 +1,4 @@
 
-
-
 body{
     padding-top: 47px; /*pour ne pas etre sous la nav*/
     background-color: #f5f5f5;
@@ -40,7 +38,7 @@ div#boardZone{
 
 
 div#gameZone{
-    background-color:white;
+    background-color: white;
 }
 
 h2{
