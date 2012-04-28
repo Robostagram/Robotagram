@@ -7,6 +7,12 @@ body{
     background-color: #F0F0F0;
 }
 
+/*
+structure de la page
+
+*/
+
+
 /* board cells */
 
 table#boardGame{
