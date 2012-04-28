@@ -7,7 +7,7 @@ import models._
 class TestBoardTemplate extends Specification{
 
   "should display robots in board" in {
-    val robots:Array[Robot] =   Array(new Robot(Color.Red),new Robot(Color.Blue),new Robot(Color.Yellow),new Robot(Color.Green))
+    val robots:Array[Robot] =  Array(new Robot(Color.Red, 2, 7),new Robot(Color.Blue, 5, 12),new Robot(Color.Yellow, 4, 15),new Robot(Color.Green, 12, 0))
     val html = views.html.board(new Board(16,16),robots);
 
     contentType(html) must equalTo("text/html")

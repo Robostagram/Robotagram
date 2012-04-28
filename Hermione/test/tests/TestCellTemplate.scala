@@ -64,7 +64,7 @@ class TestCellTemplate extends Specification {
   }
 
   "render robot in cells" in {
-    val html = views.html.cell(EmptyCell,new Robot(Color.Red));
+    val html = views.html.cell(EmptyCell,new Robot(Color.Red,0,12));
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")
     contentAsString(html) must contain("red")
