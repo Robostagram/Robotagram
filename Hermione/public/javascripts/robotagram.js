@@ -31,17 +31,19 @@
         } while(destinationCell !== parentCell)
 
         if(hasReachedObjective(parentCell)){
-            $('#winModal').modal(true, true, true);
+            $("#winModal").modal('show');
         }
     }
 
     function hasRobot(td) {
-        console.debug($(td).children().filter(".robot").length);
         return $(td).children().filter(".robot").length > 0;
     }
 
     function hasReachedObjective(td) {
-        return $(td).children().index("#objective") >= 0;
+        if($(td).children().filter("#objective").length > 0){
+            console.debug("win");
+        }
+        return $(td).children().filter("#objective").length > 0;
     }
 
     function nextCell(td, direction) {
