@@ -15,6 +15,7 @@ header{
 section#content{
     background-color: white;
     height: 100%;
+    padding-top:1em;
 }
 
 /*product name in header */
@@ -43,6 +44,14 @@ div#gameZone{
 
 div#currentGameZone{
     text-align: center;
+}
+
+div#howToPlay{
+    font-size: 1.3em;
+}
+
+div#howToPlay table{
+    margin:0.2em auto
 }
 
 h2{
