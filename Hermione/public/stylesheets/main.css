@@ -75,29 +75,29 @@ table#boardGame{
 }
 
 td.cell {
-    border:1px solid #c0c0c0;
+    border:1px groove #FFFFFF;
     width: 30px;
     height: 30px;
     text-align: center;
     vertical-align: middle;
-    background-color: white;
+    background-color: whiteSmoke;
 }
 
 /* cells with walls */
 td.cell.wall-top {
-    border-top: 2px solid black;
+    border-top: 3px groove #a0a0a0;
 }
 
 td.cell.wall-bottom {
-    border-bottom: 2px solid black;
+    border-bottom: 3px groove #a0a0a0;
 }
 
 td.cell.wall-left {
-    border-left: 2px solid black;
+    border-left: 3px groove #a0a0a0;
 }
 
 td.cell.wall-right {
-    border-right: 2px solid black;
+    border-right: 3px groove #a0a0a0;
 }
 
 div.cell {
