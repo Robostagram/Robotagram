@@ -52,7 +52,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 }
 object Game {
   def randomGame():Game = {
-    new Game(DefaultBoard, Goal.randomGoal(), 120);
+    new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), 120);
   }
 
 }

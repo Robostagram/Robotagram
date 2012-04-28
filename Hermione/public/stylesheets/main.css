@@ -81,29 +81,29 @@ table#boardGame{
 }
 
 td.cell {
-    border:1px solid #c0c0c0;
+    border:1px groove #FFFFFF;
     width: 30px;
     height: 30px;
     text-align: center;
     vertical-align: middle;
-    background-color: white;
+    background-color: whiteSmoke;
 }
 
 /* cells with walls */
 td.cell.wall-top {
-    border-top: 2px solid black;
+    border-top: 3px groove #a0a0a0;
 }
 
 td.cell.wall-bottom {
-    border-bottom: 2px solid black;
+    border-bottom: 3px groove #a0a0a0;
 }
 
 td.cell.wall-left {
-    border-left: 2px solid black;
+    border-left: 3px groove #a0a0a0;
 }
 
 td.cell.wall-right {
-    border-right: 2px solid black;
+    border-right: 3px groove #a0a0a0;
 }
 
 div.cell {
@@ -124,13 +124,16 @@ div.robot {
     position: absolute;
     top: 5%;
     left: 5%;
+    background-color: #e0e0e0;
 }
 
 div.robot:before {
     content: "\267F";
 }
 
-
+span.symbol{
+    font-size: x-large;
+}
 div.symbol {
     border-radius: 50%;
     height: 95%;
@@ -140,6 +143,7 @@ div.symbol {
     font-size: x-large;
     display: block;
     z-index: 10;
+    padding-top: 4px;
     position: absolute;
     top: 5%;
     left: 5%;
@@ -148,19 +152,19 @@ div.symbol {
 /*color items (goals)*/
 
 .blue {
-    background-color: blue;
+    color: #5555CC;
 }
 
 .green {
-    background-color: #90ee90;
+    color: #90ee90;
 }
 
 .red {
-    background-color: #f08080;
+    color: #f08080;
 }
 
 .yellow {
-    background-color: #fafad2;
+    color: #CCCC18;
 }
 
 
@@ -168,17 +172,32 @@ div.symbol {
 .star:before{
     content: "\272E";
 }
+.star{
+    padding-top: 4px;
+}
 .moon:before{
     content: "\263D";
+}
+.moon{
+    padding-top: 4px;
 }
 .planet:before{
     content: "\2641";
 }
+.planet{
+    padding-top: 4px;
+}
 .gear:before{
     content: "\2699";
 }
+.gear{
+    padding-top: 4px;
+}
 .sun:before{
     content: "\2742";
+}
+.sun{
+    padding-top: 4px;
 }
 
 div.selected{
