@@ -7,6 +7,18 @@ class Board(val width: Int, val height: Int) {
     cells(x)(y) = cells(x)(y).withTop(wall)
     if (y > 0) cells(x)(y-1) = cells(x)(y-1).withBottom(wall)
   }
+
+  def withBottom(x:Int, y:Int, wall:Boolean){
+    // TODO
+  }
+
+  def withRight(x:Int, y:Int, wall:Boolean){
+    // TODO
+  }
+
+  def withLeft(x:Int, y:Int, wall:Boolean){
+    // TODO
+  }
 }
 
 object Board {

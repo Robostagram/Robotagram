@@ -1,6 +1,7 @@
 package models
 
-class Cell(wallTop:Boolean,wallRight:Boolean, wallBottom:Boolean, wallLeft:Boolean,goal:Goal) {
+class Cell(val wallTop:Boolean, val wallRight:Boolean, val wallBottom:Boolean, val wallLeft:Boolean, val goal:Goal) {
+
 
   def withRight(yesOrNo : Boolean = true): Cell ={
     new Cell(wallTop,  yesOrNo, wallBottom, wallLeft, goal)
