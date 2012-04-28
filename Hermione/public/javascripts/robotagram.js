@@ -13,10 +13,12 @@
     // 106: j : left
     // 107: k : down
     // 108: l : right
-    var DIRECTION_UP = 105
-    var DIRECTION_LEFT = 106
-    var DIRECTION_DOWN = 107
-    var DIRECTION_RIGHT = 108
+    var DIRECTION_UP = 105;
+    var DIRECTION_LEFT = 106;
+    var DIRECTION_DOWN = 107;
+    var DIRECTION_RIGHT = 108;
+
+    var moves = 0;
 
     function moveRobot(direction){
         var robot = null;
@@ -24,26 +26,26 @@
         var destinationCell = null;
         do{
             robot = $(".selected");
-            parentCell = robot.parent()
+            parentCell = robot.parent().parent()
             destinationCell = nextCell(parentCell, direction);
             robot.detach();
-            robot.appendTo($(destinationCell))
+            robot.appendTo($(destinationCell).children()[0])
         } while(destinationCell !== parentCell)
-
+        $("#moves").val(++moves);
         if(hasReachedObjective(robot, parentCell)){
             $("#winModal").modal('show');
         }
     }
 
     function hasRobot(td) {
-        return $(td).children().filter(".robot").length > 0;
+        return $(td).children().children().filter(".robot").length > 0;
     }
 
     function hasReachedObjective(robot, td) {
         var robotClass = $(robot).attr("class");
         var robotColor = robotClass.substr(6); //remove "robot "
         robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
-        return $(td).children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
+        return $(td).children().children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
     }
 
     function nextCell(td, direction) {
@@ -71,6 +73,7 @@
             break;
         }
         if(nextCell != null && !hasRobot(nextCell)) {
+
             return nextCell
         } else {
             return td;
