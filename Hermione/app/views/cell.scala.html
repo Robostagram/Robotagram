@@ -5,6 +5,29 @@
 @renderWalls(cell: Cell) = {
 @if(cell.wallTop){wall-top} @if(cell.wallLeft){wall-left} @if(cell.wallBottom){wall-bottom} @if(cell.wallRight){wall-right}
 }
-<td class="cell @renderWalls(c)">
 
+
+@renderColor(goal: Goal) = {
+@goal.color match {
+    case Color.Red => red
+    case Color.Green => green
+    case Color.Blue => blue
+    case Color.Yellow => yellow
+}
+}
+
+@renderSymbol(goal: Goal) = {
+@goal.symbol match {
+        case Symbol.Star => star
+        case Symbol.Planet => planet
+        case Symbol.Gear => gear
+        case Symbol.Moon => moon
+        case Symbol.Sun => sun
+}
+}
+
+<td class="cell @renderWalls(c)">
+    @if(c.goal != null) {
+        <div class="symbol @renderColor(c.goal) @renderSymbol(c.goal)"/>
+   }
 </td>
