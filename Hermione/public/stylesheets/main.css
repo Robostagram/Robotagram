@@ -47,11 +47,16 @@ div#currentGameZone{
 }
 
 div#howToPlay{
-    font-size: 1.3em;
+    font-size: 1.5em;
 }
 
 div#howToPlay table{
     margin:0.2em auto
+}
+
+kbd{
+    padding:6px;
+    margin: 2px 1px;
 }
 
 h2{
