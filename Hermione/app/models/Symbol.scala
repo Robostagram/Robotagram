@@ -1,4 +1,4 @@
-package model
+package models
 
 abstract class Symbol {
          case class Star() extends Symbol
