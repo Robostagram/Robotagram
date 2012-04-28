@@ -106,37 +106,37 @@ div.symbol {
 
 /*color items (goals)*/
 
-div.blue {
+.blue {
     background-color: blue;
 }
 
-div.green {
+.green {
     background-color: #90ee90;
 }
 
-div.red {
+.red {
     background-color: #f08080;
 }
 
-div.yellow {
+.yellow {
     background-color: #fafad2;
 }
 
 
 /* symbols for goals */
-div.star:before{
+.star:before{
     content: "\272E";
 }
-div.moon:before{
+.moon:before{
     content: "\263D";
 }
-div.planet:before{
+.planet:before{
     content: "\2641";
 }
-div.gear:before{
+.gear:before{
     content: "\2699";
 }
-div.sun:before{
+.sun:before{
     content: "\2742";
 }
 
