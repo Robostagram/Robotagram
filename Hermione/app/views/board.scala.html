@@ -4,16 +4,15 @@
 
 @main("Robotagram Rocks !!!") {
 
+
 <table id="boardGame">
     @for(line:Array[Cell] <- board.cells) {
     <tr>
-        @line.map { c => @display(cell = c) }
+        @line.map { c => <td class="cell @if(c.wallTop){wall-top} @if(c.wallLeft){wall-left} @if(c.wallBottom){wall-bottom} @if(c.wallRight){wall-right}">&nbsp;</td> }
     </tr>
     }
 </table>
 
-@display(cell: models.Cell) = {
-<td class="cell @(if(cell.wallTop) wall-top)">&nbsp;</td>
-}
+
 
 }
