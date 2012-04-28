@@ -17,8 +17,5 @@ class TestBoardTemplate extends Specification{
     contentAsString(html) must contain("green")
     contentAsString(html) must contain("blue")
 
-
-
-
   }
 }
