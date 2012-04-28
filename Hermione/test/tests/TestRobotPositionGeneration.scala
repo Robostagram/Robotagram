@@ -8,7 +8,7 @@ import collection.immutable.HashSet
 class TestRobotPositionGeneration extends Specification{
 
   "generate random position for list of robots" in {
-    val robots:Array[Robot] =   controllers.Application.generateRobots();
+    val robots:List[Robot] =   controllers.Application.generateRobots(DefaultBoard);
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
     for(robot <- robots){
        if(robot.posX==7){ robot.posY must_!= 7}

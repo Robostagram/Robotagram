@@ -1,71 +1,37 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
 
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
 
-body {
-    line-height: 1;
-}
-
-ol, ul {
-    list-style: none;
-}
-
-blockquote, q {
-    quotes: none;
-}
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-/****************** END RESET ******************/
 body{
     margin:auto;
     padding:15px;
+    background-color: #F0F0F0;
 }
+
+/*
+structure de la page
+
+*/
+
+
+/* board cells */
+
+table#boardGame{
+    background-color: white;
+    -moz-box-shadow: 4px 4px 12px #aaa;
+    -webkit-box-shadow: 4px 4px 12px #aaa;
+    box-shadow: 4px 4px 12px #555;
+}
+
 td.cell {
     border:1px solid #c0c0c0;
     width: 20px;
     height: 20px;
     text-align: center;
     vertical-align: middle;
+    background-color: #
 }
 
+/* cells with walls */
 td.cell.wall-top {
     border-top: 2px solid black;
 }
@@ -82,12 +48,15 @@ td.cell.wall-right {
     border-right: 2px solid black;
 }
 
-div.robot::before {
+/*robots */
+
+div.robot:before {
     width: 15px;
     height: 15px;
     margin: auto;
     content: "\267F";
 }
+
 
 div.symbol {
     border-radius: 50%;
@@ -98,6 +67,8 @@ div.symbol {
     line-height:150%;
     font-size: large;
 }
+
+/*color items (goals)*/
 
 div.blue {
     background-color: blue;
@@ -115,19 +86,21 @@ div.yellow {
     background-color: #fafad2;
 }
 
-div.star::before{
+
+/* symbols for goals */
+div.star:before{
     content: "\272E";
 }
-div.moon::before{
+div.moon:before{
     content: "\263D";
 }
-div.planet::before{
+div.planet:before{
     content: "\2641";
 }
-div.gear::before{
+div.gear:before{
     content: "\2699";
 }
-div.sun::before{
+div.sun:before{
     content: "\2742";
 }
 
