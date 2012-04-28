@@ -113,5 +113,17 @@ div.yellow {
 }
 
 div.star::before{
-    content: "\2623";
+    content: "\272E";
+}
+div.moon::before{
+    content: "\263D";
+}
+div.planet::before{
+    content: "\2641";
+}
+div.gear::before{
+    content: "\2699";
+}
+div.sun::before{
+    content: "\2742";
 }
