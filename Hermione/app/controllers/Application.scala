@@ -23,11 +23,15 @@ object Application extends Controller {
   def generateRobots(board:Board) = {
     var robots = List[Robot]()
     for(c <- Color.values){
-      val posX:Int = Random.nextInt(board.width)
-      val posY:Int = Random.nextInt(board.height)
+      val posX:Int = getRandomPosition(board.width)
+      val posY:Int = getRandomPosition(board.height)
        robots ::=  new Robot(c,posX,posY)
     }
     robots
+  }
+  
+  def getRandomPosition(maxValue:Int) = {
+    Random.nextInt(maxValue)
   }
 
 
