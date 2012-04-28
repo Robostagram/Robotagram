@@ -1,4 +1,4 @@
-package model
+package models
 
 object Symbol extends Enumeration {
   type Symbol = Value

@@ -1,4 +1,4 @@
-package model
+package models
 
 class Cell(north:Boolean,east:Boolean,g:Goal) {
   val wallNorth:Boolean = north;
@@ -16,13 +16,6 @@ class Cell(north:Boolean,east:Boolean,g:Goal) {
 
   def withGoal(g : Goal): Cell ={
     new Cell(wallNorth, wallEast, g)
-  }
-}
-
-
-object Cell{
-  def Empty : Cell = {
-    new Cell(false, false, null);
   }
 }
 

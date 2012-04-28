@@ -1,44 +1,19 @@
-@(board: String)
+@(board: Board)
+
+@import models._
 
 @main("Robotagram Rocks !!!") {
 
 <table id="boardGame">
+    @for(line:Array[Cell] <- board.cells) {
     <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
+        @line.map { c => @display(cell = c) }
     </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="symbol red star"/></td>
-        <td class="cell wall-top">&nbsp;</td>
-        <td class="cell wall-left"><div class="robot red"/></td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell wall-bottom"><div class="robot green"/></td>
-        <td class="cell wall-right">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="robot blue"/></td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="robot yellow"/></td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-
+    }
 </table>
+
+@display(cell: models.Cell) = {
+<td class="cell @(if(cell.wallTop) wall-top)">&nbsp;</td>
+}
 
 }

@@ -1,4 +1,4 @@
-package model
+package models
 
 
 object DefaultBoard extends Board(16, 16){

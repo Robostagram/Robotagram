@@ -1,4 +1,4 @@
-package model
+package models
 
 object Color extends Enumeration {
   type Color = Value
