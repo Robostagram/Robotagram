@@ -66,7 +66,7 @@ td.cell {
     height: 30px;
     text-align: center;
     vertical-align: middle;
-    background-color: #
+    background-color: white;
 }
 
 /* cells with walls */
@@ -86,24 +86,37 @@ td.cell.wall-right {
     border-right: 2px solid black;
 }
 
+div.cell {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
 /*robots */
 
-div.robot:before {
-    width: 15px;
-    height: 15px;
+div.robot {
+    width: 90%;
+    height: 90%;
     margin: auto;
+    display: block;
+    font-size: x-large;
+    z-index: 20;
+}
+
+div.robot:before {
     content: "\267F";
 }
 
 
 div.symbol {
     border-radius: 50%;
-    height: 60%;
-    width: 60%;
+    height: 90%;
+    width: 90%;
     margin: auto;
     vertical-align: middle;
-    line-height:150%;
-    font-size: large;
+    font-size: x-large;
+    display: block;
+    z-index: 10;
 }
 
 /*color items (goals)*/
