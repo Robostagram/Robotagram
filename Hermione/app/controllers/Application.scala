@@ -2,9 +2,8 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models.DefaultBoard
-import models.Robot
-import models.Color
+import util.Random
+import models.{Board, DefaultBoard, Robot, Color}
 
 
 object Application extends Controller {
@@ -15,14 +14,20 @@ object Application extends Controller {
 
 
   def board = Action {
+    val board:Board = DefaultBoard;
+    val robots:List[Robot] =   generateRobots(board)
 
-    val robots:Array[Robot] =   generateRobots()
-
-    Ok(views.html.board(DefaultBoard,robots))
+    Ok(views.html.board(board,robots))
   }
 
-  def generateRobots() = {
-    Array(new Robot(Color.Red, 2, 7),new Robot(Color.Blue, 5, 12),new Robot(Color.Yellow, 4, 15),new Robot(Color.Green, 12, 0))
+  def generateRobots(board:Board) = {
+    var robots = List[Robot]()
+    for(c <- Color.values){
+      val posX:Int = Random.nextInt(board.width)
+      val posY:Int = Random.nextInt(board.height)
+       robots ::=  new Robot(c,posX,posY)
+    }
+    robots
   }
 
 
