@@ -1,6 +1,6 @@
 package models
 
-import scala.Array
+import scala.{Int, Array}
 
 
 class Board(val width: Int, val height: Int) {
@@ -48,12 +48,19 @@ class Board(val width: Int, val height: Int) {
 
 object Board {
 
+  val END_OF_LINE = "[\\r]{0,1}\\n"
+  val BOARD_GOALS_SEP = END_OF_LINE +"\\#"+ END_OF_LINE
+  val GOAL_SEP = ","
+
   def boardFromFile(path: String): Board = {
     boardFromString(scala.io.Source.fromFile(path).mkString)
   }
 
-  def boardFromString(stringBoard: String): Board = {
-    val lines = stringBoard.split("[\\r]{0,1}\\n")
+  def boardFromString(rawFile: String): Board = {
+    val rawSplit = rawFile.split(BOARD_GOALS_SEP)
+    val stringBoard = rawSplit(0)
+    val goals = rawSplit(1)
+    val lines = stringBoard.split(END_OF_LINE)
     val h = lines.length
     val w = lines(0).length
     val board = new Board(w, h)
@@ -77,11 +84,18 @@ object Board {
           case 'm' => board.cells(i)(j) = updateCell(board, i, j, true, false, true, true)
           case 'n' => board.cells(i)(j) = updateCell(board, i, j, false, true, true, true)
           case 'o' => board.cells(i)(j) = updateCell(board, i, j, true, true, true, true)
-          case _ => () //split("") gives "" as first piece of string,board.cells(i)(j-1) must not be used or counted
+          case _ => ()
         }
         j += 1
       }
       i += 1
+    }
+    for(line <- goals.split(END_OF_LINE)) {
+      val elements = line.split(GOAL_SEP)
+      val x = Integer.parseInt(elements(0))
+      val y = Integer.parseInt(elements(1))
+      val oldCell = board.cells(x)(y)
+      board.cells(x)(y) = oldCell.withGoal(new Goal(Color.withName(elements(2)), Symbol.withName(elements(3))))
     }
     board
   }
