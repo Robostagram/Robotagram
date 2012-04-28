@@ -101,6 +101,7 @@ div.robot {
     display: block;
     font-size: x-large;
     z-index: 20;
+    position: absolute;
 }
 
 div.robot:before {
@@ -117,6 +118,7 @@ div.symbol {
     font-size: x-large;
     display: block;
     z-index: 10;
+    position: absolute;
 }
 
 /*color items (goals)*/
