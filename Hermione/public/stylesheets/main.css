@@ -44,7 +44,6 @@ table#boardGame{
     -moz-box-shadow: 4px 4px 12px #aaa;
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
-    margin:auto; /*center in container */
 }
 
 td.cell {
@@ -129,5 +128,6 @@ div.sun:before{
     content: "\2742";
 }
 
-
-
+div.selected{
+    border: 2px solid red;
+}
