@@ -3,20 +3,20 @@ package models
 class Board(val width: Int, val height: Int) {
   val cells: Array[Array[Cell]] =  Array.fill(height, width){ Cell.Empty }
 
-  def withTop(x:Int, y:Int, wall:Boolean){
+  def withTop(x:Int, y:Int, wall:Boolean = true){
     cells(x)(y) = cells(x)(y).withTop(wall)
     if (y > 0) cells(x)(y-1) = cells(x)(y-1).withBottom(wall)
   }
 
-  def withBottom(x:Int, y:Int, wall:Boolean){
+  def withBottom(x:Int, y:Int, wall:Boolean = true){
     // TODO
   }
 
-  def withRight(x:Int, y:Int, wall:Boolean){
+  def withRight(x:Int, y:Int, wall:Boolean = true){
     // TODO
   }
 
-  def withLeft(x:Int, y:Int, wall:Boolean){
+  def withLeft(x:Int, y:Int, wall:Boolean = true){
     // TODO
   }
 }
