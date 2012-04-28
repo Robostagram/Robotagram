@@ -1,8 +1,7 @@
 package models
 
 class Board(val width: Int, val height: Int) {
-  val cells: Array[Array[Cell]] =  Array.fill(width, height){ new Cell(false, false, null) }
-
+  val cells: Array[Array[Cell]] =  Array.fill(height, width){ Cell.Empty }
 }
 
 object Board {
@@ -23,5 +22,4 @@ object Board {
     }
     board
   }
-
 }
