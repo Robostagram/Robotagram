@@ -2,9 +2,6 @@ package tests
 
 import org.specs2.mutable.Specification
 import models._
-import collection.immutable.HashSet
-import org.specs2.mock.Mockito
-import play.api.mvc.Controller
 
 object gameMock extends Game(DefaultBoard,Goal.randomGoal(), 120){
   var call:Int = 0
@@ -19,7 +16,7 @@ object gameMock extends Game(DefaultBoard,Goal.randomGoal(), 120){
   }
 }
 
-class TestRobotPositionGeneration extends Specification with Mockito{
+class TestRobotPositionGeneration extends Specification{
 
    "generate random robots list  produce non center postion" in {
       val game:Game = gameMock
