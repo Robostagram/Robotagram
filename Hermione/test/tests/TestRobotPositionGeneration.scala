@@ -15,7 +15,7 @@ class TestRobotPositionGeneration extends Specification{
        if(robot.posX==7){ robot.posY must_!= 8}
        if(robot.posX==8){ robot.posY must_!= 7}
        if(robot.posX==8){ robot.posY must_!= 8}
-      
+
       setPos.contains((robot.posX,robot.posY)) must beFalse
       setPos+((robot.posX,robot.posY))
     }

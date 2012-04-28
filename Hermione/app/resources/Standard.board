@@ -14,3 +14,20 @@ d      d a     e
 d     a       ai
 d  d      g    b
 jccfccjcccccjcch
+#
+1,12,Yellow,Planet
+2,5,Blue,Star
+2,10,Red,Star
+4,2,Green,Gear
+5,7,Red,Planet
+5,11,Green,Moon
+6,1,Yellow,Moon
+6,14,Blue,Gear
+9,1,Yellow,Star
+9,5,Blue,Moon
+9,13,Blue,Planet
+11,9 Yellow,Gear
+12,6,Red,Gear
+13,14,Red,Moon
+14,2,Green,Planet
+14,10,Green,Star
