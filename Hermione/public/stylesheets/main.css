@@ -130,3 +130,7 @@ div.gear::before{
 div.sun::before{
     content: "\2742";
 }
+
+div.selected{
+    border: 2px solid red;
+}
