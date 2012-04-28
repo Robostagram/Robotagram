@@ -16,7 +16,7 @@ object Application extends Controller {
 
   def board = Action {
 
-    val robots:Array[Robot] =   Array(new Robot(Color.Red),new Robot(Color.Blue),new Robot(Color.Yellow),new Robot(Color.Green))
+    val robots:Array[Robot] =   Array(new Robot(Color.Red, 2, 7),new Robot(Color.Blue, 5, 12),new Robot(Color.Yellow, 4, 15),new Robot(Color.Green, 12, 0))
 
     Ok(views.html.board(DefaultBoard,robots))
   }
