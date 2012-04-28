@@ -31,30 +31,39 @@
         } while(destinationCell !== parentCell)
     }
 
+    function hasRobot(td) {
+        return $(td).children().index(".robot") >= 0;
+    }
+
     function nextCell(td, direction) {
+        var nextCell = null;
         switch(direction){
         case DIRECTION_UP:
             if(!td.is(".wall-top")){
-                return td.parent().prev().children()[td.parent().children().index(td)];
+                nextCell = td.parent().prev().children()[td.parent().children().index(td)];
             }
             break;
         case DIRECTION_DOWN:
             if(!td.is(".wall-bottom")){
-                return td.parent().next().children()[td.parent().children().index(td)];
+                nextCell = td.parent().next().children()[td.parent().children().index(td)];
             }
             break;
         case DIRECTION_LEFT:
             if(!td.is(".wall-left")){
-                return td.prev();
+                nextCell = td.prev();
             }
             break;
         case DIRECTION_RIGHT:
             if(!td.is(".wall-right")){
-                return td.next();
+                nextCell = td.next();
             }
             break;
         }
-        return td;
+        if(nextCell != null && !hasRobot(nextCell)) {
+            return nextCell
+        } else {
+            return td;
+        }
     }
 
     $(document).ready(function(){
