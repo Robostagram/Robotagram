@@ -5,7 +5,7 @@ class Board(val width: Int, val height: Int) {
 
   def withTop(x:Int, y:Int, wall:Boolean){
     cells(x)(y) = cells(x)(y).withTop(wall)
-    if (y > 0) cells(x)(y-1).withBottom(wall)
+    if (y > 0) cells(x)(y-1) = cells(x)(y-1).withBottom(wall)
   }
 }
 
