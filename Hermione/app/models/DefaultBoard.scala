@@ -3,13 +3,13 @@ package models
 
 object DefaultBoard extends Board(16, 16){
 
-  // murs sur la gauche
+  // murs sur la droite
     for ( i <- 0 until width){
-      cells(i)(0) = cells(i)(0).withEastWall()
+      withRight(i, 0, true)
     }
   // murs en haut
   for ( j <- 0 until height){
-    cells(0)(j) = cells(0)(j).withNorthWall()
+     withTop(0,j, true);
   }
 
   // mapping (coords) -> goal ... pour remplir la board après coup

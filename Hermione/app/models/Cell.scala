@@ -1,27 +1,29 @@
 package models
 
-class Cell(wallNorth:Boolean,wallEast:Boolean,goal:Goal) {
+class Cell(wallTop:Boolean,wallRight:Boolean, wallBottom:Boolean, wallLeft:Boolean,goal:Goal) {
 
-  def withEastWall(yesOrNo : Boolean = true): Cell ={
-    new Cell(wallNorth, yesOrNo, goal)
+  def withRight(yesOrNo : Boolean = true): Cell ={
+    new Cell(wallTop,  yesOrNo, wallBottom, wallLeft, goal)
   }
 
-  def withNorthWall(yesOrNo : Boolean = true): Cell ={
-    new Cell(yesOrNo, wallEast, goal)
+  def withTop(yesOrNo : Boolean = true): Cell ={
+    new Cell(yesOrNo,  wallRight, wallBottom, wallLeft, goal)
+  }
+
+  def withLeft(yesOrNo : Boolean = true): Cell ={
+    new Cell(wallTop,  wallRight, wallBottom, yesOrNo, goal)
+  }
+
+  def withBottom(yesOrNo : Boolean = true): Cell ={
+    new Cell(wallTop,  wallRight, yesOrNo, wallLeft, goal)
   }
 
   def withGoal(g : Goal): Cell ={
-    new Cell(wallNorth, wallEast, g)
+    new Cell(wallTop, wallRight,wallBottom, wallLeft ,g)
   }
-
-  def wallTop:Boolean = wallNorth;
-  def wallRight:Boolean = wallEast;
-  def wallLeft:Boolean = wallNorth;  // TODO : compute it !
-  def wallBottom:Boolean = wallNorth; // TODO : compute it !
-
 }
 
 object Cell{
-  def Empty = {new Cell(false, false, null)}
+  def Empty = {new Cell(false, false, false, false, null)}
 }
 
