@@ -7,7 +7,7 @@ import models._
 class TestBoardTemplate extends Specification{
 
   "should display robots in board" in {
-    val html = views.html.board(Game.randomGame());
+    val html = views.html.board(Game.randomGame(), new Player("plouf"));
 
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")
