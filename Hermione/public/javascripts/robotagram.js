@@ -140,7 +140,7 @@
 
             // on le sort de la cellule
             $robot.css('z-index', '999').appendTo("body");
-            // mais on l'afihe au même endroit dans la page (absolute avec même offsets)
+            // mais on l'affiche au même endroit dans la page (absolute avec même offsets)
             $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});
             // transition de l'un à l'autre
             $robot.animate({
