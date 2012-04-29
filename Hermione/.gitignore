@@ -9,3 +9,7 @@ dist
 *.iml
 *.ipr
 *.iws
+.cache
+.classpath
+.project
+.settings

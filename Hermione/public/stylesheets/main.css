@@ -84,8 +84,6 @@ td.cell {
     border:1px groove #FFFFFF;
     width: 30px;
     height: 30px;
-    text-align: center;
-    vertical-align: middle;
     background-color: whiteSmoke;
 }
 
@@ -114,92 +112,128 @@ div.cell {
 
 /*robots */
 
-div.robot {
-    width:29px;
-    height: 29px;
-    margin: auto;
+div.robot{
+
     display: block;
-    font-size: x-large;
-    z-index: 999;
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    background-color: #e0e0e0;
-    outline:3px outset #dCdCdC;
+    width: 29px;
+    height: 29px;
+    vertical-align: text-top;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #C4C4C4;
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    cursor:pointer;
+
 }
 
-div.robot:before {
-    content: "\267F";
+/* survol du robot */
+.robot:hover{
+    border-color:rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: 0 1px 1px #555, 0 0 1px #555;
+    -moz-box-shadow: 0 1px 1px #555, 0 0 1px #555;
+    box-shadow: 0 1px 1px #555, 0 0 1px #555;
+    background-color: #cbcbcb;
 }
 
 /* robot selectionné*/
-div.selected{
-    outline: 3px inset #dCdCdC;
+.robot.selected{
+    border-color:rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
+    -moz-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
+    box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
+    background-color: #ACACAC;
 }
 
 div.symbol, span.symbol {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    *margin-right: .3em;
-    line-height: 14px;
+    display: block;
+    width: 29px;
+    height: 29px;
     vertical-align: text-top;
-    background-image: url("../images/glyphicons-halflings.png");
-    background-position: 14px 14px;
+    background-position: center center;
     background-repeat: no-repeat;
-    margin: 7px;
 }
 
-/*color items (goals)*/
+div.symbol{
 
-.blue {
-    color: #5555CC;
 }
 
-.green {
-    color: #48ed72;
+.robot.blue{
+    background-image: url("../images/symbols/blue_skull.png");
+}
+.robot.green{
+    background-image: url("../images/symbols/green_skull.png");
+}
+.robot.red{
+    background-image: url("../images/symbols/red_skull.png");
+}
+.robot.yellow{
+    background-image: url("../images/symbols/yellow_skull.png");
 }
 
-.red {
-    color: #f04936;
+span.symbol {
+    display: inline-block;
 }
-
-.yellow {
-    color: #ccc713;
-}
-
 
 /* symbols for goals */
 
-.symbol.red{
-    background-color: #f04936;
+.symbol.gear.blue{
+    background-image: url("../images/symbols/blue_gear.png");
 }
-.symbol.blue{
-    background-color: #5555CC;
+.symbol.star.blue{
+    background-image: url("../images/symbols/blue_star.png");
 }
-.symbol.yellow{
-    background-color: #ccc713;
+.symbol.planet.blue{
+    background-image: url("../images/symbols/blue_planet.png");
 }
-.green {
-    background-color: #48ed72;
+.symbol.moon.blue{
+    background-image: url("../images/symbols/blue_moon.png");
+}
+
+.symbol.gear.green{
+    background-image: url("../images/symbols/green_gear.png");
+}
+.symbol.star.green{
+    background-image: url("../images/symbols/green_star.png");
+}
+.symbol.planet.green{
+    background-image: url("../images/symbols/green_planet.png");
+}
+.symbol.moon.green{
+    background-image: url("../images/symbols/green_moon.png");
+}
+
+.symbol.gear.yellow{
+    background-image: url("../images/symbols/yellow_gear.png");
+}
+.symbol.star.yellow{
+    background-image: url("../images/symbols/yellow_star.png");
+}
+.symbol.planet.yellow{
+    background-image: url("../images/symbols/yellow_planet.png");
+}
+.symbol.moon.yellow{
+    background-image: url("../images/symbols/yellow_moon.png");
 }
 
 
-.symbol.star{
-    background-position: -120px 0; /*icon-star*/
+.symbol.gear.red{
+    background-image: url("../images/symbols/red_gear.png");
 }
-.symbol.moon{
-    background-position: -72px -72px; /*icon-tint*/
+.symbol.star.red{
+    background-image: url("../images/symbols/red_star.png");
 }
-.symbol.planet{
-    background-position: -336px -144px; /*icon-globe*/
+.symbol.planet.red{
+    background-image: url("../images/symbols/red_planet.png");
 }
-.symbol.gear{
-    background-position: -432px 0; /*icon-cog*/
+.symbol.moon.red{
+    background-image: url("../images/symbols/red_moon.png");
 }
-.symbol.sun{
-    background-position: -456px -96px; /*icon-asterisk*/
-}
+
 
 
 

@@ -68,11 +68,18 @@
     }
 
     function retryClick(event) {
-        $('#container').load('/newGame/' + encodeURI($("#nicknameDisplay").text() + "/" + moves), function () {
+        $('#container').load("/newGame/" + moves, function () {
             //reattach event because we load our listeners on previous dom objects
             initListeners();
             $("#moves").val(0);
             moves = 0;
+        });
+    }
+
+    function timerEnd(){
+        var container = $('#container');
+        container.load("/newGame/0", function () {
+            initListeners();
         });
     }
 
@@ -237,8 +244,12 @@
                 url:'/progress',
                 success:function(data){
                     $('#progressBar').css('width',data+'%');
-                    setTimeout(doPollTimer, 1000);
+                    if(data<=0){
+                        timerEnd();
+                    }else{
+                        setTimeout(doPollTimer, 1000);
+                    }
                 }
             }
         );
-    };
+    }
