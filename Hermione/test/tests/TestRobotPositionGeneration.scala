@@ -6,7 +6,7 @@ import collection.immutable.HashSet
 
 object gameMockMiddlePosition extends Game(DefaultBoard,Goal.randomGoal(), 120){
   var call:Int = 0
-  val returns = Array(7,7,8,8,7,8,8,7,1,2,3,4,5,6,9,10,11,12,13,14,15);
+  val returns = Array(7,7,8,8,7,8,8,7,1,2,3,4,5,6,9,10,11,12);
   override def getRandomPosition(max:Int)={
     var result = 12
     if(call<returns.size){

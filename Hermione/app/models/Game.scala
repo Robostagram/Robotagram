@@ -7,8 +7,13 @@ import java.util.UUID
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
   val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
-  val robots:List[Robot] = randomRobots(board);
-
+  private var robotsList:List[Robot] = Nil
+  def robots = {
+    if(robotsList.isEmpty){
+      robotsList = randomRobots(board)
+    }
+    robotsList
+  }
   def isDone:Boolean = {
      System.currentTimeMillis() > endTime;
   }
