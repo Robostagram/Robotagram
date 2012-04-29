@@ -115,9 +115,10 @@
             return;
         }
 
-        originCell = $robot.parents("td.cell").first();
+        originCell = $robot.parents("td.cell");
         // seulement si le robot est bien dans une cellule, pas en déplacement
         if (originCell.length > 0) {
+            originCell = originCell.first();
 
             previousDestination = originCell;
             nextDestination = nextCell(previousDestination, direction);
@@ -140,7 +141,7 @@
                 var finalLeft = finalPos.left;
 
                 // on le sort de la cellule
-                $robot.css('z-index', '999').appendTo("body");
+                $robot.appendTo("body");
                 // mais on l'affiche au même endroit dans la page (absolute avec même offsets)
                 $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});
                 // transition de l'un à l'autre
@@ -148,7 +149,7 @@
                         left:finalLeft,
                         top:finalTop
                     },
-                    'fast',
+                    100, /* 'fast' = 200 ms, 'slow' = 600ms */
                     function () {
                         // Animation complete : remettre le robot dans la cellule de destination
                         $(this).css({left:'0px', top:'0px'})
