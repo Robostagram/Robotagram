@@ -70,7 +70,7 @@
     }
 
     function retryClick(event){
-        $('#container').load('/newGame/' + encodeURI($("#nicknameDisplay").val() + "/" + moves), function(){
+        $('#container').load('/newGame/' + encodeURI($("#nicknameDisplay").text() + "/" + moves), function(){
             //reattach event because we load our listeners on previous dom objects
             initListeners();
             $("#moves").val(0);
@@ -83,7 +83,6 @@
         var user = $('#nickname').val();
         container.load('/newGame/' + encodeURI(user) + "/0", function () {
             initListeners();
-            $('#nicknameDisplay').text(user);
         });
     }
 
