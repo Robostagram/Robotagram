@@ -114,27 +114,36 @@ div.cell {
 
 /*robots */
 
-div.robot {
-    width:29px;
-    height: 29px;
-    margin: auto;
+div.robot{
+
     display: block;
-    font-size: x-large;
-    z-index: 999;
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    background-color: #e0e0e0;
-    outline:3px outset #dCdCdC;
+    width: 29px;
+    height: 29px;
+    vertical-align: text-top;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #C4C4C4;
+
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.05)
+
 }
 
-div.robot:before {
-    content: "\267F";
+/* survol du robot */
+.robot:hover{
+    border-color:rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px #555, 0 0 1px #555;
+    background-color: #cbcbcb;
 }
 
 /* robot selectionné*/
-div.selected{
-    outline: 3px inset #dCdCdC;
+.robot.selected{
+    border-color:rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 1px rgba(82, 168, 236, 0.6);
+    box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
+    background-color: #ACACAC;
 }
 
 div.symbol, span.symbol {
@@ -144,31 +153,28 @@ div.symbol, span.symbol {
     vertical-align: text-top;
     background-position: center center;
     background-repeat: no-repeat;
-    /*margin: 7px;*/
+}
+
+div.symbol{
+    cursor:pointer;
+}
+
+.robot.blue{
+    background-image: url("../images/symbols/blue_skull.png");
+}
+.robot.green{
+    background-image: url("../images/symbols/green_skull.png");
+}
+.robot.red{
+    background-image: url("../images/symbols/red_skull.png");
+}
+.robot.yellow{
+    background-image: url("../images/symbols/yellow_skull.png");
 }
 
 span.symbol {
     display: inline-block;
 }
-
-/*color items (goals)*/
-
-.blue {
-    color: #5555CC;
-}
-
-.green {
-    color: #48ed72;
-}
-
-.red {
-    color: #f04936;
-}
-
-.yellow {
-    color: #ccc713;
-}
-
 
 /* symbols for goals */
 
@@ -184,9 +190,6 @@ span.symbol {
 .symbol.moon.blue{
     background-image: url("../images/symbols/blue_moon.png");
 }
-
-/*images have slightly different sizes*/
-
 
 .symbol.gear.green{
     background-image: url("../images/symbols/green_gear.png");
