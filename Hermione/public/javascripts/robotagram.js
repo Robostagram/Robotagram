@@ -12,10 +12,17 @@
 
     function retryClick(event){
         $("#boardZone").load("/current/reload", function(){
+            //reattach event because we load our listeners on previous dom objects
             $(".robot").click(robotClickHandler);
         });
     }
 
+    function playClick(event){
+        var container = $('#container');
+        container.load('/newGame', function(){
+            initListeners();
+        });
+    }
     // direction:
     // 105: i : up
     // 106: j : left
@@ -87,25 +94,31 @@
             return td;
         }
     }
+      function initListeners(){
+          $(window).keypress(keypressHandler);
+          $(".robot").click(robotClickHandler);
+          $("#retry").click(retryClick);
 
+          //on triche, et les touches affichées marchent comme un clavier
+          $("#key-up").click(function(){
+              moveRobot(DIRECTION_UP)
+          });
+          $("#key-down").click(function(){
+              moveRobot(DIRECTION_DOWN)
+          });
+          $("#key-left").click(function(){
+              moveRobot(DIRECTION_LEFT)
+          });
+          $("#key-right").click(function(){
+              moveRobot(DIRECTION_RIGHT)
+          });
+      }
     $(document).ready(function(){
-        $(window).keypress(keypressHandler);
-        $(".robot").click(robotClickHandler);
-        $("#retry").click(retryClick);
+        $("#nickModal").modal('show');
+        $("#play").click(playClick);
 
-        //on triche, et les touches affichées marchent comme un clavier
-        $("#key-up").click(function(){
-           moveRobot(DIRECTION_UP)
-        });
-        $("#key-down").click(function(){
-            moveRobot(DIRECTION_DOWN)
-        });
-        $("#key-left").click(function(){
-            moveRobot(DIRECTION_LEFT)
-        });
-        $("#key-right").click(function(){
-            moveRobot(DIRECTION_RIGHT)
-        });
 
     })
+
+
 })();

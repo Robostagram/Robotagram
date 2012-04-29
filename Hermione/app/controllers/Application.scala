@@ -10,9 +10,7 @@ object Application extends Controller {
   val lock: Lock = new Lock();
 
   def index = Action {
-    lock.acquire();
-
-    Ok(views.html.index("my application is ready."))
+    Ok(views.html.index())
   }
 
   def newGame = Action {
