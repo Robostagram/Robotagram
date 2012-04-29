@@ -81,7 +81,7 @@ table#boardGame{
 }
 
 td.cell {
-    border:1px groove #FFFFFF;
+    border:1px solid #FFFFFF;
     width: 30px;
     height: 30px;
     background-color: whiteSmoke;
@@ -89,25 +89,26 @@ td.cell {
 
 /* cells with walls */
 td.cell.wall-top {
-    border-top: 3px groove #a0a0a0;
+    border-top: 3px solid #a0a0a0;
 }
 
 td.cell.wall-bottom {
-    border-bottom: 3px groove #a0a0a0;
+    border-bottom: 3px solid #a0a0a0;
 }
 
 td.cell.wall-left {
-    border-left: 3px groove #a0a0a0;
+    border-left: 3px solid #a0a0a0;
 }
 
 td.cell.wall-right {
-    border-right: 3px groove #a0a0a0;
+    border-right: 3px solid #a0a0a0;
 }
 
 div.cell {
-    height: 100%;
-    width: 100%;
+    height: 30px;
+    width: 30px;
     position: relative;
+    padding:1px;
 }
 
 /*robots */
@@ -115,8 +116,8 @@ div.cell {
 div.robot{
 
     display: block;
-    width: 29px;
-    height: 29px;
+    width: 26px;
+    height: 26px;
     vertical-align: text-top;
     background-position: center center;
     background-repeat: no-repeat;
@@ -128,6 +129,7 @@ div.robot{
     border: 1px solid rgba(0, 0, 0, 0.05);
 
     cursor:pointer;
+    margin: 1px;
 
 }
 
