@@ -49,6 +49,20 @@ class Board(val width: Int, val height: Int) {
     setCell(x, y, map(getCell(x, y)))
   }
 
+  private def debugDump() {
+    for (i <- 0 until width) {
+      for (j <- 0 until height) {
+        val cell = cells(i)(j)
+        print(if (cell.wallTop) "1" else "0")
+        print(if (cell.wallRight) "1" else "0")
+        print(if (cell.wallBottom) "1" else "0")
+        print(if (cell.wallLeft) "1" else "0")
+        print(" ")
+      }
+      println
+    }
+  }
+
   def rotate90deg(): Board = {
     val newBoard = new Board(height, width)
     for (i <- 0 until width) {
@@ -87,7 +101,6 @@ class Board(val width: Int, val height: Int) {
       //reorder randomly the quarters
       val quarterOrder = QUARTER_COMBOS(new Random().nextInt(6))
 
-
       //North East quarter
       //diff gives the number of rotation to operate on the shuffled quarter
       var diff = 1 - quarterOrder._1
@@ -117,6 +130,21 @@ class Board(val width: Int, val height: Int) {
       }
       for (i <- 0 until half) {
         Array.copy(quarters(quarterOrder._3).cells(i), 0, rBoard.cells(i + half), 0, half)
+      }
+
+      //rebuild the seams
+      for(i <- 0 until width) {
+        var cell1 = rBoard.cells(i)(half-1)
+        var cell2 = rBoard.cells(i)(half)
+        var wall = cell1.wallRight || cell2.wallLeft
+        rBoard.cells(i)(half-1) = cell1.withRight(wall)
+        rBoard.cells(i)(half) = cell2.withLeft(wall)
+
+        cell1 = rBoard.cells(half-1)(i)
+        cell2 = rBoard.cells(half)(i)
+        wall = cell1.wallBottom || cell2.wallTop
+        rBoard.cells(half-1)(i) = cell1.withBottom(wall)
+        rBoard.cells(half)(i) = cell2.withTop(wall)
       }
 
       rBoard
