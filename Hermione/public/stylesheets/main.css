@@ -138,18 +138,6 @@ div.selected{
 }
 
 div.symbol, span.symbol {
-    /*border-radius: 50%;
-    height: 95%;
-    width: 95%;
-    margin: auto;
-    vertical-align: middle;
-    font-size: x-large;
-    display: block;
-    z-index: 10;
-    padding-top: 4px;
-    position: absolute;
-    top: 5%;
-    left: 5%;*/
     display: inline-block;
     width: 14px;
     height: 14px;
@@ -183,10 +171,6 @@ div.symbol, span.symbol {
 
 /* symbols for goals */
 
-
-/*.star:before{
-    content: "\272E";
-}*/
 .symbol.red{
     background-color: #f04936;
 }
