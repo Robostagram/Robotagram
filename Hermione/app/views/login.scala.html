@@ -1,0 +1,27 @@
+@(loginForm: Form[String])
+
+
+@main("Robotagram Rocks !!!") {
+
+@helper.form(routes.Authentication.authenticate) {
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#nickModal").modal('show');
+    })
+</script>
+
+<div id="nickModal" class="modal hide fade">
+    <div class="modal-header">
+        <h3>Wanna play Robotagram ? </h3><img src='@routes.Assets.at("images/favicon.ico")' alt="robotagram icon">
+    </div>
+        <span class="modal-body" align="center">
+            Then please enter your
+            <input type="text" name="@loginForm("nickname").name" id="@loginForm("nickname").id" value="@loginForm("nickname").value" class="input input-medium" placeholder="nickname">
+        </span>
+
+    <div class="modal-footer">
+        <input type="submit" id="play" class="btn btn-success" value="Play !"/>
+    </div>
+</div>
+}
+}

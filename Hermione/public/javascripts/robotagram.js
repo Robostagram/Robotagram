@@ -252,16 +252,4 @@
         );
     }
 
-    $(document).ready(function () {
-        $("#nickModal").modal('show');
-        $("#play").click(loadNewGame);
-        $("#nickname").keypress(function (e) {
-            if (e.keyCode == 13) {
-                $("#nickModal").modal('hide');
-                loadNewGame();
-            }
-        });
-    })
-
-
 })();

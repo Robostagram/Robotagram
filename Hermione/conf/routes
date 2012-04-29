@@ -3,8 +3,12 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET     /newGame/:player/:score     controllers.Application.newGame(player: String, score: Int)
+GET     /                           controllers.Application.newGame(score: Int=0)
+GET     /login                      controllers.Authentication.login
+POST    /login                      controllers.Authentication.authenticate
+GET     /logout                     controllers.Authentication.logout
+POST    /logout                     controllers.Authentication.logout
+GET     /newGame/:score             controllers.Application.newGame(score: Int)
 GET     /current/reload             controllers.Application.reloadBoard
 GET     /scores                     controllers.Application.scores
 GET     /progress                   controllers.Application.progress
