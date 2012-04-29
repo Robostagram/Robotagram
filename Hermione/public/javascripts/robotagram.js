@@ -1,6 +1,8 @@
 (function(){
     function keypressHandler(event){
-        moveRobot(event.which);
+        if(DIRECTION_UP<=event.which && event.which<=DIRECTION_RIGHT && $(".selected").hasClass('robot') ){
+            moveRobot(event.which);
+        }
     }
 
     function robotClickHandler(event){
