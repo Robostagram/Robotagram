@@ -14,7 +14,6 @@ object Application extends Controller {
   }
 
   def newGame(user:String, score:Int = 0) = Action {
-    println(user)
     lock.acquire();
     try {
       if (game == null || game.isDone) {
