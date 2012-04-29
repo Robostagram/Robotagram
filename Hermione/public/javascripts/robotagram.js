@@ -6,8 +6,12 @@
     }
 
     function robotClickHandler(event){
-        $(".selected").removeClass("selected");
-        $(this).addClass("selected");
+        var $this = $(this);
+        if(!$this.is(".selected")){
+            $(".selected").toggleClass("selected");
+        }
+
+        $(this).toggleClass("selected");
     }
 
     // direction:
@@ -23,44 +27,90 @@
     var moves = 0;
 
     function moveRobot(direction){
-        var robot = null;
-        var parentCell = null
-        var destinationCell = null;
-        do{
-            robot = $(".selected");
-            parentCell = robot.parent().parent()
-            destinationCell = nextCell(parentCell, direction);
-            robot.detach();
-            robot.appendTo($(destinationCell).children()[0])
-        } while(destinationCell !== parentCell)
-        $("#moves").val(++moves);
-        if(hasReachedObjective(robot, parentCell)){
-            $("#winModal").modal('show');
+        var $robot = $(".selected"),
+            originCell,
+            destinationCell = null,
+            previousDestination,
+            nextDestination,
+            parentCell;
+        if($robot.length == 0){
+            // pas de robot
+            alert("pas de robot sélectionné");
+            return ;
+        }
+
+        originCell = $robot.parents("td.cell").first();
+        console.log(originCell);
+        // current absolute position ?
+        var originalPos = originCell.offset();
+        var origTop = originalPos.top;
+        var origLeft = originalPos.left;
+        console.log(origTop, origLeft);
+
+        previousDestination = originCell
+        nextDestination = nextCell(previousDestination, direction);
+        while(nextDestination !== previousDestination){
+            previousDestination = nextDestination;
+            nextDestination = nextCell(previousDestination, direction);
+        }
+
+        if(originCell !== nextDestination)      {
+
+            var finalPos = nextDestination.offset();
+            var finalTop = finalPos.top;
+            var finalLeft = finalPos.left;
+            console.log(finalTop, finalLeft);
+
+            // on le met temporairement positionné absolute
+            $robot.css('z-index', '999').appendTo("body");
+            $robot.css({'left' : origLeft + 'px', 'top' : origTop + 'px', position: 'absolute'})//.offset({ top: origTop, left: origLeft});//.appendTo("body");
+            $robot.animate({
+                left: finalLeft,
+                top: finalTop
+            }, 'fast', function() {
+                console.log("anim",this);
+                // Animation complete.
+                $(this).css({left:'0px', top:'0px'}).appendTo(nextDestination.children().first()).offset(0,0);
+            });
+
+
+            $("#moves").val(++moves);
+            if(hasReachedObjective($robot, nextDestination)){
+                $("#winModal").modal('show');
+            }
         }
     }
 
     function hasRobot(td) {
-        return $(td).children().children().filter(".robot").length > 0;
+        return $(td).find(".robot").length > 0;
     }
 
     function hasReachedObjective(robot, td) {
         var robotClass = $(robot).attr("class");
         var robotColor = robotClass.substr(6); //remove "robot "
         robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
-        return $(td).children().children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
+        return $(td).find("#objective").length > 0 && $("#objective").hasClass(robotColor);
     }
 
     function nextCell(td, direction) {
+        console.debug(td);
         var nextCell = null;
         switch(direction){
         case DIRECTION_UP:
             if(!td.is(".wall-top")){
-                nextCell = td.parent().prev().children()[td.parent().children().index(td)];
+                var  $td = $(td);
+                var col = $td.parents("tr").children().index($td);
+                console.debug("col :" + col);
+                nextCell = $td.parents("tr").prev().children()[col];
+                nextCell = $(nextCell);
             }
             break;
         case DIRECTION_DOWN:
             if(!td.is(".wall-bottom")){
-                nextCell = td.parent().next().children()[td.parent().children().index(td)];
+                var col = td.parents("tr").children().index(td);
+                console.debug("col :" + col);
+                nextCell = td.parents("tr").next().children()[col];
+                nextCell = $(nextCell);
             }
             break;
         case DIRECTION_LEFT:
@@ -76,7 +126,7 @@
         }
         if(nextCell != null && !hasRobot(nextCell)) {
 
-            return nextCell
+            return nextCell;
         } else {
             return td;
         }
