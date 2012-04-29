@@ -76,10 +76,15 @@
             moves = 0;
         });
     }
-
-    function loadNewGame() {
+    function loadNewGameFromLogin (){
+        loadNewGame($('#nickname').val());
+    }
+    function timerEnd(){
+        loadNewGame($('#nicknameDisplay').text());
+    }
+    function loadNewGame(user) {
+        console.log(user);
         var container = $('#container');
-        var user = $('#nickname').val();
         container.load('/newGame/' + encodeURI(user) + "/0", function () {
             initListeners();
         });
@@ -246,7 +251,11 @@
                 url:'/progress',
                 success:function(data){
                     $('#progressBar').css('width',data+'%');
-                    setTimeout(doPollTimer, 1000);
+                    if(data<=0){
+                        timerEnd();
+                    }else{
+                        setTimeout(doPollTimer, 1000);
+                    }
                 }
             }
         );
@@ -254,11 +263,11 @@
 
     $(document).ready(function () {
         $("#nickModal").modal('show');
-        $("#play").click(loadNewGame);
+        $("#play").click(loadNewGameFromLogin);
         $("#nickname").keypress(function (e) {
             if (e.keyCode == 13) {
-                $("#nickModal").modal('hide');
                 loadNewGame();
+                $("#nickModal").modal('hide');
             }
         });
     })
