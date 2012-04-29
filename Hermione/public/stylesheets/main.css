@@ -132,11 +132,13 @@ div.robot:before {
     content: "\267F";
 }
 
-span.symbol{
-    font-size: x-large;
+/* robot selectionné*/
+div.selected{
+    outline: 3px inset #dCdCdC;
 }
-div.symbol {
-    border-radius: 50%;
+
+div.symbol, span.symbol {
+    /*border-radius: 50%;
     height: 95%;
     width: 95%;
     margin: auto;
@@ -147,7 +149,17 @@ div.symbol {
     padding-top: 4px;
     position: absolute;
     top: 5%;
-    left: 5%;
+    left: 5%;*/
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    *margin-right: .3em;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("../images/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+    margin: 7px;
 }
 
 /*color items (goals)*/
@@ -170,37 +182,40 @@ div.symbol {
 
 
 /* symbols for goals */
-.star:before{
+
+
+/*.star:before{
     content: "\272E";
+}*/
+.symbol.red{
+    background-color: #f04936;
 }
-.star{
-    padding-top: 4px;
+.symbol.blue{
+    background-color: #5555CC;
 }
-.moon:before{
-    content: "\263D";
+.symbol.yellow{
+    background-color: #ccc713;
 }
-.moon{
-    padding-top: 4px;
-}
-.planet:before{
-    content: "\2641";
-}
-.planet{
-    padding-top: 4px;
-}
-.gear:before{
-    content: "\2699";
-}
-.gear{
-    padding-top: 4px;
-}
-.sun:before{
-    content: "\2742";
-}
-.sun{
-    padding-top: 4px;
+.green {
+    background-color: #48ed72;
 }
 
-div.selected{
-    outline: 3px inset #dCdCdC;
+
+.symbol.star{
+    background-position: -120px 0; /*icon-star*/
 }
+.symbol.moon{
+    background-position: -72px -72px; /*icon-tint*/
+}
+.symbol.planet{
+    background-position: -336px -144px; /*icon-globe*/
+}
+.symbol.gear{
+    background-position: -432px 0; /*icon-cog*/
+}
+.symbol.sun{
+    background-position: -456px -96px; /*icon-asterisk*/
+}
+
+
+
