@@ -231,6 +231,7 @@
             moveRobot(DIRECTION_RIGHT)
         });
         doPollScore();
+        doPollTimer();
     }
 
     function doPollScore() {
@@ -244,15 +245,11 @@
         $.ajax({
                 url:'/progress',
                 success:function(data){
-                    var bar = $('#progressBar');
-                    bar.css('width',data+'%');
-
+                    $('#progressBar').css('width',data+'%');
+                    setTimeout(doPollTimer, 1000);
                 }
             }
         );
-        scores.load('/scores', function () {
-            setTimeout(doPollScore, 5000);
-        });
     }
 
     $(document).ready(function () {
