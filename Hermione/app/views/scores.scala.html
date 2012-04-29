@@ -5,13 +5,13 @@
 <table class="table table-condensed">
     <thead>
         <tr>
-            <th>user</th>
-            <th>score</th>
+            <th>Player</th>
+            <th>Best score</th>
         </tr>
     </thead>
     <tbody>
         @for(p:Player <- game.players){
-            <tr><th>@p.name</th><td>@p.highScore</td></tr>
+            <tr><th>@p.name</th><td>@if(p.highScore == 0){-}else{@p.highScore}</td></tr>
         }
     </tbody>
 </table>

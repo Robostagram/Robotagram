@@ -69,10 +69,10 @@
         $(this).toggleClass("selected");
     }
 
-    function retryClick(event) {
-        $("#boardZone").load("/current/reload", function () {
+    function retryClick(event){
+        $('#container').load('/newGame/' + encodeURI($("#nicknameDisplay").val() + "/" + moves), function(){
             //reattach event because we load our listeners on previous dom objects
-            $(".robot").click(robotClickHandler);
+            initListeners();
             $("#moves").val(0);
             moves = 0;
         });
@@ -81,7 +81,7 @@
     function loadNewGame() {
         var container = $('#container');
         var user = $('#nickname').val();
-        container.load('/newGame/' + encodeURI(user), function () {
+        container.load('/newGame/' + encodeURI(user) + "/0", function () {
             initListeners();
             $('#nicknameDisplay').text(user);
         });
@@ -114,8 +114,8 @@
             parentCell;
         if ($robot.length == 0) {
             // pas de robot
-            alert("pas de robot sélectionné");
-            return;
+            alert("You must select a robot");
+            return ;
         }
 
         originCell = $robot.parents("td.cell").first();
@@ -124,7 +124,7 @@
         var origTop = originalPos.top;
         var origLeft = originalPos.left;
 
-        previousDestination = originCell
+        previousDestination = originCell;
         nextDestination = nextCell(previousDestination, direction);
         while (nextDestination !== previousDestination) {
             previousDestination = nextDestination;
@@ -140,7 +140,7 @@
 
             // on le met temporairement positionné absolute
             $robot.css('z-index', '999').appendTo("body");
-            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'})//.offset({ top: origTop, left: origLeft});//.appendTo("body");
+            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});//.offset({ top: origTop, left: origLeft});//.appendTo("body");
             $robot.animate({
                 left:finalLeft,
                 top:finalTop
@@ -151,7 +151,7 @@
             });
             moves++;
             $("#moves").text(moves + " Moves");
-            if (hasReachedObjective(robot, parentCell)) {
+            if (hasReachedObjective($robot, nextDestination)) {
                 $("#winModal").modal('show');
             }
         }
