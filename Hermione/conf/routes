@@ -6,7 +6,7 @@
 GET     /                           controllers.Application.index
 GET     /newGame/:player/:score     controllers.Application.newGame(player: String, score: Int)
 GET     /current/reload             controllers.Application.reloadBoard
-GET     /test                       controllers.Application.index
+GET     /scores                     controllers.Application.scores
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
