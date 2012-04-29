@@ -17,9 +17,9 @@
         });
     }
 
-    function playClick(event){
+    function loadNewGame(){
         var container = $('#container');
-        container.load('/newGame', function(){
+        container.load('/newGame',$('#nickname').val(), function(){
             initListeners();
         });
     }
@@ -115,7 +115,13 @@
       }
     $(document).ready(function(){
         $("#nickModal").modal('show');
-        $("#play").click(playClick);
+        $("#play").click(loadNewGame);
+        $("#nickname").keypress(function(e){
+            if(e.keyCode == 13) {
+                $("#nickModal").modal('hide');
+                loadNewGame();
+            }
+        })
 
 
     })
