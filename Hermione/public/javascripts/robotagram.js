@@ -1,4 +1,3 @@
-(function () {
     function keypressHandler(event) {
         if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
             moveRobot(event.which);
@@ -69,7 +68,7 @@
     }
 
     function retryClick(event) {
-        $('#container').load('/newGame/' + encodeURI($("#nicknameDisplay").text() + "/" + moves), function () {
+        $('#container').load("/newGame/" + moves, function () {
             //reattach event because we load our listeners on previous dom objects
             initListeners();
             $("#moves").val(0);
@@ -77,18 +76,9 @@
         });
     }
 
-    function loadNewGameFromLogin (){
-        loadNewGame($('#nickname').val());
-    }
-
     function timerEnd(){
-        loadNewGame($('#nicknameDisplay').text());
-    }
-
-    function loadNewGame(user) {
-        console.log(user);
         var container = $('#container');
-        container.load('/newGame/' + encodeURI(user) + "/0", function () {
+        container.load("/newGame/0", function () {
             initListeners();
         });
     }
@@ -263,17 +253,3 @@
             }
         );
     }
-
-    $(document).ready(function () {
-        $("#nickModal").modal('show');
-        $("#play").click(loadNewGameFromLogin);
-        $("#nickname").keypress(function (e) {
-            if (e.keyCode == 13) {
-                loadNewGameFromLogin();
-                $("#nickModal").modal('hide');
-            }
-        });
-    })
-
-
-})();

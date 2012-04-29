@@ -7,7 +7,7 @@ import play.api.test.Helpers._
 
 class TestBoard extends Specification {
   "respond to the board Action" in {
-    val result = controllers.Application.newGame("plouf").apply(FakeRequest())
+    val result = controllers.Application.newGame(0).apply(FakeRequest())
 
     status(result) must equalTo(OK)
     contentType(result) must beSome("text/html")
