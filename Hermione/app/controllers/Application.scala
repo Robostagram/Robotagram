@@ -50,6 +50,6 @@ object Application extends Controller {
   }
 
   def progress = Action {
-    Ok(game.percentageDone());
+    Ok(game.percentageDone().toString);
   }
 }

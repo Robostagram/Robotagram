@@ -33,7 +33,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   }
 
   def percentageDone():Int = {
-     (endTime - System.currentTimeMillis()) / (durationInSeconds*1000);
+     (endTime - System.currentTimeMillis()).toInt / (durationInSeconds*1000);
   }
 
   def randomRobots(board:Board): List[Robot] = {
