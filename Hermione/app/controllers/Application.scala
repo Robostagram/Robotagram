@@ -45,4 +45,8 @@ object Application extends Controller {
     };
     Ok(views.html.renderBoard(game))
   }
+  
+  def scores = Action {
+    Ok(views.html.scores(game));
+  }
 }

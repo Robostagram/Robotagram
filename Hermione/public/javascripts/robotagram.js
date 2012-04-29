@@ -223,6 +223,14 @@
         $("#key-right").click(function () {
             moveRobot(DIRECTION_RIGHT)
         });
+        doPollScore();
+    }
+
+    function doPollScore(){
+        var scores = $('#scores');
+        scores.load('/scores', function() {
+            setTimeout(doPollScore,5000);
+        });
     }
 
     $(document).ready(function () {
