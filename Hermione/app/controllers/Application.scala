@@ -27,7 +27,7 @@ object Application extends Controller {
         };
         val player: Player = game.withPlayer(user)
         player.scored(score);
-        Ok(views.html.board(game, player))
+        Ok(views.html.game(game, player))
     }
   }
 

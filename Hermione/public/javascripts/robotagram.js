@@ -1,4 +1,3 @@
-(function () {
     function keypressHandler(event) {
         if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
             moveRobot(event.which);
@@ -74,14 +73,6 @@
             initListeners();
             $("#moves").val(0);
             moves = 0;
-        });
-    }
-
-    function loadNewGame() {
-        var container = $('#container');
-        var user = $('#nickname').val();
-        container.load('/newGame/' + encodeURI(user) + "/0", function () {
-            initListeners();
         });
     }
 
@@ -250,6 +241,4 @@
                 }
             }
         );
-    }
-
-})();
+    };
