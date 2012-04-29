@@ -2,15 +2,20 @@ package models
 
 import util.Random
 import collection.immutable.HashSet
+import java.util.UUID
 
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
-
+  val uuid:String = UUID.randomUUID().toString;
+  val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
   private var robotsList:List[Robot] = Nil
   def robots = {
-     if(robotsList.isEmpty){
-       robotsList = randomRobots(board)
-     }
+    if(robotsList.isEmpty){
+      robotsList = randomRobots(board)
+    }
     robotsList
+  }
+  def isDone:Boolean = {
+     System.currentTimeMillis() > endTime;
   }
 
   def randomRobots(board:Board): List[Robot] = {
@@ -28,6 +33,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     }
     robots
   }
+
   def unacceptableValue(posX:Int, posY:Int, w:Int,h:Int):Boolean = {
     var resultW:Boolean = true;
     var resultH:Boolean = true;
@@ -50,6 +56,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     Random.nextInt(maxValue)
   }
 }
+
 object Game {
   def randomGame():Game = {
     new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), 120);

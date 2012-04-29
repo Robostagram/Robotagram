@@ -3,7 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.newGame
+GET     /                           controllers.Application.index
+GET     /newGame                    controllers.Application.newGame
+GET     /current/reload             controllers.Application.reloadBoard
 GET     /test                       controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path

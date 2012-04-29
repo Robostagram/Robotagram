@@ -54,10 +54,16 @@ div#howToPlay table{
     margin:0.2em auto
 }
 
+table#key-mapping{
+    vertical-align: middle;
+    padding:5px;
+}
+
 kbd{
     padding:6px;
     margin: 2px 1px;
 }
+
 
 h2{
     margin-bottom: 1em;
@@ -118,13 +124,17 @@ div.robot {
     position: absolute;
     top: 5%;
     left: 5%;
+    background-color: #e0e0e0;
+    outline:3px outset #dCdCdC;
 }
 
 div.robot:before {
     content: "\267F";
 }
 
-
+span.symbol{
+    font-size: x-large;
+}
 div.symbol {
     border-radius: 50%;
     height: 95%;
@@ -134,6 +144,7 @@ div.symbol {
     font-size: x-large;
     display: block;
     z-index: 10;
+    padding-top: 4px;
     position: absolute;
     top: 5%;
     left: 5%;
@@ -142,19 +153,19 @@ div.symbol {
 /*color items (goals)*/
 
 .blue {
-    background-color: blue;
+    color: #5555CC;
 }
 
 .green {
-    background-color: #90ee90;
+    color: #48ed72;
 }
 
 .red {
-    background-color: #f08080;
+    color: #f04936;
 }
 
 .yellow {
-    background-color: #fafad2;
+    color: #ccc713;
 }
 
 
@@ -162,19 +173,34 @@ div.symbol {
 .star:before{
     content: "\272E";
 }
+.star{
+    padding-top: 4px;
+}
 .moon:before{
     content: "\263D";
+}
+.moon{
+    padding-top: 4px;
 }
 .planet:before{
     content: "\2641";
 }
+.planet{
+    padding-top: 4px;
+}
 .gear:before{
     content: "\2699";
+}
+.gear{
+    padding-top: 4px;
 }
 .sun:before{
     content: "\2742";
 }
+.sun{
+    padding-top: 4px;
+}
 
 div.selected{
-    outline: 2px solid red;
+    outline: 3px inset #dCdCdC;
 }
