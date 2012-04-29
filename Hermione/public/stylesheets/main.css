@@ -115,12 +115,12 @@ div.cell {
 /*robots */
 
 div.robot {
-    width: 95%;
-    height: 95%;
+    width:29px;
+    height: 29px;
     margin: auto;
     display: block;
     font-size: x-large;
-    z-index: 20;
+    z-index: 999;
     position: absolute;
     top: 5%;
     left: 5%;

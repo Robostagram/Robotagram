@@ -1,17 +1,21 @@
-(function(){
-    function keypressHandler(event){
-        if(DIRECTION_UP<=event.which && event.which<=DIRECTION_RIGHT && $(".selected").hasClass('robot') ){
+(function () {
+    function keypressHandler(event) {
+        if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
             moveRobot(event.which);
         }
     }
 
-    function robotClickHandler(event){
-        $(".selected").removeClass("selected");
-        $(this).addClass("selected");
+    function robotClickHandler(event) {
+        var $this = $(this);
+        if (!$this.is(".selected")) {
+            $(".selected").toggleClass("selected");
+        }
+
+        $(this).toggleClass("selected");
     }
 
-    function retryClick(event){
-        $("#boardZone").load("/current/reload", function(){
+    function retryClick(event) {
+        $("#boardZone").load("/current/reload", function () {
             //reattach event because we load our listeners on previous dom objects
             $(".robot").click(robotClickHandler);
             $("#moves").val(0);
@@ -19,14 +23,15 @@
         });
     }
 
-    function loadNewGame(){
+    function loadNewGame() {
         var container = $('#container');
         var user = $('#nickname').val();
         $('#nicknameDisplay').text(user);
-        container.load('/newGame/'+encodeURI(user), function(){
+        container.load('/newGame/' + encodeURI(user), function () {
             initListeners();
         });
     }
+
     // direction:
     // 105: i : up
     // 106: j : left
@@ -39,90 +44,133 @@
 
     var moves = 0;
 
-    function moveRobot(direction){
-        var robot = null;
-        var parentCell = null
-        var destinationCell = null;
-        do{
-            robot = $(".selected");
-            parentCell = robot.parent().parent()
-            destinationCell = nextCell(parentCell, direction);
-            robot.detach();
-            robot.appendTo($(destinationCell).children()[0])
-        } while(destinationCell !== parentCell)
-        moves++;
-        $("#moves").text(moves+" Moves");
-        if(hasReachedObjective(robot, parentCell)){
-            $("#winModal").modal('show');
+    function moveRobot(direction) {
+        var $robot = $(".selected"),
+            originCell,
+            destinationCell = null,
+            previousDestination,
+            nextDestination,
+            parentCell;
+        if ($robot.length == 0) {
+            // pas de robot
+            alert("pas de robot sélectionné");
+            return;
+        }
+
+        originCell = $robot.parents("td.cell").first();
+        // current absolute position ?
+        var originalPos = originCell.offset();
+        var origTop = originalPos.top;
+        var origLeft = originalPos.left;
+
+        previousDestination = originCell
+        nextDestination = nextCell(previousDestination, direction);
+        while (nextDestination !== previousDestination) {
+            previousDestination = nextDestination;
+            nextDestination = nextCell(previousDestination, direction);
+        }
+
+        if (originCell !== nextDestination) {
+
+            var finalPos = nextDestination.offset();
+            var finalTop = finalPos.top;
+            var finalLeft = finalPos.left;
+            console.log(finalTop, finalLeft);
+
+            // on le met temporairement positionné absolute
+            $robot.css('z-index', '999').appendTo("body");
+            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'})//.offset({ top: origTop, left: origLeft});//.appendTo("body");
+            $robot.animate({
+                left:finalLeft,
+                top:finalTop
+            }, 'fast', function () {
+                console.log("anim", this);
+                // Animation complete.
+                $(this).css({left:'0px', top:'0px'}).appendTo(nextDestination.children().first()).offset(0, 0);
+            });
+            moves++;
+            $("#moves").text(moves + " Moves");
+            if (hasReachedObjective(robot, parentCell)) {
+                $("#winModal").modal('show');
+            }
         }
     }
 
     function hasRobot(td) {
-        return $(td).children().children().filter(".robot").length > 0;
+        return $(td).find(".robot").length > 0;
     }
 
     function hasReachedObjective(robot, td) {
         var robotClass = $(robot).attr("class");
         var robotColor = robotClass.substr(6); //remove "robot "
         robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
-        return $(td).children().children().filter("#objective").length > 0 && $("#objective").hasClass(robotColor);
+        return $(td).find("#objective").length > 0 && $("#objective").hasClass(robotColor);
     }
 
     function nextCell(td, direction) {
         var nextCell = null;
-        switch(direction){
-        case DIRECTION_UP:
-            if(!td.is(".wall-top")){
-                nextCell = td.parent().prev().children()[td.parent().children().index(td)];
-            }
-            break;
-        case DIRECTION_DOWN:
-            if(!td.is(".wall-bottom")){
-                nextCell = td.parent().next().children()[td.parent().children().index(td)];
-            }
-            break;
-        case DIRECTION_LEFT:
-            if(!td.is(".wall-left")){
-                nextCell = td.prev();
-            }
-            break;
-        case DIRECTION_RIGHT:
-            if(!td.is(".wall-right")){
-                nextCell = td.next();
-            }
-            break;
+        switch (direction) {
+            case DIRECTION_UP:
+                if (!td.is(".wall-top")) {
+                    var $td = $(td);
+                    var col = $td.parents("tr").children().index($td);
+                    console.debug("col :" + col);
+                    nextCell = $td.parents("tr").prev().children()[col];
+                    nextCell = $(nextCell);
+                }
+                break;
+            case DIRECTION_DOWN:
+                if (!td.is(".wall-bottom")) {
+                    var col = td.parents("tr").children().index(td);
+                    console.debug("col :" + col);
+                    nextCell = td.parents("tr").next().children()[col];
+                    nextCell = $(nextCell);
+                }
+                break;
+            case DIRECTION_LEFT:
+                if (!td.is(".wall-left")) {
+                    nextCell = td.prev();
+                }
+                break;
+            case DIRECTION_RIGHT:
+                if (!td.is(".wall-right")) {
+                    nextCell = td.next();
+                }
+                break;
         }
-        if(nextCell != null && !hasRobot(nextCell)) {
+        if (nextCell != null && !hasRobot(nextCell)) {
 
             return nextCell
         } else {
             return td;
         }
     }
-      function initListeners(){
-          $(window).keypress(keypressHandler);
-          $(".robot").click(robotClickHandler);
-          $("#retry").click(retryClick);
 
-          //on triche, et les touches affichées marchent comme un clavier
-          $("#key-up").click(function(){
-              moveRobot(DIRECTION_UP)
-          });
-          $("#key-down").click(function(){
-              moveRobot(DIRECTION_DOWN)
-          });
-          $("#key-left").click(function(){
-              moveRobot(DIRECTION_LEFT)
-          });
-          $("#key-right").click(function(){
-              moveRobot(DIRECTION_RIGHT)
-          });
-      }
-    $(document).ready(function(){
+    function initListeners() {
+        $(window).keypress(keypressHandler);
+        $(".robot").click(robotClickHandler);
+        $("#retry").click(retryClick);
+
+        //on triche, et les touches affichées marchent comme un clavier
+        $("#key-up").click(function () {
+            moveRobot(DIRECTION_UP)
+        });
+        $("#key-down").click(function () {
+            moveRobot(DIRECTION_DOWN)
+        });
+        $("#key-left").click(function () {
+            moveRobot(DIRECTION_LEFT)
+        });
+        $("#key-right").click(function () {
+            moveRobot(DIRECTION_RIGHT)
+        });
+    }
+
+    $(document).ready(function () {
         $("#nickModal").modal('show');
         $("#play").click(loadNewGame);
-        $("#nickname").keypress(function(e){
-            if(e.keyCode == 13) {
+        $("#nickname").keypress(function (e) {
+            if (e.keyCode == 13) {
                 $("#nickModal").modal('hide');
                 loadNewGame();
             }
