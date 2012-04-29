@@ -3,9 +3,60 @@
         if(DIRECTION_UP<=event.which && event.which<=DIRECTION_RIGHT && $(".selected").hasClass('robot') ){
             moveRobot(event.which);
         }
+        if(event.which === SELECT_NEXT){
+            selectNextRobot();
+        }
+        if(event.which === SELECT_PREVIOUS){
+            selectPreviousRobot();
+        }
     }
 
-    function robotClickHandler(event){
+    var ROBOT_COLORS = ['blue', 'red', 'yellow', 'green']
+
+    function selectNextRobot(){
+        var $currentSelected = $(".robot.selected");
+        var curColorIndex = 0; //blue by default
+        $.each(ROBOT_COLORS, function(index, colorName){
+            if($currentSelected.hasClass(colorName)){
+                curColorIndex = index;
+                return false; //stop here !
+            }
+            return true; //continue
+        });
+        curColorIndex += 1;
+        if(curColorIndex >= ROBOT_COLORS.length){
+            curColorIndex = 0;
+        }
+
+        selectByColor(ROBOT_COLORS[curColorIndex]);
+    }
+
+    function selectPreviousRobot(){
+        var $currentSelected = $(".robot.selected");
+        var curColorIndex = 0; //blue by default
+        $.each(ROBOT_COLORS, function(index, colorName){
+            if($currentSelected.hasClass(colorName)){
+                curColorIndex = index;
+                return false; //stop here !
+            }
+            return true; //continue
+        });
+        curColorIndex -= 1;
+        if(curColorIndex <= 0){
+            curColorIndex = ROBOT_COLORS.length -1;
+        }
+
+        selectByColor(ROBOT_COLORS[curColorIndex]);
+    }
+
+    function selectByColor(colorName){
+        $(".selected").toggleClass("selected");
+        $(".robot." + colorName).toggleClass("selected");
+    }
+
+
+
+    function robotClickHandler(){
         var $this = $(this);
         if(!$this.is(".selected")){
             $(".selected").toggleClass("selected");
@@ -38,6 +89,12 @@
     var DIRECTION_LEFT = 106;
     var DIRECTION_DOWN = 107;
     var DIRECTION_RIGHT = 108;
+
+    // switch robot
+    // 113 q : previous
+    // 115 s : next
+    var SELECT_PREVIOUS = 113;
+    var SELECT_NEXT = 115;
 
     var moves = 0;
 
