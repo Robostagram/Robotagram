@@ -165,6 +165,7 @@
               moveRobot(DIRECTION_RIGHT)
           });
       }
+
     $(document).ready(function(){
         $("#nickModal").modal('show');
         $("#play").click(loadNewGame);

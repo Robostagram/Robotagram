@@ -22,11 +22,14 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
      System.currentTimeMillis() > endTime;
   }
 
-  def withPlayer(user:String) {
+  def withPlayer(user:String):Player = {
     val option:Option[Player] = players.find(player => player.name == user);
     if (option == None){
-      players += new Player(user);
+      val player:Player = new Player(user);
+      players += player;
+      return player
     }
+    option.get
   }
 
   def randomRobots(board:Board): List[Robot] = {
