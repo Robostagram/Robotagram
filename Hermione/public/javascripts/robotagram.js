@@ -76,12 +76,15 @@
             moves = 0;
         });
     }
+
     function loadNewGameFromLogin (){
         loadNewGame($('#nickname').val());
     }
+
     function timerEnd(){
         loadNewGame($('#nicknameDisplay').text());
     }
+
     function loadNewGame(user) {
         console.log(user);
         var container = $('#container');
