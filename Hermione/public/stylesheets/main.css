@@ -134,6 +134,8 @@ div.robot{
 /* survol du robot */
 .robot:hover{
     border-color:rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: 0 1px 1px #555, 0 0 1px #555;
+    -moz-box-shadow: 0 1px 1px #555, 0 0 1px #555;
     box-shadow: 0 1px 1px #555, 0 0 1px #555;
     background-color: #cbcbcb;
 }
@@ -141,7 +143,8 @@ div.robot{
 /* robot selectionné*/
 .robot.selected{
     border-color:rgba(82, 168, 236, 0.8);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 1px rgba(82, 168, 236, 0.6);
+    -webkit-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
+    -moz-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
     box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
     background-color: #ACACAC;
 }
