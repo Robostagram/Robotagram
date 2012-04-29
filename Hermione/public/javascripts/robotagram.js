@@ -19,7 +19,9 @@
 
     function loadNewGame(){
         var container = $('#container');
-        container.load('/newGame',$('#nickname').val(), function(){
+        var user = $('#nickname').val();
+        $('#nicknameDisplay').text(user);
+        container.load('/newGame/'+encodeURI(user), function(){
             initListeners();
         });
     }
@@ -46,7 +48,8 @@
             robot.detach();
             robot.appendTo($(destinationCell).children()[0])
         } while(destinationCell !== parentCell)
-        $("#moves").val(++moves);
+        moves++;
+        $("#moves").text(moves+" Moves");
         if(hasReachedObjective(robot, parentCell)){
             $("#winModal").modal('show');
         }
