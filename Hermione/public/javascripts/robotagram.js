@@ -97,10 +97,10 @@
     var DIRECTION_RIGHT = 108;
 
     // switch robot
-    // 113 q : previous
-    // 115 s : next
-    var SELECT_PREVIOUS = 113;
-    var SELECT_NEXT = 115;
+    // 115 s : previous
+    // 100 d : next
+    var SELECT_PREVIOUS = 115;
+    var SELECT_NEXT = 100;
 
     var moves = 0;
 
