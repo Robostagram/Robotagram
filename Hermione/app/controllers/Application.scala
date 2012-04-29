@@ -1,18 +1,47 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
-import util.Random
 import models._
+import concurrent.Lock
 
 
 object Application extends Controller {
+  var game: Game = null;
+  val lock: Lock = new Lock();
 
   def index = Action {
-    Ok(views.html.index("my application is ready."))
+    Ok(views.html.index())
   }
 
-  def newGame = Action {
-    Ok(views.html.board(Game.randomGame()))
+  def newGame(user:String) = Action {
+    println(user)
+    lock.acquire();
+    try {
+      if (game == null || game.isDone) {
+        game = Game.randomGame()
+      }
+    } catch {
+      case e => InternalServerError("WTF ? " + e);
+    } finally {
+      lock.release();
+    };
+    game.withPlayer(user);
+    Ok(views.html.board(game))
+  }
+
+  def reloadBoard = Action {
+    lock.acquire();
+    try {
+      if (game == null) {
+        game = Game.randomGame()
+      } else if (game.isDone) {
+        Ok("Game is done, please <a href=\"/\">start a new one</a>.")
+      }
+    } catch {
+      case e => InternalServerError("WTF ? " + e);
+    } finally {
+      lock.release();
+    };
+    Ok(views.html.renderBoard(game))
   }
 }

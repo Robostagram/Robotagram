@@ -1,44 +1,14 @@
-@(board: String)
-
 @main("Robotagram Rocks !!!") {
-
-<table id="boardGame">
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="symbol red star"/></td>
-        <td class="cell wall-top">&nbsp;</td>
-        <td class="cell wall-left"><div class="robot red"/></td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell wall-bottom"><div class="robot green"/></td>
-        <td class="cell wall-right">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="robot blue"/></td>
-        <td class="cell">&nbsp;</td>
-        <td class="cell"><div class="robot yellow"/></td>
-        <td class="cell">&nbsp;</td>
-    </tr>
-
-</table>
+    <div id="nickModal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Wanna play Robotagram ?  </h3><img src='@routes.Assets.at("images/favicon.ico")' alt="robotagram icon">
+        </div>
+        <span class="modal-body" align="center">
+            Then please enter your <input id="nickname" type="text"class="input input-medium" placeholder="nickname">
+        </span>
+        <div class="modal-footer">
+            <a id="play" class="btn btn-success" data-dismiss="modal" >Play !</a>
+        </div>
+    </div>
 
 }

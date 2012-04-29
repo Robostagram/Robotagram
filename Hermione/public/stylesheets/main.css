@@ -125,6 +125,7 @@ div.robot {
     top: 5%;
     left: 5%;
     background-color: #e0e0e0;
+    outline:3px outset #dCdCdC;
 }
 
 div.robot:before {
@@ -156,15 +157,15 @@ div.symbol {
 }
 
 .green {
-    color: #90ee90;
+    color: #48ed72;
 }
 
 .red {
-    color: #f08080;
+    color: #f04936;
 }
 
 .yellow {
-    color: #CCCC18;
+    color: #ccc713;
 }
 
 
@@ -201,5 +202,5 @@ div.symbol {
 }
 
 div.selected{
-    outline: 2px solid red;
+    outline: 3px inset #dCdCdC;
 }
