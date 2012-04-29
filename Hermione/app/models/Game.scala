@@ -32,6 +32,10 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     option.get
   }
 
+  def percentageDone():Int = {
+     (endTime - System.currentTimeMillis()) / (durationInSeconds*1000);
+  }
+
   def randomRobots(board:Board): List[Robot] = {
     var robots = List[Robot]()
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
