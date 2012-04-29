@@ -138,16 +138,17 @@ div.selected{
 }
 
 div.symbol, span.symbol {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    *margin-right: .3em;
-    line-height: 14px;
+    display: block;
+    width: 29px;
+    height: 29px;
     vertical-align: text-top;
-    background-image: url("../images/glyphicons-halflings.png");
-    background-position: 14px 14px;
+    background-position: center center;
     background-repeat: no-repeat;
-    margin: 7px;
+    /*margin: 7px;*/
+}
+
+span.symbol {
+    display: inline-block;
 }
 
 /*color items (goals)*/
@@ -171,35 +172,62 @@ div.symbol, span.symbol {
 
 /* symbols for goals */
 
-.symbol.red{
-    background-color: #f04936;
+.symbol.gear.blue{
+    background-image: url("../images/symbols/blue_gear.png");
 }
-.symbol.blue{
-    background-color: #5555CC;
+.symbol.star.blue{
+    background-image: url("../images/symbols/blue_star.png");
 }
-.symbol.yellow{
-    background-color: #ccc713;
+.symbol.planet.blue{
+    background-image: url("../images/symbols/blue_planet.png");
 }
-.green {
-    background-color: #48ed72;
+.symbol.moon.blue{
+    background-image: url("../images/symbols/blue_moon.png");
+}
+
+/*images have slightly different sizes*/
+
+
+.symbol.gear.green{
+    background-image: url("../images/symbols/green_gear.png");
+}
+.symbol.star.green{
+    background-image: url("../images/symbols/green_star.png");
+}
+.symbol.planet.green{
+    background-image: url("../images/symbols/green_planet.png");
+}
+.symbol.moon.green{
+    background-image: url("../images/symbols/green_moon.png");
+}
+
+.symbol.gear.yellow{
+    background-image: url("../images/symbols/yellow_gear.png");
+}
+.symbol.star.yellow{
+    background-image: url("../images/symbols/yellow_star.png");
+}
+.symbol.planet.yellow{
+    background-image: url("../images/symbols/yellow_planet.png");
+}
+.symbol.moon.yellow{
+    background-image: url("../images/symbols/yellow_moon.png");
 }
 
 
-.symbol.star{
-    background-position: -120px 0; /*icon-star*/
+.symbol.gear.red{
+    background-image: url("../images/symbols/red_gear.png");
 }
-.symbol.moon{
-    background-position: -72px -72px; /*icon-tint*/
+.symbol.star.red{
+    background-image: url("../images/symbols/red_star.png");
 }
-.symbol.planet{
-    background-position: -336px -144px; /*icon-globe*/
+.symbol.planet.red{
+    background-image: url("../images/symbols/red_planet.png");
 }
-.symbol.gear{
-    background-position: -432px 0; /*icon-cog*/
+.symbol.moon.red{
+    background-image: url("../images/symbols/red_moon.png");
 }
-.symbol.sun{
-    background-position: -456px -96px; /*icon-asterisk*/
-}
+
 
 
 
