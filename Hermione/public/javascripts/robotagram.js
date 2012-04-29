@@ -26,9 +26,9 @@
     function loadNewGame() {
         var container = $('#container');
         var user = $('#nickname').val();
-        $('#nicknameDisplay').text(user);
         container.load('/newGame/' + encodeURI(user), function () {
             initListeners();
+            $('#nicknameDisplay').text(user);
         });
     }
 

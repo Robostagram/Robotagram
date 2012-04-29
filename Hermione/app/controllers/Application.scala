@@ -13,7 +13,7 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def newGame(user:String) = Action {
+  def newGame(user:String, score:Int = 0) = Action {
     println(user)
     lock.acquire();
     try {
@@ -25,8 +25,9 @@ object Application extends Controller {
     } finally {
       lock.release();
     };
-    game.withPlayer(user);
-    Ok(views.html.board(game))
+    val player: Player = game.withPlayer(user)
+    player.scored(score);
+    Ok(views.html.board(game, player))
   }
 
   def reloadBoard = Action {
