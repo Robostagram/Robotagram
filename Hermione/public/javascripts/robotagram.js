@@ -14,6 +14,8 @@
         $("#boardZone").load("/current/reload", function(){
             //reattach event because we load our listeners on previous dom objects
             $(".robot").click(robotClickHandler);
+            $("#moves").val(0);
+            moves = 0;
         });
     }
 
