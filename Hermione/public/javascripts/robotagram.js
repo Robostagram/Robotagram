@@ -109,8 +109,7 @@
             originCell,
             destinationCell = null,
             previousDestination,
-            nextDestination,
-            parentCell;
+            nextDestination;
         if ($robot.length == 0) {
             // pas de robot
             alert("You must select a robot");
@@ -118,10 +117,6 @@
         }
 
         originCell = $robot.parents("td.cell").first();
-        // current absolute position ?
-        var originalPos = originCell.offset();
-        var origTop = originalPos.top;
-        var origLeft = originalPos.left;
 
         previousDestination = originCell;
         nextDestination = nextCell(previousDestination, direction);
@@ -130,28 +125,38 @@
             nextDestination = nextCell(previousDestination, direction);
         }
 
-        if (originCell !== nextDestination) {
+        // destination finale du robot
+        destinationCell = nextDestination;
+        if (originCell !== destinationCell) {
 
-            var finalPos = nextDestination.offset();
+            // current absolute position ?
+            var originalPos = originCell.offset();
+            var origTop = originalPos.top;
+            var origLeft = originalPos.left;
+
+            var finalPos = destinationCell.offset();
             var finalTop = finalPos.top;
             var finalLeft = finalPos.left;
 
-            // on le met temporairement positionné absolute
+            // on le sort de la cellule
             $robot.css('z-index', '999').appendTo("body");
-            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});//.offset({ top: origTop, left: origLeft});//.appendTo("body");
+            // mais on l'afihe au même endroit dans la page (absolute avec même offsets)
+            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});
+            // transition de l'un à l'autre
             $robot.animate({
                 left:finalLeft,
                 top:finalTop
                 },
                 'fast',
                 function () {
-                    // Animation complete.
-                    $(this).css({left:'0px', top:'0px'}).appendTo(nextDestination.children().first()).offset(0, 0);
+                    // Animation complete : remettre le robot dans la cellule de destination
+                    $(this).css({left:'0px', top:'0px'})
+                        .appendTo(destinationCell.children().first()).offset(0, 0);
                 }
             );
             moves++;
             $("#moves").text(moves + " Moves");
-            if (hasReachedObjective($robot, nextDestination)) {
+            if (hasReachedObjective($robot, destinationCell)) {
                 $("#winModal").modal('show');
             }
         }
@@ -198,7 +203,6 @@
                 break;
         }
         if (nextCell != null && !hasRobot(nextCell)) {
-
             return nextCell
         } else {
             return td;
@@ -241,9 +245,7 @@
                 $("#nickModal").modal('hide');
                 loadNewGame();
             }
-        })
-
-
+        });
     })
 
 
