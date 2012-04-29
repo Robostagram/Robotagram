@@ -9,6 +9,7 @@
     <div class="span4" id="gameZone">
         <form class="form-inline" >
             <div id="currentGameZone" class="well">
+                @timer(game)
                 <h3 id="nicknameDisplay">@player.name</h3>
                 @gameGoal(game.goal)
                 <h3><div id="moves"/></h3>

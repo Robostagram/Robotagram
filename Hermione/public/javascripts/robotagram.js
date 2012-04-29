@@ -239,6 +239,21 @@
         });
     }
 
+    function doPollTimer() {
+        $.ajax({
+                url:'/progress',
+                success:function(data){
+                    var bar = $('#progressBar');
+                    bar.css('width',data+'%');
+
+                }
+            }
+        );
+        scores.load('/scores', function () {
+            setTimeout(doPollScore, 5000);
+        });
+    }
+
     $(document).ready(function () {
         $("#nickModal").modal('show');
         $("#play").click(loadNewGame);
