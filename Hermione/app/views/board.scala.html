@@ -1,4 +1,4 @@
-@(game: Game)
+@(game: Game, player: Player)
 
 @import models._
 
@@ -21,24 +21,7 @@
         <hr/>
 
         <h3>Leaderboard ?</h3>
-        <table class="table table-condensed">
-            <thead>
-                <tr>
-                    <th>user</th>
-                    <th>score</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>Emma</th>
-                    <td>69</td>
-                </tr>
-                <tr>
-                    <th>d[ o_0 ]b</th>
-                    <td>51</td>
-                </tr>
-            </tbody>
-        </table>
+        @scores(game)
 
         <h3>How to play</h3>
         <div id="howToPlay">

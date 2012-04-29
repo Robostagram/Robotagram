@@ -1,0 +1,17 @@
+@(game: Game)
+
+@import models._
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>user</th>
+            <th>score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for(p:Player <- game.players){
+            <tr><th>@p.name</th><td>@p.highScore</td></tr>
+        }
+    </tbody>
+</table>

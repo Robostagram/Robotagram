@@ -13,17 +13,19 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def newGame = Action {
+  def newGame(user:String) = Action {
+    println(user)
     lock.acquire();
     try {
       if (game == null || game.isDone) {
         game = Game.randomGame()
       }
     } catch {
-      case e => InternalServerError("WTF ?");
+      case e => InternalServerError("WTF ? " + e);
     } finally {
       lock.release();
     };
+    game.withPlayer(user);
     Ok(views.html.board(game))
   }
 
@@ -33,10 +35,10 @@ object Application extends Controller {
       if (game == null) {
         game = Game.randomGame()
       } else if (game.isDone) {
-        Ok("Game is done, please reload to start a new one")
+        Ok("Game is done, please <a href=\"/\">start a new one</a>.")
       }
     } catch {
-      case e => InternalServerError("WTF ?");
+      case e => InternalServerError("WTF ? " + e);
     } finally {
       lock.release();
     };

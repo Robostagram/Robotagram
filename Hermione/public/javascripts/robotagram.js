@@ -14,12 +14,14 @@
         $("#boardZone").load("/current/reload", function(){
             //reattach event because we load our listeners on previous dom objects
             $(".robot").click(robotClickHandler);
+            $("#moves").val(0);
+            moves = 0;
         });
     }
 
     function loadNewGame(){
         var container = $('#container');
-        container.load('/newGame',$('#nickname').val(), function(){
+        container.load('/newGame/' + encodeURI($('#nickname').val()), function(){
             initListeners();
         });
     }

@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /newGame                    controllers.Application.newGame
+GET     /newGame/:player            controllers.Application.newGame(player: String)
 GET     /current/reload             controllers.Application.reloadBoard
 GET     /test                       controllers.Application.index
 

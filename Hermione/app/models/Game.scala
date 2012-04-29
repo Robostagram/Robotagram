@@ -1,12 +1,15 @@
 package models
 
-import util.Random
-import collection.immutable.HashSet
+import scala.util.Random
+import scala.collection.immutable.HashSet
 import java.util.UUID
+import scala._
 
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
   val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
+  var players:Set[Player] = new HashSet[Player];
+
   private var robotsList:List[Robot] = Nil
   def robots = {
     if(robotsList.isEmpty){
@@ -14,8 +17,16 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     }
     robotsList
   }
+
   def isDone:Boolean = {
      System.currentTimeMillis() > endTime;
+  }
+
+  def withPlayer(user:String) {
+    val option:Option[Player] = players.find(player => player.name == user);
+    if (option == None){
+      players += new Player(user);
+    }
   }
 
   def randomRobots(board:Board): List[Robot] = {
