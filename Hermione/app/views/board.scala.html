@@ -9,12 +9,11 @@
     <div class="span4" id="gameZone">
         <form class="form-inline" >
             <div id="currentGameZone" class="well">
-                <h3>Current Game</h3>
+                <h3 id="nicknameDisplay"></h3>
                 @gameGoal(game.goal)
 
-                <h3>Submit</h3>
+                <h3><div id="moves"></div></h3>
 
-                <input id="moves" type="text" class="input input-medium" placeholder="moves?">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
@@ -64,16 +63,13 @@
 
     <div id="winModal" class="modal hide fade">
         <div class="modal-header">
-            <button class="close" data-dismiss="modal">&times;</button>
             <h3>Solution found !</h3>
         </div>
         <div class="modal-body" align="center">
             <img src="http://img.bollywoodsargam.com/albumsbolly/Emma_Watson/Emma_Watson_BollywoodSargam_hot_762997.jpg" alt="Wouhou!" height="50%" width="50%">
         </div>
         <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal" >Close</a>
-            <a id="retry" class="btn btn-success" data-dismiss="modal" >Retry</a>
-            <a href="." class="btn btn-primary">New game</a>
+            <a id="retry" class="btn btn-success" data-dismiss="modal" >Play Again !</a>
         </div>
     </div>
 </div>
