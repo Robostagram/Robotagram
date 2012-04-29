@@ -44,8 +44,12 @@ object Application extends Controller {
     };
     Ok(views.html.renderBoard(game))
   }
-  
+
   def scores = Action {
     Ok(views.html.scores(game));
+  }
+
+  def progress = Action {
+    Ok(game.percentageDone());
   }
 }
