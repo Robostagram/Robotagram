@@ -76,10 +76,15 @@
             moves = 0;
         });
     }
-
-    function loadNewGame() {
+    function loadNewGameFromLogin (){
+        loadNewGame($('#nickname').val());
+    }
+    function timerEnd(){
+        loadNewGame($('#nicknameDisplay').text());
+    }
+    function loadNewGame(user) {
+        console.log(user);
         var container = $('#container');
-        var user = $('#nickname').val();
         container.load('/newGame/' + encodeURI(user) + "/0", function () {
             initListeners();
         });
@@ -231,6 +236,7 @@
             moveRobot(DIRECTION_RIGHT)
         });
         doPollScore();
+        doPollTimer();
     }
 
     function doPollScore() {
@@ -240,13 +246,28 @@
         });
     }
 
+    function doPollTimer() {
+        $.ajax({
+                url:'/progress',
+                success:function(data){
+                    $('#progressBar').css('width',data+'%');
+                    if(data<=0){
+                        timerEnd();
+                    }else{
+                        setTimeout(doPollTimer, 1000);
+                    }
+                }
+            }
+        );
+    }
+
     $(document).ready(function () {
         $("#nickModal").modal('show');
-        $("#play").click(loadNewGame);
+        $("#play").click(loadNewGameFromLogin);
         $("#nickname").keypress(function (e) {
             if (e.keyCode == 13) {
+                loadNewGameFromLogin();
                 $("#nickModal").modal('hide');
-                loadNewGame();
             }
         });
     })
