@@ -136,7 +136,6 @@
             var finalPos = nextDestination.offset();
             var finalTop = finalPos.top;
             var finalLeft = finalPos.left;
-            console.log(finalTop, finalLeft);
 
             // on le met temporairement positionné absolute
             $robot.css('z-index', '999').appendTo("body");
@@ -144,11 +143,13 @@
             $robot.animate({
                 left:finalLeft,
                 top:finalTop
-            }, 'fast', function () {
-                console.log("anim", this);
-                // Animation complete.
-                $(this).css({left:'0px', top:'0px'}).appendTo(nextDestination.children().first()).offset(0, 0);
-            });
+                },
+                'fast',
+                function () {
+                    // Animation complete.
+                    $(this).css({left:'0px', top:'0px'}).appendTo(nextDestination.children().first()).offset(0, 0);
+                }
+            );
             moves++;
             $("#moves").text(moves + " Moves");
             if (hasReachedObjective($robot, nextDestination)) {
@@ -175,7 +176,6 @@
                 if (!td.is(".wall-top")) {
                     var $td = $(td);
                     var col = $td.parents("tr").children().index($td);
-                    console.debug("col :" + col);
                     nextCell = $td.parents("tr").prev().children()[col];
                     nextCell = $(nextCell);
                 }
@@ -183,7 +183,6 @@
             case DIRECTION_DOWN:
                 if (!td.is(".wall-bottom")) {
                     var col = td.parents("tr").children().index(td);
-                    console.debug("col :" + col);
                     nextCell = td.parents("tr").next().children()[col];
                     nextCell = $(nextCell);
                 }
