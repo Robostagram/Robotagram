@@ -1,0 +1,34 @@
+@main("Home") {
+<div class="row" xmlns="http://www.w3.org/1999/html">
+    <div class="span6" id="boardZone">
+        <h2>Welcome</h2>
+        <p><strong>Robotagram</strong> is a super great game etc.</p>
+        <img src="http://bumpshack.com/wp-content/uploads/2010/05/Emma-Watson-Ultra-Sexy-Vanity-Fair-PHOTOS.jpg"
+             alt="" style="-moz-box-shadow: 4px 4px 12px #aaa;-webkit-box-shadow: 4px 4px 12px #aaa;box-shadow: 4px 4px 12px #555;margin:0px auto;">
+
+    </div>
+    <div class="span6" id="roomList">
+        <h3>Join a game !</h3>
+        <div id="join">
+            Current rooms :
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>players</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>default</th>
+                        <td>9999</td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Application.newGame(0)">Join</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+}

@@ -6,29 +6,33 @@ import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
 
-class Authentication extends Controller {
+object Authentication extends Controller {
 
   val loginForm = Form("nickname" -> nonEmptyText)
 
-  val redirectToIndex = Redirect(routes.Application.newGame(0))
-
-  def authenticate = Action {implicit request =>
+  def authenticate(redirectTo: String = null) = Action {implicit request =>
     loginForm.bindFromRequest.fold(
-      noUserError => redirectToIndex,
-      userFound => redirectToIndex.withSession("username" -> userFound)
+      noUserError => Redirect(routes.Home.index()),
+      userFound =>{
+        // no very scala-ish :-/
+        if (redirectTo == null ) { //no redirect url -> go back home - and only redirect to local urls starting with '/'
+          Redirect(routes.Home.index()).withSession("username" -> userFound)
+        }
+        else{ // redirectUrl -> go there
+          Redirect(redirectTo).withSession("username" -> userFound)
+        }
+      }
     )
   }
 
-  def login = Action {
-    Ok(views.html.login(loginForm))
+  // login + redirect url after login (optionnal, defaults to home page)
+  def login(redirectTo: String = null) = Action {
+    Ok(views.html.login(loginForm, redirectTo))
   }
 
   def logout = Action {
     Ok("ta mere en slip").withNewSession
   }
-}
-
-object Authentication extends Authentication {
 
   object Secured {
     // Authentication check: executes the wrapped action only if a username is found in the session
@@ -36,7 +40,7 @@ object Authentication extends Authentication {
       request =>
         request.session.get("username") match {
           case Some(user) => action(request)
-          case None => Redirect(routes.Authentication.login)
+          case None => Redirect(routes.Authentication.login(request.uri))
         }
     }
   }
