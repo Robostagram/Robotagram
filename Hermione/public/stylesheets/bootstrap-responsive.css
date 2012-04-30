@@ -685,10 +685,10 @@
   }
   .navbar-fixed-top {
     position: static;
-    margin-bottom: 18px;
+    /*margin-bottom: 18px;*//* commented out by tdesodt */
   }
   .navbar-fixed-top .navbar-inner {
-    padding: 5px;
+    /*padding: 5px;*//* commented out by tdesodt */
   }
   .navbar .container {
     width: auto;

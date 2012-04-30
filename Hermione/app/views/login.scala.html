@@ -1,7 +1,7 @@
-@(loginForm: Form[String], redirectTo: String = null)
+@(loginForm: Form[String], redirectTo: Option[String] = None)
 
 
-@main("Robotagram Rocks !!!") {
+@main("Robotagram Rocks !!!", AnonymousUser) {
 
 @helper.form(routes.Authentication.authenticate(redirectTo)) {
 <script type="text/javascript">

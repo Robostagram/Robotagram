@@ -23,3 +23,17 @@ table#keyboard-keys
 td#key-mapping{
      visibility: hidden;
 }
+/*
+.symbol{
+    width:20px !important;
+    height:20px !important;
+}
+
+.cell{
+    width:20px !important;
+    height:20px !important;
+}
+
+table#boardGame{
+    margin:0px;
+} */

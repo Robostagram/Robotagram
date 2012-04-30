@@ -1,0 +1,21 @@
+@(user: User)
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="@controllers.routes.Home.index" title="Home">Robotagram</a>
+            <ul class="nav pull-right">
+                <li>
+                @user match {
+                    case AnonymousUser => { <a href="@controllers.routes.Authentication.login(None)">Log on</a> }
+                    case _ => { <a href="@controllers.routes.Authentication.logout()">Log out</a> }
+                }
+                </li>
+            </ul>
+            @user match {
+                case AnonymousUser => { }
+                case _ => { <span class="navbar-text pull-right">@user.nickname</span> }
+            }
+        </div>
+    </div>
+</div>

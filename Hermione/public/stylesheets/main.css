@@ -1,6 +1,6 @@
 
 body{
-    padding-top: 47px; /*pour ne pas etre sous la nav*/
+    padding-top: 40px; /*pour ne pas etre sous la nav*/
     background-color: #f5f5f5;
 }
 
@@ -8,19 +8,11 @@ body{
     structure de la page
 */
 
-header{
-    background-color: white;
-}
 
 section#content{
     background-color: white;
     height: 100%;
     padding-top:1em;
-}
-
-/*product name in header */
-.navbar a.brand{
-    font-size: 2em;
 }
 
 footer{

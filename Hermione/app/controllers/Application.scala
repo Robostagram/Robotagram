@@ -14,7 +14,7 @@ object Application extends Controller {
   def newGame(score: Int = 0) = Secured.Authenticated {
     Action {
       implicit request =>
-        val user = request.session.get("username").get
+        val user = User.fromRequest(request)
         lock.acquire();
         try {
           if (game == null || game.isDone) {
@@ -25,9 +25,9 @@ object Application extends Controller {
         } finally {
           lock.release();
         };
-        val player: Player = game.withPlayer(user)
+        val player: Player = game.withPlayer(user.nickname)
         player.scored(score);
-        Ok(views.html.game(game, player))
+        Ok(views.html.game(game, player, user))
     }
   }
 

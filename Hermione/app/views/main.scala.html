@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, user: User)(content: Html)
 
 <!DOCTYPE html>
 
@@ -9,10 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/reset.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-responsive.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/keys.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-    <link rel="stylesheet" media="all and (orientation:portrait)" href="@routes.Assets.at("stylesheets/smallscreen.css")" type="text/css" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-responsive.css")">@* must be after main ! *@
+    <link rel="stylesheet" media="(max-width: 767px)" href="@routes.Assets.at("stylesheets/smallscreen.css")" type="text/css" />
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.ico")">
     <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
@@ -21,13 +21,7 @@
 <body>
 
 <header>
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                  <a class="brand" href="@controllers.routes.Home.index" title="Home">Robotagram</a>
-            </div>
-        </div>
-    </div>
+    @nav(user)
 </header>
 <section id="content">
     <div id="container" class="container">
