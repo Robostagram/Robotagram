@@ -16,8 +16,12 @@ object Authentication extends Controller {
       noUserError => Redirect(routes.Home.index()),
       userFound =>{
         redirectTo match{
-          case Some(redirection) =>  Redirect(redirection).withSession("username" -> userFound)
-          case _ => Redirect(routes.Home.index()).withSession("username" -> userFound)
+          case Some(redirection) =>  Redirect(redirection).withSession("username" -> userFound).flashing(
+            "success" -> "You are now logged in"
+          )
+          case _ => Redirect(routes.Home.index()).withSession("username" -> userFound).flashing(
+            "success" -> "You are now logged in"
+          )
         }
       }
     )
@@ -25,11 +29,14 @@ object Authentication extends Controller {
 
   // login + redirect url after login (optionnal, defaults to home page)
   def login(redirectTo: Option[String] = None) = Action {
+    implicit request =>
     Ok(views.html.login(loginForm, redirectTo))
   }
 
   def logout = Action {
-    Ok("ta mere en slip").withNewSession
+    Redirect(routes.Home.index()).withNewSession.flashing(
+      "success" -> "You have been logged out"
+    )
   }
 
   object Secured {

@@ -1,4 +1,4 @@
-@(title: String, user: User)(headerContent: Html = null)(content: Html)
+@(title: String, user: User)(headerContent: Html = null)(content: Html)(implicit flash: Flash)
 
 <!DOCTYPE html>
 
@@ -33,6 +33,14 @@
 </header>
 <section id="content">
     <div id="container" class="container">
+        @if(!flash.isEmpty) {
+            @for((msgKey, msgValue) <- flash.data) {
+                <div class="alert alert-@msgKey" data-dismiss="alert">
+                    <a title="close" class="close">×</a>
+                    @msgValue
+                </div>
+                }
+            }
         @content
     </div>
 </section>
