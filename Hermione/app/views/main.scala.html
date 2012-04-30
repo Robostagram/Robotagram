@@ -1,4 +1,4 @@
-@(title: String, user: User)(content: Html)
+@(title: String, user: User)(headerContent: Html = null)(content: Html)
 
 <!DOCTYPE html>
 
@@ -21,7 +21,15 @@
 <body>
 
 <header>
-    @nav(user)
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="@controllers.routes.Home.index" title="Home">Robotagram</a>
+                @headerContent
+                @userInfo(user)
+            </div>
+        </div>
+    </div>
 </header>
 <section id="content">
     <div id="container" class="container">

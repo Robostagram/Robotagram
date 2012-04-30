@@ -229,5 +229,30 @@ span.symbol {
 }
 
 
+a.brand{
+    /*width:115px;*/ /*symmetric of loginLink + userName*/
+    width:15%;
+}
+
+ul#userInfoBar{
+    width:7%;
+}
+a#logoutLink, a#loginLink{
+    /*width: 45px;*/
+    text-align: right;
+}
+
+span#userName{
+    font-weight: bold;
+    text-align: center;
+    width:8%;
+}
 
 
+ul#scoreInfo{
+    width:70%;
+}
+
+li#timeProgress{
+    /*relative to size of container*/
+}
