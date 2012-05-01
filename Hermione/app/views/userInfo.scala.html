@@ -3,11 +3,7 @@
     <li>
         @user match {
             case AnonymousUser => { <a id="loginLink" href="@controllers.routes.Authentication.login(None)">Log on</a> }
-            case _ => { <a id="logoutLink" href="@controllers.routes.Authentication.logout()">Log out</a> }
+            case _ => { <a id="userName">@user.nickname</a></li><li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">Log out</a> }
         }
     </li>
-</ul>
-@user match {
-    case AnonymousUser => { }
-    case _ => { <span id="userName" class="navbar-text pull-right">@user.nickname</span> }
-}
+</ul

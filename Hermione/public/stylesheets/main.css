@@ -229,30 +229,44 @@ span.symbol {
 }
 
 
-a.brand{
-    /*width:115px;*/ /*symmetric of loginLink + userName*/
-    width:15%;
-}
+/*
 
-ul#userInfoBar{
-    width:7%;
-}
+  NAV BAR
+
+*/
+
 a#logoutLink, a#loginLink{
-    /*width: 45px;*/
     text-align: right;
 }
 
-span#userName{
+a#userName{
     font-weight: bold;
     text-align: center;
-    width:8%;
 }
 
+/* special container
+resized via js to always take as much space as possible */
+div#headerExtraContent{
+    display:inline-block;
+}
 
 ul#scoreInfo{
-    width:70%;
+    width:100%;
 }
 
-li#timeProgress{
-    /*relative to size of container*/
+#timeProgress a{
+    padding-top:10px;
+    padding-bottom:10px;
 }
+
+#timeProgress .progress{
+    margin-bottom:0px;
+    margin-top: 0px;
+    width:100%;
+    height:19px;
+}
+
+#timeProgress .progress .bar{
+    height:19px;
+}
+

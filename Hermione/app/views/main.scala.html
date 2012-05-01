@@ -15,6 +15,7 @@
     <link rel="stylesheet" media="(max-width: 767px)" href="@routes.Assets.at("stylesheets/smallscreen.css")" type="text/css" />
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.ico")">
     <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/jquery.ba-throttle-debounce.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
     <script src = "@routes.Assets.at("javascripts/robotagram.js")" type = "text/javascript"></script>
 </head>
@@ -25,7 +26,9 @@
         <div class="navbar-inner">
             <div class="container">
                 <a class="brand" href="@controllers.routes.Home.index" title="Home">Robotagram</a>
-                @headerContent
+                <div id="headerExtraContent">
+                    @headerContent
+                </div>
                 @userInfo(user)
             </div>
         </div>
@@ -50,5 +53,61 @@
     </span>
 </footer>
 </div>
+<script type="text/javascript">
+
+    // resize the contents of the top bqr so that it always fit the window
+    function resizeTopBarContents(){
+        //header : resize the content in the middle to take as much space as possible
+        var $headerContainer = $("header").find(".container").first();
+        var $centerZone = $headerContainer.find("#headerExtraContent");
+
+        var containerFullWidth = $headerContainer.width(),
+                totalWidthOnTheLeft = 0,
+                totalWidthOnTheRight = 0;
+
+        $centerZone.prevAll().each(function(){
+                    totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+                });
+
+        $centerZone.nextAll().each(function(){
+                totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+            });
+        //console.log("left:" + totalWidthOnTheLeft + " - right : " + totalWidthOnTheRight);
+
+        // widthInTheMiddle
+        $centerZone.width(containerFullWidth - totalWidthOnTheLeft - totalWidthOnTheRight);
+
+        // timer and score zone
+        $scoreZone = $centerZone.find("#scoreInfo");
+        if($scoreZone.length> 0){
+            containerFullWidth = $scoreZone.width();
+            totalWidthOnTheLeft = 0;
+            totalWidthOnTheRight = 0;
+
+            $scoreZone = $scoreZone.first();
+            $timer = $scoreZone.find("#timeProgress");
+
+            $timer.prevAll().each(function(){
+                totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+            });
+
+            $timer.nextAll().each(function(){
+                totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+            });
+
+
+            $timer.width(containerFullWidth - totalWidthOnTheLeft - totalWidthOnTheRight - 1 /*ugly :-/*/);
+
+        }
+    }
+    /*throttling to avoid recomputing during resize
+    * see : http://benalman.com/projects/jquery-throttle-debounce-plugin/
+    * for a good explanation of throttling
+    * */
+    $(window).resize($.throttle( 250, resizeTopBarContents ));
+    resizeTopBarContents();/* trigger on first load to make it all fit together*/
+
+
+    </script>
 </body>
 </html>

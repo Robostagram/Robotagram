@@ -6,25 +6,25 @@
     @*<span class="navbar-text"> this would go in the title bar </span>*@
 
     <ul id="scoreInfo" class="nav">
-        <li id="timeProgress" style="width:75%;">
-            <a style="width:100%;"><div class="progress progress-striped active" style="margin-bottom:0px;width:100%;">
+        <li id="timeProgress">
+            <a><div class="progress progress-striped active">
             <div class="bar"
                  style="width: 40%;"></div>
             </div>
             </a>
         </li>
         <li>
-            <a style="width:35px;">23:00</a>
+            <a id="timeLeft">23:00</a>
         </li>
         <li>
-            <a style="width:25px;">13</a>
+            <a id="currentScore">13</a>
         </li>
     </ul>
 }
 
 @main("Robotagram Rocks !!!", user)(headerContent){
 
-<div class="row">
+<div class="row-fluid">
     <div class="span8" id="boardZone">
         @renderBoard(game)
     </div>
