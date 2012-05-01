@@ -75,7 +75,7 @@
         //console.log("left:" + totalWidthOnTheLeft + " - right : " + totalWidthOnTheRight);
 
         // widthInTheMiddle
-        $centerZone.width(containerFullWidth - totalWidthOnTheLeft - totalWidthOnTheRight);
+        $centerZone.width(containerFullWidth - totalWidthOnTheLeft - totalWidthOnTheRight - 4 /*ugly !!*/);
 
         // timer and score zone
         $scoreZone = $centerZone.find("#scoreInfo");
