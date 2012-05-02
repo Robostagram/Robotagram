@@ -250,7 +250,7 @@ div#headerExtraContent{
     display:inline-block;
 }
 
-ul#scoreInfo{
+ul#headerInfo{
     width:100%;
 }
 
@@ -262,28 +262,28 @@ a#currentScore{
 }
 
 /*symbol is 29px high and navbar is 40px high ... center vertically manually*/
-a#scoreGoal{
+a#headerGoal{
     padding:0px;
     padding-top:4px;
     margin-right:0px;
 }
 
 
-a#scoreGoal span.symbol{
+a#headerGoal span.symbol{
     float:right; /*put it out of the float to avoid destorying the nav*/
 }
 
-a#goalRobot{
+a#headerRobot{
     padding:0px;
     padding-top:4px;
     margin-right:0px;
 }
 
-a#goalRobot div.robot{
+a#headerRobot div.robot{
     background-color: transparent;
 }
 
-a#goalArrow{
+a#headerArrow{
     margin:0px;
     padding-right:3px;
     padding-left:3px;

@@ -6,16 +6,16 @@
 
 @* what to put in the top header bar *@
 @headerContent = {
-    <ul id="scoreInfo" class="nav">
+    <ul id="headerInfo" class="nav">
         <li class="divider-vertical"></li>
         <li>
-            <a id="goalRobot"><div class="robot @renderColor(game.goal.color)" style="z-index:9999;"></div></a>
+            <a id="headerRobot"><div class="robot @renderColor(game.goal.color)"></div></a>
         </li>
         <li>
-            <a id="goalArrow">&rarr;</a>
+            <a id="headerArrow">&rarr;</a>
         </li>
         <li>
-            <a id="scoreGoal">@gameGoal(game.goal)</a>
+            <a id="headerGoal">@gameGoal(game.goal)</a>
         </li>
         <li>
             <a id="currentScore">0</a>
@@ -100,7 +100,6 @@
 <script type="text/javascript">
   $(document).ready(function () {
     initListeners();
-    $('#scoreGoal span').popover({placement: 'bottom', title: "Bring the robot here !"})   ;
   })
 </script>
 

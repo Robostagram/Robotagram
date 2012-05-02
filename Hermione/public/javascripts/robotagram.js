@@ -219,17 +219,26 @@ function initListeners() {
 
     //on triche, et les touches affichées marchent comme un clavier
     $("#key-up").click(function () {
-        moveRobot(DIRECTION_UP)
+        moveRobot(DIRECTION_UP);
     });
     $("#key-down").click(function () {
-        moveRobot(DIRECTION_DOWN)
+        moveRobot(DIRECTION_DOWN);
     });
     $("#key-left").click(function () {
-        moveRobot(DIRECTION_LEFT)
+        moveRobot(DIRECTION_LEFT);
     });
     $("#key-right").click(function () {
-        moveRobot(DIRECTION_RIGHT)
+        moveRobot(DIRECTION_RIGHT);
     });
+
+    // robot from header selects the robot on the board
+    $("a#headerRobot").click(function(e){
+        $(".selected").removeClass("selected");
+        $("#robotForObjective").addClass("selected");
+        e.preventDefault();
+    });
+
+    $('#headerGoal span').popover({placement: 'bottom', title: "Bring the robot here !"});
 
     doPollScore();
     doPollTimer();
