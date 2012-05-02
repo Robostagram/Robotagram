@@ -268,8 +268,25 @@ a#scoreGoal{
     margin-right:0px;
 }
 
+
 a#scoreGoal span.symbol{
     float:right; /*put it out of the float to avoid destorying the nav*/
+}
+
+a#goalRobot{
+    padding:0px;
+    padding-top:4px;
+    margin-right:0px;
+}
+
+a#goalRobot div.robot{
+    background-color: transparent;
+}
+
+a#goalArrow{
+    margin:0px;
+    padding-right:3px;
+    padding-left:3px;
 }
 
 #timeProgress a{

@@ -53,7 +53,7 @@ function selectPreviousRobot() {
 /* mark the robot with given color as selected */
 function selectByColor(colorName) {
     $(".selected").toggleClass("selected");
-    $(".robot." + colorName).toggleClass("selected");
+    $("td .robot." + colorName).toggleClass("selected");
 }
 
 
@@ -214,7 +214,7 @@ function nextCell(td, direction) {
 
 function initListeners() {
     $(window).keypress(keypressHandler);
-    $(".robot").click(robotClickHandler);
+    $("td .robot").click(robotClickHandler);
     $("#retry").click(retryClick);
 
     //on triche, et les touches affichées marchent comme un clavier

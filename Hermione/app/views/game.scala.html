@@ -1,11 +1,19 @@
 @(game: Game, player: Player, user: User)(implicit flash: Flash)
 
+@renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
+
 @import models._
 
 @* what to put in the top header bar *@
 @headerContent = {
     <ul id="scoreInfo" class="nav">
         <li class="divider-vertical"></li>
+        <li>
+            <a id="goalRobot"><div class="robot @renderColor(game.goal.color)" style="z-index:9999;"></div></a>
+        </li>
+        <li>
+            <a id="goalArrow">&rarr;</a>
+        </li>
         <li>
             <a id="scoreGoal">@gameGoal(game.goal)</a>
         </li>
@@ -92,6 +100,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
     initListeners();
+    $('#scoreGoal span').popover({placement: 'bottom', title: "Bring the robot here !"})   ;
   })
 </script>
 
