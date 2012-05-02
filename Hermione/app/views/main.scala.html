@@ -88,7 +88,7 @@
             $timer = $scoreZone.find("#timeProgress");
 
             $timer.prevAll().each(function(){
-                totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+                totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft")) + parseInt($(this).css("marginRight"));
             });
 
             $timer.nextAll().each(function(){
@@ -104,7 +104,7 @@
     * see : http://benalman.com/projects/jquery-throttle-debounce-plugin/
     * for a good explanation of throttling
     * */
-    $(window).resize($.throttle( 250, resizeTopBarContents ));
+    $(window).resize($.throttle( 150, resizeTopBarContents ));
     resizeTopBarContents();/* trigger on first load to make it all fit together*/
 
 
