@@ -1,3 +1,4 @@
+
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
         moveRobot(event.which);
@@ -12,7 +13,8 @@ function keypressHandler(event) {
 
 var ROBOT_COLORS = ['blue', 'red', 'yellow', 'green']
 
-function selectNextRobot() {
+
+function getIndexOfCurrentlySelectedRobot(){
     var $currentSelected = $(".robot.selected");
     var curColorIndex = 0; //blue by default
     if ($currentSelected.length > 0) {
@@ -24,6 +26,11 @@ function selectNextRobot() {
             return true; //continue
         });
     }
+    return curColorIndex
+}
+
+function selectNextRobot() {
+    var curColorIndex = getIndexOfCurrentlySelectedRobot();
     curColorIndex += 1;
     if (curColorIndex >= ROBOT_COLORS.length) {
         curColorIndex = 0;
@@ -33,17 +40,8 @@ function selectNextRobot() {
 }
 
 function selectPreviousRobot() {
-    var $currentSelected = $(".robot.selected");
-    var curColorIndex = 0; //blue by default
-    if ($currentSelected.length > 0) {
-        $.each(ROBOT_COLORS, function (index, colorName) {
-            if ($currentSelected.hasClass(colorName)) {
-                curColorIndex = index;
-                return false; //stop here !
-            }
-            return true; //continue
-        });
-    }
+    var curColorIndex = getIndexOfCurrentlySelectedRobot();
+
     curColorIndex -= 1;
     if (curColorIndex < 0) {
         curColorIndex = ROBOT_COLORS.length - 1;
@@ -52,12 +50,14 @@ function selectPreviousRobot() {
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
+/* mark the robot with given color as selected */
 function selectByColor(colorName) {
     $(".selected").toggleClass("selected");
     $(".robot." + colorName).toggleClass("selected");
 }
 
 
+/* called when clicking on the robot */
 function robotClickHandler() {
     var $this = $(this);
     if (!$this.is(".selected")) {
@@ -99,7 +99,9 @@ var DIRECTION_RIGHT = 108;
 var SELECT_PREVIOUS = 115;
 var SELECT_NEXT = 100;
 
+/* global variable for current number of moves ...*/
 var moves = 0;
+
 
 function moveRobot(direction) {
     var $robot = $(".selected"),
@@ -155,7 +157,7 @@ function moveRobot(direction) {
                 }
             );
             moves++;
-            $("#moves").text(moves + " Moves");
+            $("#currentScore").text(moves + "");
             if (hasReachedObjective($robot, destinationCell)) {
                 $("#winModal").modal('show');
             }
@@ -228,6 +230,7 @@ function initListeners() {
     $("#key-right").click(function () {
         moveRobot(DIRECTION_RIGHT)
     });
+
     doPollScore();
     doPollTimer();
 }

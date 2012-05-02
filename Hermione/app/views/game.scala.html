@@ -15,9 +15,15 @@
         <li>
             <a id="timeLeft">23:00</a>
         </li>
+        <li class="divider-vertical"></li>
+
         <li>
-            <a id="currentScore">13</a>
+            <a id="scoreGoal">@gameGoal(game.goal)</a>
         </li>
+        <li>
+            <a id="currentScore">0</a>
+        </li>
+        <li class="divider-vertical"></li>
     </ul>
 }
 
@@ -31,9 +37,6 @@
         <form class="form-inline" >
             <div id="currentGameZone" class="well">
                 @timer(game)
-                <h3 id="nicknameDisplay">@player.name</h3>
-                @gameGoal(game.goal)
-                <h3><div id="moves"/></h3>
             </div>
         </form>
         <hr/>

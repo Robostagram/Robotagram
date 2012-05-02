@@ -5,4 +5,4 @@
 @renderGoalColor() = {@renderColor(goal.color)}
 @renderSymbol() = {@if(goal.symbol == Symbol.Star){star}@if(goal.symbol == Symbol.Planet){planet}@if(goal.symbol == Symbol.Gear){gear}@if(goal.symbol == Symbol.Moon){moon}@if(goal.symbol == Symbol.Sun){sun}}
 
-Your Goal : <span class="symbol @renderGoalColor() @renderSymbol()"></span>
+<span class="symbol @renderGoalColor() @renderSymbol()"></span>

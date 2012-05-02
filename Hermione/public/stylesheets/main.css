@@ -254,6 +254,24 @@ ul#scoreInfo{
     width:100%;
 }
 
+a#currentScore{
+    min-width:15px;
+    text-align: center;
+    padding-right:0px;
+    padding-left:0px;
+}
+
+/*symbol is 29px high and navbar is 40px high ... center vertically manually*/
+a#scoreGoal{
+    padding:0px;
+    padding-top:4px;
+    margin-right:0px;
+}
+
+a#scoreGoal span.symbol{
+    float:right; /*put it out of the float to avoid destorying the nav*/
+}
+
 #timeProgress a{
     padding-top:10px;
     padding-bottom:10px;

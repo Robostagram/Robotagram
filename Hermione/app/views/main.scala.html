@@ -92,7 +92,7 @@
             });
 
             $timer.nextAll().each(function(){
-                totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft"));
+                totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft")) + parseInt($(this).css("marginRight"));
             });
 
 
