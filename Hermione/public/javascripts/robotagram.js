@@ -77,10 +77,7 @@ function retryClick(event) {
 }
 
 function timerEnd(){
-    var container = $('#container');
-    container.load("/newGame/0", function () {
-        initListeners();
-    });
+    $("#endOfGameModal").modal('show');
 }
 
 // direction:
@@ -246,14 +243,21 @@ function initListeners() {
 
 function doPollScore() {
     var scores = $('#scores');
-    scores.load('/scores', function () {
-        setTimeout(doPollScore, 5000);
+    var scoreUrl = document.URL + '/scores';
+    scores.load(scoreUrl, function (response, status, xhr) {
+        if(status == "error"){
+            alert("Error while retrieving the scores : " + response);
+        }
+        else{
+            setTimeout(doPollScore, 5000);
+        }
+
     });
 }
 
 function doPollTimer() {
     $.ajax({
-            url:'/progress',
+            url:document.URL + '/progress',
             success:function(data){
                 $('#progressBar').css('width',data+'%');
                 if(data<=0){

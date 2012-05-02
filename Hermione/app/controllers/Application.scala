@@ -8,8 +8,61 @@ import play.api.libs.json.{Json, JsValue}
 import controllers.Authentication.Secured
 
 object Application extends Controller {
+  // sooner or later, handle games in several rooms ... so far, just use the default room
   var game: Game = null;
   val lock: Lock = new Lock();
+
+
+  // GET /rooms/n/games/current
+  def currentGame(roomId: Int) = Secured.Authenticated {
+    Action {
+      implicit request =>
+        val user = User.fromRequest(request)
+        if (roomId != 0) {
+          NotFound("404 de la mort : Only the room 0 exists so far")
+        }
+        else {
+          // find latest game for room with that Id
+          Redirect(routes.Application.getGame(roomId, game.uuid))
+        }
+    }
+  }
+
+  // GET /rooms/n/games/xx-xx-x-x-x-xxx
+  def getGame(roomId: Int, gameId: String) = Secured.Authenticated {
+    Action {
+      implicit request =>
+
+        if (roomId != 0) {
+          NotFound("404 de la mort : Only the room 0 exists so far")
+        }
+        else {
+
+          val user = User.fromRequest(request)
+          lock.acquire();
+          try {
+            // get game from Id or load random new one ?
+            if (game == null || game.isDone) {
+              game = Game.randomGame()
+            }
+          } catch {
+            case e => InternalServerError("WTF ? " + e);
+          } finally {
+            lock.release();
+          };
+          if (gameId != game.uuid) {
+            // game is no longer being played
+            // should not be a 200, but something else, probably a 30X (redirection )
+            Ok(views.html.gameFinished(gameId, roomId, user))
+          } else {
+
+            val player: Player = game.withPlayer(user.nickname)
+            player.scored(0);
+            Ok(views.html.game(game, player, user))
+          }
+        }
+    }
+  }
 
   def newGame(score: Int = 0) = Secured.Authenticated {
     Action {
@@ -47,11 +100,11 @@ object Application extends Controller {
     Ok(views.html.renderBoard(game))
   }
 
-  def scores = Action {
+  def scores(roomId: Int, gameId: String) = Action {
     Ok(views.html.scores(game));
   }
 
-  def progress = Action {
+  def progress(roomId: Int, gameId: String) = Action {
     Ok("" + game.percentageDone());
   }
 
@@ -83,7 +136,7 @@ object Application extends Controller {
     lock.acquire();
     try {
       if (game != null) {
-        val summary:JsValue = GameSummary.fromGame(game).toJson;
+        val summary: JsValue = GameSummary.fromGame(game).toJson;
         game.players.foreach(player => player.sendJSon(summary))
       }
     } finally {
