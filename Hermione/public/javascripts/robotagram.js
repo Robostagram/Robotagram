@@ -67,10 +67,6 @@ function robotClickHandler() {
 }
 
 
-function timerEnd() {
-    $("#endOfGameModal").modal('show');
-}
-
 // direction:
 // 105: i : up
 // 106: j : left
@@ -80,6 +76,7 @@ var DIRECTION_UP = 105;
 var DIRECTION_LEFT = 106;
 var DIRECTION_DOWN = 107;
 var DIRECTION_RIGHT = 108;
+
 
 // switch robot
 // 115 s : previous
@@ -155,13 +152,17 @@ function moveRobot(direction) {
                     async:false,
                     success:function (data) {
                         //alert("submitted");
-                        $("#winModal").modal('show');
+                        $("#winModal").modal('show').find("a#retry").focus(); //so that enter does what we want
                     },
                     error:function () {
                         alert("not submitted");
+                    },
+                    statusCode:{
+                        410:function () {
+                            alert("to late ! - the game is finished");
+                        }
                     }
                 });
-                $("#winModal").modal('show');
             }
         }
     }
@@ -246,9 +247,9 @@ function initListeners() {
 }
 
 function doPollScore() {
-    var scores = $('#scores');
-    var scoreUrl = document.URL + '/scores';
-    scores.load(scoreUrl, function (response, status, xhr) {
+    var $scores = $('#scores');
+    var scoreUrl = document.URL + '/scores'; // scores for current game in current room
+    $scores.load(scoreUrl, function (response, status, xhr) {
         if (status == "error") {
             alert("Error while retrieving the scores : status = " + status);
         }
@@ -264,12 +265,20 @@ function doPollTimer() {
             url:document.URL + '/status',
             success:function (data) {
                 $('#progressBar').css('width', data.game.percentageDone + '%');
-                if (data <= 0) {
-                    timerEnd();
-                } else {
+                if (data.game.percentageDone <= 0) {
+                    $("#endOfGameModal").modal('show');
+                }
+                else {
                     setTimeout(doPollTimer, 1000);
+                }
+            },
+            statusCode:{
+                410:function () {
+                    alert("The game you asked is finished .... ");
+                    $("#endOfGameModal").modal('show').find("a#joinNextGame").focus();
                 }
             }
         }
-    );
+    )
+    ;
 }
