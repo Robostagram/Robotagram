@@ -1,4 +1,3 @@
-
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
         moveRobot(event.which);
@@ -14,7 +13,7 @@ function keypressHandler(event) {
 var ROBOT_COLORS = ['blue', 'red', 'yellow', 'green']
 
 
-function getIndexOfCurrentlySelectedRobot(){
+function getIndexOfCurrentlySelectedRobot() {
     var $currentSelected = $(".robot.selected");
     var curColorIndex = 0; //blue by default
     if ($currentSelected.length > 0) {
@@ -68,7 +67,7 @@ function robotClickHandler() {
 }
 
 
-function timerEnd(){
+function timerEnd() {
     $("#endOfGameModal").modal('show');
 }
 
@@ -150,15 +149,15 @@ function moveRobot(direction) {
             if (hasReachedObjective($robot, destinationCell)) {
                 // submit the score !
                 $.ajax({
-                    url: document.URL + '/score',
-                    type: 'POST',
-                    data: {score: moves},
-                    async: false,
-                    success:function(data){
+                    url:document.URL + '/score',
+                    type:'POST',
+                    data:{score:moves},
+                    async:false,
+                    success:function (data) {
                         //alert("submitted");
                         $("#winModal").modal('show');
                     },
-                    error : function(){
+                    error:function () {
                         alert("not submitted");
                     }
                 });
@@ -234,13 +233,13 @@ function initListeners() {
     });
 
     // robot from header selects the robot on the board
-    $("a#headerRobot").click(function(e){
+    $("a#headerRobot").click(function (e) {
         $(".selected").removeClass("selected");
         $("#robotForObjective").addClass("selected");
         e.preventDefault();
     });
 
-    $('#headerGoal span').popover({placement: 'bottom', title: "Bring the robot here !"});
+    $('#headerGoal span').popover({placement:'bottom', title:"Bring the robot here !"});
 
     doPollScore();
     doPollTimer();
@@ -250,10 +249,10 @@ function doPollScore() {
     var scores = $('#scores');
     var scoreUrl = document.URL + '/scores';
     scores.load(scoreUrl, function (response, status, xhr) {
-        if(status == "error"){
+        if (status == "error") {
             alert("Error while retrieving the scores : status = " + status);
         }
-        else{
+        else {
             setTimeout(doPollScore, 5000);
         }
 
@@ -263,11 +262,11 @@ function doPollScore() {
 function doPollTimer() {
     $.ajax({
             url:document.URL + '/status',
-            success:function(data){
-                $('#progressBar').css('width',data.game.percentageDone+'%');
-                if(data<=0){
+            success:function (data) {
+                $('#progressBar').css('width', data.game.percentageDone + '%');
+                if (data <= 0) {
                     timerEnd();
-                }else{
+                } else {
                     setTimeout(doPollTimer, 1000);
                 }
             }

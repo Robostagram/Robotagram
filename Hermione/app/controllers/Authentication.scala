@@ -11,26 +11,27 @@ object Authentication extends Controller {
 
   val loginForm = Form("nickname" -> nonEmptyText)
 
-  def authenticate(redirectTo: Option[String] = None) = Action {implicit request =>
-    loginForm.bindFromRequest.fold(
-      noUserError => Redirect(routes.Home.index()),
-      userFound =>{
-        redirectTo match{
-          case Some(redirection) =>  Redirect(redirection).withSession("username" -> userFound).flashing(
-            "success" -> "You are now logged in"
-          )
-          case _ => Redirect(routes.Home.index()).withSession("username" -> userFound).flashing(
-            "success" -> "You are now logged in"
-          )
+  def authenticate(redirectTo: Option[String] = None) = Action {
+    implicit request =>
+      loginForm.bindFromRequest.fold(
+        noUserError => Redirect(routes.Home.index()),
+        userFound => {
+          redirectTo match {
+            case Some(redirection) => Redirect(redirection).withSession("username" -> userFound).flashing(
+              "success" -> "You are now logged in"
+            )
+            case _ => Redirect(routes.Home.index()).withSession("username" -> userFound).flashing(
+              "success" -> "You are now logged in"
+            )
+          }
         }
-      }
-    )
+      )
   }
 
   // login + redirect url after login (optionnal, defaults to home page)
   def login(redirectTo: Option[String] = None) = Action {
     implicit request =>
-    Ok(views.html.login(loginForm, redirectTo))
+      Ok(views.html.login(loginForm, redirectTo))
   }
 
   def logout = Action {
@@ -44,12 +45,13 @@ object Authentication extends Controller {
     def Authenticated[A](action: Action[A]): Action[A] = Action(action.parser) {
       implicit request => {
         val u = User.fromRequest
-        u match{
+        u match {
           case AnonymousUser => Redirect(routes.Authentication.login(Some(request.uri)))
           case _ => action(request)
         }
       }
     }
   }
+
 }
 

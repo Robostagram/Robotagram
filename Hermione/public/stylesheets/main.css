@@ -1,5 +1,4 @@
-
-body{
+body {
     padding-top: 40px; /*pour ne pas etre sous la nav*/
     background-color: #f5f5f5;
 }
@@ -8,16 +7,15 @@ body{
     structure de la page
 */
 
-
-section#content{
+section#content {
     background-color: white;
     height: 100%;
-    padding-top:1em;
+    padding-top: 1em;
 }
 
-footer{
+footer {
     margin-top: 3em;
-    background-color:#f5f5f5;
+    background-color: #f5f5f5;
     color: #DDD;
     text-align: center;
     height: 40px;
@@ -26,54 +24,52 @@ footer{
     margin-bottom: 0px;
 }
 
-div#boardZone{
+div#boardZone {
 }
 
-
-div#gameZone{
+div#gameZone {
     background-color: white;
 }
 
-div#currentGameZone{
+div#currentGameZone {
     text-align: center;
 }
 
-div#howToPlay{
+div#howToPlay {
     font-size: 1.5em;
 }
 
-div#howToPlay table{
-    margin:0.2em auto
+div#howToPlay table {
+    margin: 0.2em auto
 }
 
-table#key-mapping{
+table#key-mapping {
     vertical-align: middle;
-    padding:5px;
+    padding: 5px;
 }
 
-kbd{
-    padding:6px;
+kbd {
+    padding: 6px;
     margin: 2px 1px;
 }
 
-
-h2{
+h2 {
     margin-bottom: 1em;
 }
 
 /* board cells */
 
-table#boardGame{
+table#boardGame {
     background-color: white;
     -moz-box-shadow: 4px 4px 12px #aaa;
     -webkit-box-shadow: 4px 4px 12px #aaa;
     box-shadow: 4px 4px 12px #555;
 
-    margin:0px auto;
+    margin: 0px auto;
 }
 
 td.cell {
-    border:1px solid #FFFFFF;
+    border: 1px solid #FFFFFF;
     width: 30px;
     height: 30px;
     background-color: whiteSmoke;
@@ -100,12 +96,12 @@ div.cell {
     height: 30px;
     width: 30px;
     position: relative;
-    padding:1px;
+    padding: 1px;
 }
 
 /*robots */
 
-div.robot{
+div.robot {
 
     display: block;
     width: 26px;
@@ -120,14 +116,14 @@ div.robot{
     border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.05);
 
-    cursor:pointer;
+    cursor: pointer;
     margin: 1px;
 
 }
 
 /* survol du robot */
-.robot:hover{
-    border-color:rgba(82, 168, 236, 0.8);
+.robot:hover {
+    border-color: rgba(82, 168, 236, 0.8);
     -webkit-box-shadow: 0 1px 1px #555, 0 0 1px #555;
     -moz-box-shadow: 0 1px 1px #555, 0 0 1px #555;
     box-shadow: 0 1px 1px #555, 0 0 1px #555;
@@ -135,8 +131,8 @@ div.robot{
 }
 
 /* robot selectionné*/
-.robot.selected{
-    border-color:rgba(82, 168, 236, 0.8);
+.robot.selected {
+    border-color: rgba(82, 168, 236, 0.8);
     -webkit-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
     -moz-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
     box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
@@ -152,20 +148,23 @@ div.symbol, span.symbol {
     background-repeat: no-repeat;
 }
 
-div.symbol{
+div.symbol {
 
 }
 
-.robot.blue{
+.robot.blue {
     background-image: url("../images/symbols/blue_skull.png");
 }
-.robot.green{
+
+.robot.green {
     background-image: url("../images/symbols/green_skull.png");
 }
-.robot.red{
+
+.robot.red {
     background-image: url("../images/symbols/red_skull.png");
 }
-.robot.yellow{
+
+.robot.yellow {
     background-image: url("../images/symbols/yellow_skull.png");
 }
 
@@ -175,59 +174,69 @@ span.symbol {
 
 /* symbols for goals */
 
-.symbol.gear.blue{
+.symbol.gear.blue {
     background-image: url("../images/symbols/blue_gear.png");
 }
-.symbol.star.blue{
+
+.symbol.star.blue {
     background-image: url("../images/symbols/blue_star.png");
 }
-.symbol.planet.blue{
+
+.symbol.planet.blue {
     background-image: url("../images/symbols/blue_planet.png");
 }
-.symbol.moon.blue{
+
+.symbol.moon.blue {
     background-image: url("../images/symbols/blue_moon.png");
 }
 
-.symbol.gear.green{
+.symbol.gear.green {
     background-image: url("../images/symbols/green_gear.png");
 }
-.symbol.star.green{
+
+.symbol.star.green {
     background-image: url("../images/symbols/green_star.png");
 }
-.symbol.planet.green{
+
+.symbol.planet.green {
     background-image: url("../images/symbols/green_planet.png");
 }
-.symbol.moon.green{
+
+.symbol.moon.green {
     background-image: url("../images/symbols/green_moon.png");
 }
 
-.symbol.gear.yellow{
+.symbol.gear.yellow {
     background-image: url("../images/symbols/yellow_gear.png");
 }
-.symbol.star.yellow{
+
+.symbol.star.yellow {
     background-image: url("../images/symbols/yellow_star.png");
 }
-.symbol.planet.yellow{
+
+.symbol.planet.yellow {
     background-image: url("../images/symbols/yellow_planet.png");
 }
-.symbol.moon.yellow{
+
+.symbol.moon.yellow {
     background-image: url("../images/symbols/yellow_moon.png");
 }
 
-
-.symbol.gear.red{
+.symbol.gear.red {
     background-image: url("../images/symbols/red_gear.png");
 }
-.symbol.star.red{
+
+.symbol.star.red {
     background-image: url("../images/symbols/red_star.png");
 }
-.symbol.planet.red{
+
+.symbol.planet.red {
     background-image: url("../images/symbols/red_planet.png");
 }
-.symbol.moon.red{
+
+.symbol.moon.red {
     background-image: url("../images/symbols/red_moon.png");
 }
-
 
 /*
 
@@ -235,73 +244,72 @@ span.symbol {
 
 */
 
-a#logoutLink, a#loginLink{
+a#logoutLink, a#loginLink {
     text-align: right;
 }
 
-a#userName{
+a#userName {
     font-weight: bold;
     text-align: center;
 }
 
 /* special container
 resized via js to always take as much space as possible */
-div#headerExtraContent{
-    display:inline-block;
+div#headerExtraContent {
+    display: inline-block;
 }
 
-ul#headerInfo{
-    width:100%;
+ul#headerInfo {
+    width: 100%;
 }
 
-a#currentScore{
-    min-width:15px;
+a#currentScore {
+    min-width: 15px;
     text-align: center;
-    padding-right:0px;
-    padding-left:0px;
+    padding-right: 0px;
+    padding-left: 0px;
 }
 
 /*symbol is 29px high and navbar is 40px high ... center vertically manually*/
-a#headerGoal{
-    padding:0px;
-    padding-top:4px;
-    margin-right:0px;
+a#headerGoal {
+    padding: 0px;
+    padding-top: 4px;
+    margin-right: 0px;
 }
 
-
-a#headerGoal span.symbol{
-    float:right; /*put it out of the float to avoid destorying the nav*/
+a#headerGoal span.symbol {
+    float: right; /*put it out of the float to avoid destorying the nav*/
 }
 
-a#headerRobot{
-    padding:0px;
-    padding-top:4px;
-    margin-right:0px;
+a#headerRobot {
+    padding: 0px;
+    padding-top: 4px;
+    margin-right: 0px;
 }
 
-a#headerRobot div.robot{
+a#headerRobot div.robot {
     background-color: transparent;
 }
 
-a#headerArrow{
-    margin:0px;
-    padding-right:3px;
-    padding-left:3px;
+a#headerArrow {
+    margin: 0px;
+    padding-right: 3px;
+    padding-left: 3px;
 }
 
-#timeProgress a{
-    padding-top:10px;
-    padding-bottom:10px;
+#timeProgress a {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-#timeProgress .progress{
-    margin-bottom:0px;
+#timeProgress .progress {
+    margin-bottom: 0px;
     margin-top: 0px;
-    width:100%;
-    height:19px;
+    width: 100%;
+    height: 19px;
 }
 
-#timeProgress .progress .bar{
-    height:19px;
+#timeProgress .progress .bar {
+    height: 19px;
 }
 

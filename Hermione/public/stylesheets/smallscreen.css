@@ -1,39 +1,40 @@
 /*loaded on small screens - typically iPhones/iPads*/
 
-
-body{
+body {
     padding-top: 0px;
 }
 
-div#howToPlay{
+div#howToPlay {
     font-size: 5em;
 }
 
-
-// Landscape phone to portrait tablet
+/
+/
+Landscape phone to portrait tablet
 /*kbd{
     font-size: 100px;
 } */
 
-table#keyboard-keys
-   {
-       display: none;
-       visibility: hidden;
-   }
-td#key-mapping{
-     visibility: hidden;
+table#keyboard-keys {
+    display: none;
+    visibility: hidden;
 }
+
+td#key-mapping {
+    visibility: hidden;
+}
+
 /*
 .symbol{
-    width:20px !important;
-    height:20px !important;
+   width:20px !important;
+   height:20px !important;
 }
 
 .cell{
-    width:20px !important;
-    height:20px !important;
+   width:20px !important;
+   height:20px !important;
 }
 
 table#boardGame{
-    margin:0px;
+   margin:0px;
 } */
