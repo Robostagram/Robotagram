@@ -1,17 +1,18 @@
 package models
 
-import play.api.libs.json.JsValue
-import play.api.libs.iteratee.PushEnumerator
+import play.api.libs.iteratee.{Enumerator, PushEnumerator}
 
 class Player(val name: String) {
-  var highScore: Int = 0;
-  var channel: PushEnumerator[JsValue] = null;
+  var highScore: Int = -1;
+  var channel: PushEnumerator[String] = Enumerator.imperative[String]();
 
   def scored(newScore: Int) {
-    highScore = if (highScore < newScore) newScore else highScore
-  };
+    if (highScore == -1 || highScore > newScore)  {
+      highScore = newScore
+    }
+  }
 
-  def sendJSon(message: JsValue) {
+  def sendJSon(message: String) {
     channel.push(message);
   }
 }

@@ -9,9 +9,9 @@
             <th>Best score</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="leaderBoard">
         @for(p:Player <- game.players){
-            <tr><th>@p.name</th><td>@if(p.highScore == 0){-}else{@p.highScore}</td></tr>
+            <tr id="score_@p.name"><th>@p.name</th><td><span id="best_score_@p.name">@if(p.highScore == -1){-}else{@p.highScore}</span></td></tr>
         }
     </tbody>
 </table>

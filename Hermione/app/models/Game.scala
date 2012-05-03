@@ -18,27 +18,34 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     robotsList
   }
 
-  def isDone:Boolean = {
-     System.currentTimeMillis() > endTime;
-  }
+  def isDone:Boolean = System.currentTimeMillis() > endTime
 
-  def withPlayer(user:String):Player = {
-    val option:Option[Player] = players.find(player => player.name == user);
+  def withPlayer(name:String):Player = {
+    val option:Option[Player] = players.find(player => player.name == name)
     if (option == None){
-      val player:Player = new Player(user);
-      players += player;
+      val player:Player = new Player(name)
+      players += player
       return player
     }
-    option.get
+    val player = option.get
+    player
   }
 
-  def percentageDone():Int = {
-     ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt;
+  def withoutPlayer(name: String): Player = {
+    val option: Option[Player] = players.find(player => player.name == name)
+    if (option == None) {
+      return null
+    }
+    val player: Player = option.get
+    players -= player
+    player
   }
 
-  def secondsLeft(): Int = {
-    ((endTime - System.currentTimeMillis())/1000.0).toInt
-  }
+  def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
+
+  def percentageDone():Int = 100 - ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt
+
+  def remainingMilliseconds():Long = endTime - System.currentTimeMillis()
 
   def randomRobots(board:Board): List[Robot] = {
     var robots = List[Robot]()
@@ -74,16 +81,11 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     resultW && resultH
   }
 
-  def getRandomPosition(maxValue:Int) = {
-    Random.nextInt(maxValue)
-  }
+  def getRandomPosition(maxValue:Int) = Random.nextInt(maxValue)
 }
 
 object Game {
-  val DEFAULT_GAME_DURATION = 30;
+  val DEFAULT_GAME_DURATION = 120
 
-  def randomGame():Game = {
-    new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION);
-  }
-
+  def randomGame():Game = new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION)
 }

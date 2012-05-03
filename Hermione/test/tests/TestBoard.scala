@@ -11,7 +11,7 @@ class TestBoard extends Specification {
     {
 
       var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "john")
-      val result = controllers.Application.newGame(0).apply(req)
+      val result = controllers.Application.newGame.apply(req)
 
       status(result) must equalTo(OK)
       contentType(result) must beSome("text/html")
@@ -22,7 +22,7 @@ class TestBoard extends Specification {
 
 
   "redirect to login page if not logged on" in {
-    val result = controllers.Application.newGame(0).apply(FakeRequest())
+    val result = controllers.Application.newGame.apply(FakeRequest())
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER
