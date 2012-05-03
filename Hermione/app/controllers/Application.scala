@@ -42,7 +42,7 @@ object Application extends Controller {
         else {
           // find latest game for room with that Id
           initializeGameIfNecessary()
-          SeeOther(routes.Application.getGame(roomId, game.uuid).absoluteURL())
+          Redirect(routes.Application.getGame(roomId, game.uuid))
         }
     }
   }

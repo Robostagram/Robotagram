@@ -7,22 +7,20 @@ import play.api.test.Helpers._
 import play.api.mvc.{Session, Cookies}
 
 class TestBoard extends Specification {
-  "respond to the board Action if logged in" in running(FakeApplication()) {
+  "redirect to current game" in running(FakeApplication()) {
     {
 
       var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "john")
-      val result = controllers.Application.newGame(0).apply(req)
+      val result = controllers.Application.currentGame(0).apply(req)
 
-      status(result) must equalTo(OK)
-      contentType(result) must beSome("text/html")
-      charset(result) must beSome("utf-8")
-      contentAsString(result) must contain("<table id=\"boardGame\">")
+      status(result) mustEqual SEE_OTHER
+      header("Location", result).get must startWith("/rooms/0/games/")
     }
   }
 
 
   "redirect to login page if not logged on" in {
-    val result = controllers.Application.newGame(0).apply(FakeRequest())
+    val result = controllers.Application.currentGame(0).apply(FakeRequest())
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER
