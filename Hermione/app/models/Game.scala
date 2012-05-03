@@ -36,6 +36,10 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
      ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt;
   }
 
+  def secondsLeft(): Int = {
+    ((endTime - System.currentTimeMillis())/1000.0).toInt
+  }
+
   def randomRobots(board:Board): List[Robot] = {
     var robots = List[Robot]()
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];

@@ -4,9 +4,10 @@ import play.api.mvc._
 import models._
 import concurrent.Lock
 import play.api.libs.iteratee.{Iteratee, Enumerator}
-import play.api.libs.json.{Json, JsValue}
 import controllers.Authentication.Secured
 import play.api.data.Form
+import play.api.libs.json.Json.toJson
+import play.api.libs.json.JsValue
 
 object Application extends Controller {
   // sooner or later, handle games in several rooms ... so far, just use the default room
@@ -110,12 +111,27 @@ object Application extends Controller {
   }
 
 
-  //
-  // GET /rooms/n/games/xx-xx-x-x-x-xxx/progress
-  //
-  def progress(roomId: Int, gameId: String) = Action {
-    // TODO: handle room and game Id
-    Ok("" + game.percentageDone());
+  def status(roomId: Int, gameId: String) = Action {
+    if (game == null) {
+      Gone("Game is done or unknown. Score not submitted");
+    }
+    else {
+      var state = "playing"
+      if (game.isDone) {
+        state = "finished"
+      };
+      Ok(toJson(Map(
+            "game" -> toJson(
+              Map(
+                "duration" -> toJson(game.durationInSeconds),
+                "timeLeft" -> toJson(game.secondsLeft),
+                "percentageDone" -> toJson(game.percentageDone()),
+                "players" -> toJson(game.players.count(p => true)),
+                "status" -> toJson(state)
+              )
+            )
+      )))
+    }
   }
 
   /////////// Web sockets /////////////////

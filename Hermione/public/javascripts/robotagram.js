@@ -262,9 +262,9 @@ function doPollScore() {
 
 function doPollTimer() {
     $.ajax({
-            url:document.URL + '/progress',
+            url:document.URL + '/status',
             success:function(data){
-                $('#progressBar').css('width',data+'%');
+                $('#progressBar').css('width',data.game.percentageDone+'%');
                 if(data<=0){
                     timerEnd();
                 }else{
