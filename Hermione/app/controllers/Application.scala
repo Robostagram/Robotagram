@@ -112,8 +112,8 @@ object Application extends Controller {
 
 
   def status(roomId: Int, gameId: String) = Action {
-    if (game == null) {
-      Gone("Game is done or unknown. Score not submitted");
+    if (game == null || gameId != game.uuid) {
+      Gone("Game is not there anymore");
     }
     else {
       var state = "playing"
