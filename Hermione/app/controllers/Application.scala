@@ -6,6 +6,7 @@ import concurrent.Lock
 import play.api.libs.iteratee.{Iteratee, Enumerator}
 import play.api.libs.json.{Json, JsValue}
 import controllers.Authentication.Secured
+import play.api.data.Form
 
 object Application extends Controller {
   // sooner or later, handle games in several rooms ... so far, just use the default room
@@ -13,7 +14,23 @@ object Application extends Controller {
   val lock: Lock = new Lock();
 
 
+  private def initializeGameIfNecessary() {
+    lock.acquire();
+    try {
+      // get game from Id or load random new one ?
+      if (game == null || game.isDone) {
+        game = Game.randomGame()
+      }
+    } catch {
+      case e => InternalServerError("WTF ? " + e);
+    } finally {
+      lock.release();
+    };
+  }
+
+  //
   // GET /rooms/n/games/current
+  //
   def currentGame(roomId: Int) = Secured.Authenticated {
     Action {
       implicit request =>
@@ -23,12 +40,16 @@ object Application extends Controller {
         }
         else {
           // find latest game for room with that Id
-          Redirect(routes.Application.getGame(roomId, game.uuid))
+          initializeGameIfNecessary()
+          SeeOther(routes.Application.getGame(roomId, game.uuid).absoluteURL())
         }
     }
   }
 
+
+  //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
+  //
   def getGame(roomId: Int, gameId: String) = Secured.Authenticated {
     Action {
       implicit request =>
@@ -39,72 +60,61 @@ object Application extends Controller {
         else {
 
           val user = User.fromRequest(request)
-          lock.acquire();
-          try {
-            // get game from Id or load random new one ?
-            if (game == null || game.isDone) {
-              game = Game.randomGame()
-            }
-          } catch {
-            case e => InternalServerError("WTF ? " + e);
-          } finally {
-            lock.release();
-          };
+          initializeGameIfNecessary()
           if (gameId != game.uuid) {
             // game is no longer being played
             // should not be a 200, but something else, probably a 30X (redirection )
-            Ok(views.html.gameFinished(gameId, roomId, user))
+            Ok(views.html.gameFinished(roomId, gameId, user))
           } else {
 
             val player: Player = game.withPlayer(user.nickname)
             player.scored(0);
-            Ok(views.html.game(game, player, user))
+            Ok(views.html.game(roomId, game, player, user))
           }
         }
     }
   }
 
-  def newGame(score: Int = 0) = Secured.Authenticated {
+
+  // post my own score
+  // POST /rooms/n/games/xx-xxx-xx/score
+  //
+  // the score is posted - need to process the request posted info
+  def submitScore(roomId: Int, gameId: String) = Secured.Authenticated {
     Action {
       implicit request =>
         val user = User.fromRequest(request)
-        lock.acquire();
-        try {
-          if (game == null || game.isDone) {
-            game = Game.randomGame()
+        Form("score" -> play.api.data.Forms.number).bindFromRequest.fold(
+          noScore => BadRequest("Missing a positive  score ...."),
+          submittedScore => {
+            if (game != null && !game.isDone && game.uuid == gameId) {
+              val player: Player = game.withPlayer(user.nickname)
+              player.scored(submittedScore);
+              Accepted("Score updated : " + submittedScore);
+            }
+            else {
+              Gone("Game is done or unknown. Score not submitted");
+            }
           }
-        } catch {
-          case e => InternalServerError("WTF ? " + e);
-        } finally {
-          lock.release();
-        };
-        val player: Player = game.withPlayer(user.nickname)
-        player.scored(score);
-        Ok(views.html.game(game, player, user))
+        )
     }
   }
 
-  def reloadBoard = Action {
-    lock.acquire();
-    try {
-      if (game == null) {
-        game = Game.randomGame()
-      } else if (game.isDone) {
-        Ok("Game is done, please <a href=\"/\">start a new one</a>.")
-      }
-    } catch {
-      case e => InternalServerError("WTF ? " + e);
-    } finally {
-      lock.release();
-    };
-    Ok(views.html.renderBoard(game))
-  }
 
+  //
+  // GET /rooms/n/games/xx-xx-x-x-x-xxx/scores
+  //
   def scores(roomId: Int, gameId: String) = Action {
+    // TODO: handle room and game Id
     Ok(views.html.scores(game));
   }
 
+
+  //
+  // GET /rooms/n/games/xx-xx-x-x-x-xxx/progress
+  //
   def progress(roomId: Int, gameId: String) = Action {
+    // TODO: handle room and game Id
     Ok("" + game.percentageDone());
   }
 

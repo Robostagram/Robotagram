@@ -1,8 +1,8 @@
-@(requestedGame: String, requestedRoom: Int , user: User)(implicit flash: Flash)
+@(requestedRoom: Int , requestedGame: String, user: User)(implicit flash: Flash)
 
 @main("This game is over", user)(null){
 
-    This game @requestedGame is over ...
-    Join this one ! : <a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame(requestedRoom)">Join</a>
+    <p>The game @requestedGame is over ...</p>
+    <p>Join this one ! : <a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame(requestedRoom)">Join</a></p>
 
 }

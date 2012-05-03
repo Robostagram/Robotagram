@@ -67,14 +67,6 @@ function robotClickHandler() {
     $(this).toggleClass("selected");
 }
 
-function retryClick(event) {
-    $('#container').load("/newGame/" + moves, function () {
-        //reattach event because we load our listeners on previous dom objects
-        initListeners();
-        $("#moves").val(0);
-        moves = 0;
-    });
-}
 
 function timerEnd(){
     $("#endOfGameModal").modal('show');
@@ -156,6 +148,20 @@ function moveRobot(direction) {
             moves++;
             $("#currentScore").text(moves + "");
             if (hasReachedObjective($robot, destinationCell)) {
+                // submit the score !
+                $.ajax({
+                    url: document.URL + '/score',
+                    type: 'POST',
+                    data: {score: moves},
+                    async: false,
+                    success:function(data){
+                        //alert("submitted");
+                        $("#winModal").modal('show');
+                    },
+                    error : function(){
+                        alert("not submitted");
+                    }
+                });
                 $("#winModal").modal('show');
             }
         }
@@ -212,7 +218,6 @@ function nextCell(td, direction) {
 function initListeners() {
     $(window).keypress(keypressHandler);
     $("td .robot").click(robotClickHandler);
-    $("#retry").click(retryClick);
 
     //on triche, et les touches affichées marchent comme un clavier
     $("#key-up").click(function () {
@@ -246,7 +251,7 @@ function doPollScore() {
     var scoreUrl = document.URL + '/scores';
     scores.load(scoreUrl, function (response, status, xhr) {
         if(status == "error"){
-            alert("Error while retrieving the scores : " + response);
+            alert("Error while retrieving the scores : status = " + status);
         }
         else{
             setTimeout(doPollScore, 5000);

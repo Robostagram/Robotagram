@@ -1,4 +1,4 @@
-@(game: Game, player: Player, user: User)(implicit flash: Flash)
+@(roomId : Int,  game: Game, player: Player, user: User)(implicit flash: Flash)
 
 @renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
 
@@ -92,7 +92,7 @@
             <img src="http://img.bollywoodsargam.com/albumsbolly/Emma_Watson/Emma_Watson_BollywoodSargam_hot_762997.jpg" alt="Wouhou!" height="50%" width="50%">
         </div>
         <div class="modal-footer">
-            <a id="retry" class="btn btn-success" data-dismiss="modal" >Play Again !</a>
+            <a id="retry" class="btn btn-success" href="@routes.Application.getGame(roomId, game.uuid)" >Play Again !</a>
         </div>
     </div>
 
@@ -106,8 +106,9 @@
 
         </div>
         <div class="modal-footer">
-            @* "current" is the ursl for the current game in this room *@
-            <a class="btn btn-success" href="current" >Join the next game !</a>
+            <a href="@routes.Home.index" class="btn">Give up</a>
+            @* "current" is the url for the current game in this room *@
+            <a class="btn btn-success" href="@routes.Application.currentGame(roomId)" >Join the next game !</a>
         </div>
     </div>
 </div>
