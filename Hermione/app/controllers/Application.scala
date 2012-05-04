@@ -85,7 +85,7 @@ object Application extends Controller {
     Action {
       implicit request =>
         val user = User.fromRequest(request)
-        Form("score" -> play.api.data.Forms.number).bindFromRequest.fold(
+        Form("score" -> play.api.data.Forms.number(min = 0)).bindFromRequest.fold(
           noScore => BadRequest("Missing a positive  score ...."),
           submittedScore => {
             if (game != null && !game.isDone && game.uuid == gameId) {
@@ -106,12 +106,14 @@ object Application extends Controller {
   // GET /rooms/n/games/xx-xx-x-x-x-xxx/scores
   //
   def scores(roomId: Int, gameId: String) = Action {
+    // TODO : disable browser caching on this method
     // TODO: handle room and game Id
     Ok(views.html.scores(game));
   }
 
 
   def status(roomId: Int, gameId: String) = Action {
+    // TODO : disable browser caching on this method
     if (game == null || gameId != game.uuid) {
       Gone("Game is not there anymore");
     }

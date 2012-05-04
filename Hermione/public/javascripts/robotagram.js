@@ -1,5 +1,5 @@
 function keypressHandler(event) {
-    if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
+    if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
         moveRobot(event.which);
     }
     if (event.which === SELECT_NEXT) {
@@ -89,7 +89,7 @@ var moves = 0;
 
 
 function moveRobot(direction) {
-    var $robot = $(".selected"),
+    var $robot = $(".robot.selected"),
         originCell,
         destinationCell = null,
         previousDestination,
