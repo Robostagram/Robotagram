@@ -22,7 +22,7 @@
         </li>
         <li class="divider-vertical"></li>
         <li>
-            <a id="timeLeft">23:00</a>
+            <a id="timeLeft">@game.secondsLeft</a>
         </li>
         <li id="timeProgress">
             <a>@timer(game)</a>
@@ -32,7 +32,7 @@
 }
 
 @main("Robotagram Rocks !!!", user)(headerContent){
-
+<input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
         @renderBoard(game)

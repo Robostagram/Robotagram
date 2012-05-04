@@ -242,8 +242,35 @@ function initListeners() {
 
     $('#headerGoal span').popover({placement:'bottom', title:"Bring the robot here !"});
 
+    doRefreshLoop();
+
     doPollScore();
     doPollTimer();
+}
+
+// store the actual time left (as double, with detaisl and stuff )
+// resync'd with server on a regular basis (pollTimer)
+var previousTimeLeft = 0;
+var REFRESH_LOOP_REPEAT_TIME = 300;
+
+// the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
+function doRefreshLoop(){
+
+    // decrease the "time left" stuff ...
+    var $timeLeft = $("a#timeLeft");
+    var timeLeft = previousTimeLeft;
+    timeLeft = timeLeft - (REFRESH_LOOP_REPEAT_TIME / 1000);
+    previousTimeLeft = timeLeft;
+
+    // and compute percentage left
+    var duration = parseInt($("#gameDuration").val());
+    var percentLeft = 100 * ( timeLeft / duration);
+    //console.log(percentLeft);
+    $('#progressBar').css('width', percentLeft + '%');
+    $timeLeft.text(parseInt(timeLeft));
+
+    // to it again
+    setTimeout(doRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
 }
 
 function doPollScore() {
@@ -254,7 +281,7 @@ function doPollScore() {
             alert("Error while retrieving the scores : status = " + status);
         }
         else {
-            setTimeout(doPollScore, 5000);
+            setTimeout(doPollScore, 6000);
         }
 
     });
@@ -264,12 +291,13 @@ function doPollTimer() {
     $.ajax({
             url:document.URL + '/status',
             success:function (data) {
-                $('#progressBar').css('width', data.game.percentageDone + '%');
+                // resync the time left
+                previousTimeLeft = data.game.timeLeft;
                 if (data.game.percentageDone <= 0) {
                     $("#endOfGameModal").modal('show');
                 }
                 else {
-                    setTimeout(doPollTimer, 1000);
+                    setTimeout(doPollTimer, 4000);
                 }
             },
             statusCode:{
