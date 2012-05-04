@@ -11,16 +11,16 @@ class TestBoard extends Specification {
     {
 
       var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "john")
-      val result = controllers.Application.currentGame(0).apply(req)
+      val result = controllers.Application.currentGame("default").apply(req)
 
       status(result) mustEqual SEE_OTHER
-      header("Location", result).get must startWith("/rooms/0/games/")
+      header("Location", result).get must startWith("/rooms/default/games/")
     }
   }
 
 
   "redirect to login page if not logged on" in {
-    val result = controllers.Application.currentGame(0).apply(FakeRequest())
+    val result = controllers.Application.currentGame("default").apply(FakeRequest())
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER

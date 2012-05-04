@@ -32,12 +32,12 @@ object Application extends Controller {
   //
   // GET /rooms/n/games/current
   //
-  def currentGame(roomId: Int) = Secured.Authenticated {
+  def currentGame(roomId: String) = Secured.Authenticated {
     Action {
       implicit request =>
         val user = User.fromRequest(request)
-        if (roomId != 0) {
-          NotFound("404 de la mort : Only the room 0 exists so far")
+        if (roomId != "default") {
+          NotFound("404 de la mort : room '" + roomId + "' does not exist. Only the room 'default' exists so far")
         }
         else {
           // find latest game for room with that Id
@@ -51,12 +51,12 @@ object Application extends Controller {
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
   //
-  def getGame(roomId: Int, gameId: String) = Secured.Authenticated {
+  def getGame(roomId: String, gameId: String) = Secured.Authenticated {
     Action {
       implicit request =>
 
-        if (roomId != 0) {
-          NotFound("404 de la mort : Only the room 0 exists so far")
+        if (roomId != "default") {
+          NotFound("404 de la mort : room '" + roomId + "' does not exist. Only the room 'default' exists so far")
         }
         else {
 
@@ -81,7 +81,7 @@ object Application extends Controller {
   // POST /rooms/n/games/xx-xxx-xx/score
   //
   // the score is posted - need to process the request posted info
-  def submitScore(roomId: Int, gameId: String) = Secured.Authenticated {
+  def submitScore(roomId: String, gameId: String) = Secured.Authenticated {
     Action {
       implicit request =>
         val user = User.fromRequest(request)
@@ -105,14 +105,16 @@ object Application extends Controller {
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx/scores
   //
-  def scores(roomId: Int, gameId: String) = Action {
+  def scores(roomId: String, gameId: String) = Action {
     // TODO : disable browser caching on this method
     // TODO: handle room and game Id
     Ok(views.html.scores(game));
   }
 
-
-  def status(roomId: Int, gameId: String) = Action {
+  //
+  // GET /rooms/n/games/xx-xx-x-x-x-xxx/status
+  //
+  def status(roomId: String, gameId: String) = Action {
     // TODO : disable browser caching on this method
     if (game == null || gameId != game.uuid) {
       Gone("Game is not there anymore");
