@@ -114,13 +114,14 @@ function moveRobot(direction) {
 
         // destination finale du robot
         destinationCell = nextDestination;
-        if (originCell !== destinationCell) {
+        if (originCell !== destinationCell) { // = robot can move in that direction
 
             // current absolute position ?
             var originalPos = originCell.offset();
             var origTop = originalPos.top;
             var origLeft = originalPos.left;
 
+            // destination absolute position
             var finalPos = destinationCell.offset();
             var finalTop = finalPos.top;
             var finalLeft = finalPos.left;
@@ -173,10 +174,10 @@ function hasRobot(td) {
 }
 
 function hasReachedObjective(robot, td) {
-    var robotClass = $(robot).attr("class");
-    var robotColor = robotClass.substr(6); //remove "robot "
-    robotColor = robotColor.substr(0, robotColor.indexOf(" ")); // remove " selected"
-    return $(td).find("#objective").length > 0 && $("#objective").hasClass(robotColor);
+    // special id is put on the robot on server side
+    var isRobotForObjective = $(robot).is("#robotForObjective");
+
+    return isRobotForObjective && $(td).find("#objective").length > 0;
 }
 
 function nextCell(td, direction) {
@@ -250,12 +251,15 @@ function initListeners() {
 
 // store the actual time left (as double, with detaisl and stuff )
 // resync'd with server on a regular basis (pollTimer)
-var previousTimeLeft = 0;
+var previousTimeLeft = -999;
 var REFRESH_LOOP_REPEAT_TIME = 300;
 
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doRefreshLoop(){
-
+    var duration = parseInt($("#gameDuration").val(), 10);
+    if(previousTimeLeft === -999){
+        previousTimeLeft = duration;
+    }
     // decrease the "time left" stuff ...
     var $timeLeft = $("a#timeLeft");
     var timeLeft = previousTimeLeft;
@@ -263,14 +267,41 @@ function doRefreshLoop(){
     previousTimeLeft = timeLeft;
 
     // and compute percentage left
-    var duration = parseInt($("#gameDuration").val());
     var percentLeft = 100 * ( timeLeft / duration);
     //console.log(percentLeft);
-    $('#progressBar').css('width', percentLeft + '%');
-    $timeLeft.text(parseInt(timeLeft));
+    var $progressBarContainer = $("#progressBarContainer");
 
-    // to it again
-    setTimeout(doRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
+    // remove color classes from container, if any
+    $progressBarContainer.removeClass("progress-info")
+        .removeClass("progress-success")
+        .removeClass("progress-warning")
+        .removeClass("progress-danger");
+
+    if(percentLeft < 10) {
+        $progressBarContainer.addClass("progress-danger"); // red
+    }
+    else if(percentLeft < 25){
+        $progressBarContainer.addClass("progress-warning"); // yellow
+    }
+    else if(percentLeft < 50){
+        $progressBarContainer.addClass("progress-info"); //blue
+    }
+    else{
+        $progressBarContainer.addClass("progress-success"); //green
+    }
+
+    var $progressBar = $('#progressBar') ;
+    $progressBar.css('width', percentLeft + '%');
+    $timeLeft.text(Math.ceil(timeLeft));
+
+    if(timeLeft <= 0){
+        notifyEndOfGame();
+    }
+    else
+    {
+        // to it again
+        setTimeout(doRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
+    }
 }
 
 function doPollScore() {
@@ -287,6 +318,16 @@ function doPollScore() {
     });
 }
 
+var endOfGameNotified = false;
+function notifyEndOfGame(){
+    console.log("end of game");
+    if(!endOfGameNotified){
+        endOfGameNotified = true;
+        $("#endOfGameModal").modal('show');
+    }
+
+}
+
 function doPollTimer() {
     $.ajax({
             url:document.URL + '/status',
@@ -294,7 +335,7 @@ function doPollTimer() {
                 // resync the time left
                 previousTimeLeft = data.game.timeLeft;
                 if (data.game.percentageDone <= 0) {
-                    $("#endOfGameModal").modal('show');
+                    notifyEndOfGame();
                 }
                 else {
                     setTimeout(doPollTimer, 4000);
@@ -303,7 +344,7 @@ function doPollTimer() {
             statusCode:{
                 410:function () {
                     alert("The game you asked is finished .... ");
-                    $("#endOfGameModal").modal('show').find("a#joinNextGame").focus();
+                    notifyEndOfGame();
                 }
             }
         }

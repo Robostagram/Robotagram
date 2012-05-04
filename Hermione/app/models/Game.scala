@@ -80,7 +80,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 }
 
 object Game {
-  val DEFAULT_GAME_DURATION = 180;
+  val DEFAULT_GAME_DURATION = 10;
 
   def randomGame():Game = {
     new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION);
