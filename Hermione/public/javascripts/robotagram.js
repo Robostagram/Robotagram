@@ -1,3 +1,4 @@
+
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT && $(".selected").hasClass('robot')) {
         moveRobot(event.which);
@@ -11,6 +12,7 @@ function keypressHandler(event) {
 }
 
 var ROBOT_COLORS = ['blue', 'red', 'yellow', 'green'];
+
 
 function getIndexOfCurrentlySelectedRobot() {
     var $currentSelected = $(".robot.selected");
@@ -65,7 +67,7 @@ function robotClickHandler() {
 }
 
 function timerEnd() {
-    $("#endOfGameModal").modal('show');
+    $("#endOfGameModal").modal('show').find("a#joinNextGame").focus();;
 }
 
 // direction:
@@ -138,7 +140,7 @@ function moveRobot(direction) {
             if (hasReachedObjective($robot, destinationCell)) {
                 sendScore();
                 window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in game.scala.html)
-                $("#winModal").modal('show');
+                $("#winModal").modal('show').find("a#retry").focus(); //so that enter does what we want;
             }
         }
     }
@@ -210,7 +212,7 @@ function initListeners() {
     });
 
     // robot from header selects the robot on the board
-    $("a#headerRobot").click(function(e) {
+    $("a#headerRobot").click(function (e) {
         $(".selected").removeClass("selected");
         $("#robotForObjective").addClass("selected");
         e.preventDefault();

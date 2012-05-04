@@ -6,7 +6,7 @@ import models.User
 
 object Home extends Controller {
 
-  def index = Action{
+  def index = Action {
     implicit request => {
       val user = User.fromRequest(request)
       Ok(views.html.index(user))
