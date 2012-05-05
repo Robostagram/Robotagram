@@ -1,6 +1,5 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
 import play.api.mvc.Controller
 import play.api.data._
@@ -35,9 +34,11 @@ object Authentication extends Controller {
   }
 
   def logout = Action {
-    Redirect(routes.Home.index()).withNewSession.flashing(
-      "success" -> "You have been logged out"
-    )
+    implicit request =>
+      Application.playerDisconnected(User.fromRequest.nickname);
+      Redirect(routes.Home.index()).withNewSession.flashing(
+        "success" -> "You have been logged out"
+      )
   }
 
   object Secured {

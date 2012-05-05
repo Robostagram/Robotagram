@@ -3,11 +3,11 @@ package controllers
 import play.api.mvc._
 import models._
 import concurrent.Lock
-import play.api.libs.iteratee.{Iteratee, Enumerator}
+import play.api.libs.iteratee.Iteratee
 import controllers.Authentication.Secured
-import play.api.data.Form
 import play.api.libs.json.Json.toJson
-import play.api.libs.json.JsValue
+import play.api.data.Form
+import play.api.libs.json.{JsString, JsUndefined, Json, JsValue}
 
 object Application extends Controller {
   // sooner or later, handle games in several rooms ... so far, just use the default room
@@ -15,12 +15,16 @@ object Application extends Controller {
   val lock: Lock = new Lock();
 
 
-  private def initializeGameIfNecessary() {
+  private def initializeGameIfNecessary(playerName:String) {
     lock.acquire();
     try {
-      // get game from Id or load random new one ?
-      if (game == null || game.isDone) {
+      var createNewGame: Boolean = game == null || game.isDone;
+      if (createNewGame) {
+        if(game != null) game.players.foreach(player => player.channel.close())
         game = Game.randomGame()
+      }
+      if (!createNewGame) {  // if game already existed, notify other users of new user
+        notifySummary(playerName)
       }
     } catch {
       case e => InternalServerError("WTF ? " + e);
@@ -41,7 +45,7 @@ object Application extends Controller {
         }
         else {
           // find latest game for room with that Id
-          initializeGameIfNecessary()
+          initializeGameIfNecessary(user.nickname)
           Redirect(routes.Application.getGame(roomId, game.uuid))
         }
     }
@@ -54,14 +58,12 @@ object Application extends Controller {
   def getGame(roomId: String, gameId: String) = Secured.Authenticated {
     Action {
       implicit request =>
-
         if (roomId != "default") {
           NotFound("404 de la mort : room '" + roomId + "' does not exist. Only the room 'default' exists so far")
         }
         else {
-
           val user = User.fromRequest(request)
-          initializeGameIfNecessary()
+          initializeGameIfNecessary(user.nickname)
           if (gameId != game.uuid) {
             // game is no longer being played
             // should not be a 200, but something else, probably a 30X (redirection )
@@ -69,46 +71,10 @@ object Application extends Controller {
           } else {
 
             val player: Player = game.withPlayer(user.nickname)
-            player.scored(0);
             Ok(views.html.game(roomId, game, player, user))
           }
         }
     }
-  }
-
-
-  // post my own score
-  // POST /rooms/n/games/xx-xxx-xx/score
-  //
-  // the score is posted - need to process the request posted info
-  def submitScore(roomId: String, gameId: String) = Secured.Authenticated {
-    Action {
-      implicit request =>
-        val user = User.fromRequest(request)
-        Form("score" -> play.api.data.Forms.number(min = 0)).bindFromRequest.fold(
-          noScore => BadRequest("Missing a positive  score ...."),
-          submittedScore => {
-            if (game != null && !game.isDone && game.uuid == gameId) {
-              val player: Player = game.withPlayer(user.nickname)
-              player.scored(submittedScore);
-              Accepted("Score updated : " + submittedScore);
-            }
-            else {
-              Gone("Game is done or unknown. Score not submitted");
-            }
-          }
-        )
-    }
-  }
-
-
-  //
-  // GET /rooms/n/games/xx-xx-x-x-x-xxx/scores
-  //
-  def scores(roomId: String, gameId: String) = Action {
-    // TODO : disable browser caching on this method
-    // TODO: handle room and game Id
-    Ok(views.html.scores(game));
   }
 
   //
@@ -140,37 +106,55 @@ object Application extends Controller {
 
   /////////// Web sockets /////////////////
 
-  val in = Iteratee.foreach[JsValue](summaryReceived)
+  val in = Iteratee.foreach[String](messageReceived)
 
-  def connectPlayer(player: Player) = WebSocket.using[JsValue] {
+  def connectPlayer(player: String) = WebSocket.using[String] {
     implicit request =>
-    // Send a single 'Hello!' message
-      val out = Enumerator.imperative[JsValue]()
-      game.withPlayer(player.name).channel = out
-      (in, out)
+      (in, game.withPlayer(player).channel)
   }
 
-  def summaryReceived(jsonScore: JsValue) {
-    lock.acquire();
-    try {
-      if (game != null) {
-        game.withPlayer((jsonScore \ "player").as[String]).scored((jsonScore \ "score").as[Int]);
-      }
-    } finally {
-      lock.release();
-    };
+  def playerDisconnected(player: String) {
+    val removedPlayer: Player = game.withoutPlayer(player)
+    removedPlayer.channel.close()
     notifySummary()
   }
 
-  def notifySummary() {
-    lock.acquire();
-    try {
-      if (game != null) {
-        val summary: JsValue = GameSummary.fromGame(game).toJson;
-        game.players.foreach(player => player.sendJSon(summary))
+  def messageReceived(message: String) {
+    val messageJson: JsValue = Json.parse(message)
+
+    val jsonScore = messageJson \ "score";
+    var matches:Boolean = (jsonScore:Any) match {
+      case JsUndefined(error) => false
+      case _ => true;
+    }
+    if (matches) {
+      val player: String = (jsonScore \ "player").as[String]
+      val score = (jsonScore \ "score").as[String].toInt
+      lock.acquire();
+      try {
+        game.withPlayer(player).scored(score);
+        notifySummary() // null in order to set also the local leader board
+      } finally {
+        lock.release();
       }
-    } finally {
-      lock.release();
-    };
+    }
+
+    val jsonLeave = messageJson \ "leave";
+    matches = (jsonLeave:Any) match {
+      case JsUndefined(error) => false
+      case _ => true;
+    }
+    if (matches){
+      val player: String = (jsonLeave \ "player").as[String]
+      playerDisconnected(player);
+    }
+  }
+
+  def notifySummary(fromPlayer: String = null) {
+    if (game != null) {
+      val summary: JsValue = GameSummary.fromGame(game).toJson;
+      val message: String = Json.stringify(summary)
+      game.players.filter(player => player.name != fromPlayer).foreach(player => player.sendJSon(message))
+    }
   }
 }
