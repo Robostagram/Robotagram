@@ -142,27 +142,8 @@ function moveRobot(direction) {
             if (hasReachedObjective($robot, destinationCell)) {
 
                 sendScore();
-                window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in game.scala.html)
-                $("#winModal").modal('show').find("a#retry").focus(); //so that enter does what we want;
-                /*// submit the score !
-                $.ajax({
-                    url:document.URL + '/score',
-                    type:'POST',
-                    data:{score:moves},
-                    async:false,
-                    success:function (data) {
-                        //alert("submitted");
-                        $("#winModal").modal('show').find("a#retry").focus(); //so that enter does what we want
-                    },
-                    error:function () {
-                        alert("not submitted");
-                    },
-                    statusCode:{
-                        410:function () {
-                            alert("to late ! - the game is finished");
-                        }
-                    }
-                });*/
+                window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
+                $("#winModal").modal('show');
             }
         }
     }
