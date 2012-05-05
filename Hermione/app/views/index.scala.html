@@ -1,6 +1,6 @@
 @(user: User)(implicit flash: Flash)
 
-@main("Home", user)(null) {
+@main("Robotagram", user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
     <div class="span6" id="boardZone">
         <h2>Welcome</h2>
@@ -25,7 +25,7 @@
                     <tr>
                         <th>default</th>
                         <td>9999</td>
-                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame("default")">Join</a></td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame('default')">Join</a></td>
                     </tr>
                 </tbody>
             </table>
