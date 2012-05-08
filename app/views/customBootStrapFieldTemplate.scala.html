@@ -7,9 +7,7 @@
 @messageToDisplay() = {
                         @if(elements.hasErrors){
                             @elements.errors.mkString(", ")
-                        }else{
-                            @elements.infos.mkString(", ")
-                        }
+                        }else{}
                        }
 <div class="control-group @if(elements.hasErrors) {error}">
     <label class="control-label" for="@elements.id">@elements.label</label>

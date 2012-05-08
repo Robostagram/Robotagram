@@ -17,12 +17,12 @@ object Authentication extends Controller {
   def authenticate(redirectTo: Option[String] = None) = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(
-        failedForm => Ok(views.html.login(failedForm, redirectTo)),       // redisplay the page with posted form to show errors
+        failedPostedForm => Ok(views.html.login(failedPostedForm, redirectTo)),       // redisplay the page with posted form to show errors
         postedNickname => {
           var destinationUrl = ""
           redirectTo match {
             case Some(redirection) => destinationUrl = redirection
-            case _ => destinationUrl = routes.Home.index().absoluteURL()
+            case _ => destinationUrl = routes.Home.index().absoluteURL()  // default to home
           }
           Redirect(destinationUrl)
             .withSession("username" -> postedNickname)
@@ -50,8 +50,7 @@ object Authentication extends Controller {
     // Authentication check: executes the wrapped action only if a username is found in the session
     def Authenticated[A](action: Action[A]): Action[A] = Action(action.parser) {
       implicit request => {
-        val u = User.fromRequest
-        u match {
+        User.fromRequest match {
           case AnonymousUser => Redirect(routes.Authentication.login(Some(request.uri)))
                                     .flashing("info" -> "You must be authentified to access the page you requested." )
           case _ => action(request)
