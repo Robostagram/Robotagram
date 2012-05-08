@@ -116,7 +116,10 @@ object Application extends Controller {
   def playerDisconnected(player: String) {
     if (game != null){
       val removedPlayer: Player = game.withoutPlayer(player)
-      removedPlayer.channel.close()
+      if(removedPlayer != null){
+        // may be disconnected but having never played so far ....
+        removedPlayer.channel.close()
+      }
     }
     notifySummary()
   }
