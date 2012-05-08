@@ -13,7 +13,9 @@ object Authentication extends Controller {
   def authenticate(redirectTo: Option[String] = None) = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(
-        noUserError => Redirect(routes.Home.index()),
+        failedForm => {
+          // redisplay the page with posted form to show errors
+          Ok(views.html.login(failedForm, redirectTo))},
         userFound => {
           redirectTo match {
             case Some(redirection) => Redirect(redirection).withSession("username" -> userFound).flashing(
