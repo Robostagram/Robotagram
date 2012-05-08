@@ -17,14 +17,12 @@ object Authentication extends Controller {
           // redisplay the page with posted form to show errors
           Ok(views.html.login(failedForm, redirectTo))},
         userFound => {
+          var destinationUrl = ""
           redirectTo match {
-            case Some(redirection) => Redirect(redirection).withSession("username" -> userFound).flashing(
-              "success" -> "You are now logged in"
-            )
-            case _ => Redirect(routes.Home.index()).withSession("username" -> userFound).flashing(
-              "success" -> "You are now logged in"
-            )
+            case Some(redirection) => destinationUrl = redirection
+            case _ => destinationUrl = routes.Home.index().absoluteURL()
           }
+          Redirect(destinationUrl).withSession("username" -> userFound).flashing("success" -> "You are now logged in")
         }
       )
   }
