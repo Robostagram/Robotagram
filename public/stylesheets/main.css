@@ -11,6 +11,7 @@ section#content {
     background-color: white;
     height: 100%;
     padding-top: 1em;
+    min-height: 200px;
 }
 
 footer {
