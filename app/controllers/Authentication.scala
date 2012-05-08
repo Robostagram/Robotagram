@@ -5,10 +5,14 @@ import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
 import models.{AnonymousUser, User}
+import play.api.data.validation.Constraints
 
 object Authentication extends Controller {
 
-  val loginForm = Form("nickname" -> nonEmptyText(maxLength = 40)) //TODO : authorize only letters digits and underscores
+  val loginForm = Form("nickname" -> text.verifying(Constraints.nonEmpty)
+                                          .verifying(Constraints.maxLength(40))
+                                          .verifying(Constraints.minLength(4))
+                                          .verifying(Constraints.pattern("""^([A-Za-z]|[0-9]|_)*$""".r, "Letters, numbers and _", "Must contain only non-accentuated letters, numbers or underscores")))
 
   def authenticate(redirectTo: Option[String] = None) = Action {
     implicit request =>
