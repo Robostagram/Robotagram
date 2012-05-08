@@ -6,7 +6,7 @@
 GET     /                           controllers.Home.index
 
 # Authentication (redirectTo not in routes, to use as a querystring param)
-GET     /login                      controllers.Authentication.login(redirectTo: Option[String])
+GET     /login                      controllers.Authentication.login(redirectTo: Option[String] ?= None)
 POST    /login                      controllers.Authentication.authenticate(redirectTo: Option[String])
 GET     /logout                     controllers.Authentication.logout
 POST    /logout                     controllers.Authentication.logout
