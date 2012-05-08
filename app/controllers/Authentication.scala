@@ -49,7 +49,7 @@ object Authentication extends Controller {
       implicit request => {
         val u = User.fromRequest
         u match {
-          case AnonymousUser => Redirect(routes.Authentication.login(Some(request.uri)))
+          case AnonymousUser => Redirect(routes.Authentication.login(Some(request.uri))).flashing("info" -> "You must be authentified to access the page you requested." )
           case _ => action(request)
         }
       }
