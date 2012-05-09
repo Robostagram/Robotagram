@@ -1,0 +1,18 @@
+@(elements: helper.FieldElements)
+
+@*taken from http://stackoverflow.com/questions/10212085/form-validation-and-form-helper *@
+@**************************************************
+* Generate input according twitter bootsrap rules *
+**************************************************@
+@messageToDisplay() = {
+                        @if(elements.hasErrors){
+                            @elements.errors.mkString(", ")
+                        }else{}
+                       }
+<div class="control-group @if(elements.hasErrors) {error}">
+    <label class="control-label" for="@elements.id">@elements.label</label>
+    <div class="controls">
+        @elements.input
+        <span class="help-inline">@messageToDisplay</span>
+    </div>
+</div>

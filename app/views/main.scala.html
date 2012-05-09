@@ -36,10 +36,11 @@
 </header>
 <section id="content">
     <div id="container" class="container">
+        @*Output messages stored in the "flash" (with key "success", "error", "warning" etc ...*@
         @if(!flash.isEmpty) {
             @for((msgKey, msgValue) <- flash.data) {
                 <div class="alert alert-@msgKey" data-dismiss="alert">
-                    <a title="close" class="close">×</a>
+                    <a title="close" class="close">&times;</a>
                     @msgValue
                 </div>
                 }
@@ -55,7 +56,7 @@
 </div>
 <script type="text/javascript">
 
-    // resize the contents of the top bqr so that it always fit the window
+    // resize the contents of the top bar so that it always fit the window
     function resizeTopBarContents(){
         //header : resize the content in the middle to take as much space as possible
         var $headerContainer = $("header").find(".container").first();
