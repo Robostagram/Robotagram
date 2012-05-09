@@ -127,14 +127,15 @@ object Application extends Controller {
   def messageReceived(message: String) {
     val messageJson: JsValue = Json.parse(message)
 
-    val jsonScore = messageJson \ "score";
-    var matches:Boolean = (jsonScore:Any) match {
+    val jsonSolution = messageJson \ "solution";
+    var matches:Boolean = (jsonSolution:Any) match {
       case JsUndefined(error) => false
       case _ => true;
     }
     if (matches) {
-      val player: String = (jsonScore \ "player").as[String]
-      val score = (jsonScore \ "score").as[String].toInt
+      val player: String = (jsonSolution \ "player").as[String]
+      val score = (jsonSolution \ "moves").as[List[String]].length
+	  // TODO: use move list to check validity
       lock.acquire();
       try {
         game.withPlayer(player).scored(score);

@@ -7,18 +7,18 @@
     <tr>
         @for(y:Int <- 0 until game.board.cells(x).length) {
             @if(game.robots(0).posX == x && game.robots(0).posY == y){
-                @cell(game.board.cells(x)(y), game.robots(0), game.goal)
+                @cell(game.board.cells(x)(y), game.robots(0), game.goal, x, y)
             } else {
                 @if(game.robots(1).posX == x && game.robots(1).posY == y){
-                    @cell(game.board.cells(x)(y), game.robots(1), game.goal)
+                    @cell(game.board.cells(x)(y), game.robots(1), game.goal, x, y)
                 } else {
                     @if(game.robots(2).posX == x && game.robots(2).posY == y){
-                        @cell(game.board.cells(x)(y), game.robots(2), game.goal)
+                        @cell(game.board.cells(x)(y), game.robots(2), game.goal, x, y)
                     } else {
                         @if(game.robots(3).posX == x && game.robots(3).posY == y){
-                            @cell(game.board.cells(x)(y), game.robots(3), game.goal)
+                            @cell(game.board.cells(x)(y), game.robots(3), game.goal, x, y)
                         } else {
-                            @cell(game.board.cells(x)(y), null, game.goal)
+                            @cell(game.board.cells(x)(y), null, game.goal, x, y)
                         }
                     }
                 }

@@ -88,7 +88,9 @@ var SELECT_PREVIOUS = 115;
 var SELECT_NEXT = 100;
 
 /* global variable for current number of moves ...*/
-var moves = 0;
+//var moves = 0;
+var moves = new Array();
+var undoIndex = 0;
 
 // move the robot in the requested direction
 //
@@ -139,8 +141,9 @@ function moveRobot(direction) {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
                            });
-            moves++;
-            $("#currentScore").text(moves + "");
+			moves.push(JSON.stringify({"movement":{"robot":getIndexOfCurrentlySelectedRobot(), "origin":{"row":originCell.data("row"), "column":originCell.data("column")}, "direction":direction}}));
+            undoIndex++;
+            $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {
 
                 window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
@@ -347,7 +350,7 @@ function reSyncGameStatusWithServer() {
 
     function sendScore() {
         // how to handle submission of a game that is finished ?
-        var message = JSON.stringify({"score":{"player":$("#userName").text(), "score":$("#currentScore").text()}});
+        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":moves}});
         gameSocket.send(message);
     }
 
