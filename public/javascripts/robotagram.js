@@ -78,6 +78,8 @@ var DIRECTION_LEFT = 106;
 var DIRECTION_DOWN = 107;
 var DIRECTION_RIGHT = 108;
 
+// ghost mode
+var GHOST_MODE = 103;
 
 // switch robot
 // 115 s : previous
@@ -141,7 +143,6 @@ function moveRobot(direction) {
             $("#currentScore").text(moves + "");
             if (hasReachedObjective($robot, destinationCell)) {
 
-                sendScore();
                 window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
                 $("#winModal").modal('show');
             }
