@@ -3,14 +3,12 @@ package helpers
 import views.html.customBootStrapFieldTemplate
 import views.html.helper.FieldConstructor
 
-/**
- * Created with IntelliJ IDEA.
- * User: tibal
- * Date: 08/05/12
- * Time: 08:01
- * To change this template use File | Settings | File Templates.
- */
-
 object CustomHelpers {
-  implicit val myFields = FieldConstructor(customBootStrapFieldTemplate.f)
+
+  // so that you can just add
+  //   @import helpers.CustomHelpers._
+  // in a template and form controls will use that custom template
+  // useful to display form errors/form validation "à la bootstrap"
+  implicit val myFields = FieldConstructor(customBootStrapFieldTemplate.f) // .f is the template function ( params => Html )?
+
 }
