@@ -230,6 +230,41 @@ function initListeners() {
 
     // info if you hover the objective
     $('#headerGoal span').popover({placement:'bottom', title:"Bring the robot here !"});
+    var $robotOfObjective = $("#robotForObjective");
+    $robotOfObjective.tooltip({
+        title:"Bring this robot ...",
+        trigger:'manual',
+        placement:function(){
+            // are we on the first row ? then display the tooltip at the bottom ...
+            var $cell = this.$element.closest("td.cell");
+            if($cell.data('data-row')== 0){
+                return 'bottom';
+            }
+            return 'top';
+        }
+    });
+    var $objective = $('#objective');
+    $objective.tooltip({
+        title:"... to this objective !",
+        trigger:'manual',
+        placement:function(){
+            // are we on the first row ? then display the tooltip at the bottom ...
+            var $cell = this.$element.closest("td.cell");
+            if($cell.data('data-row')== 0){
+                return 'bottom';
+            }
+            return 'top';
+        }
+    });
+
+    // tooltip on robot on page load
+    $robotOfObjective.tooltip('show');
+    // but not for too long
+    setTimeout(function(){$robotOfObjective.tooltip('hide');}, 3000);
+    // tooltip on the objective a bit after the robot
+    setTimeout(function(){$objective.tooltip('show');}, 1500);
+    setTimeout(function(){$objective.tooltip('hide');}, 3000);
+
 
     connectPlayer();
 
