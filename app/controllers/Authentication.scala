@@ -11,7 +11,7 @@ object Authentication extends Controller {
 
   val loginForm = Form("nickname" -> text.verifying(Constraints.nonEmpty)
                                           .verifying(Constraints.maxLength(40))
-                                          .verifying(Constraints.minLength(4))
+                                          .verifying(Constraints.minLength(2))
                                           .verifying(Constraints.pattern("""^([A-Za-z]|[0-9]|_)*$""".r, "Letters, numbers and _", "Must contain only non-accentuated letters, numbers or underscores")))
 
   def authenticate(redirectTo: Option[String] = None) = Action {
