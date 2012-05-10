@@ -17,7 +17,7 @@
     <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/jquery.ba-throttle-debounce.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
-    <script src = "@routes.Assets.at("javascripts/robotagram.js")" type = "text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/robotagram.js")" type = "text/javascript"></script>
 </head>
 <body>
 
@@ -99,10 +99,10 @@
              * all but li#timeProgress have a fixed width, and we want li#timeProgress to take as much space as possible in the containing zone
              */
 
+            $scoreZone = $scoreZone.first();
             containerFullWidth = $scoreZone.width();
             totalWidthOnTheLeft = 0;
             totalWidthOnTheRight = 0;
-            $scoreZone = $scoreZone.first();
 
             $timer = $scoreZone.find("#timeProgress");
 
