@@ -108,7 +108,6 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 	    // TODO log invalid move?
 	    return robots
 	  }
-	  println("moving " + robot.color + " from " + movement.x + ", " + movement.y + " " + movement.direction.toString)
 	  val diffs = movement.direction match {
 	    case Direction.Up => (-1,0)
 	    case Direction.Left => (0,-1)
@@ -149,8 +148,6 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 				  case None => //TODO log?
 				               null
 				}
-				println(robot.posX + " " + robot.posY)
-				println(goalPosition)
 				goalPosition != (-1, -1) &&
 				  robot != null &&
 				  goalPosition._1 == robot.posX &&
