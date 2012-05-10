@@ -92,7 +92,7 @@ class Board(val width: Int, val height: Int) {
 
   def randomizeQuarters(): Board = {
     if (width != height || width % 2 != 0) {
-      //only square boards odd length  can be shuffled by quarter
+      //only square boards odd length can be shuffled by quarter
       this
     } else {
       val half = width / 2: Int

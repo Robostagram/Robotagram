@@ -99,8 +99,8 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   
   // create an updated set of robots matching the specified movement and this game and the previous state of the set
   // detects walls and other robots
-  def move(robotss: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
-    var robot = robotss.getOrElse(movement.color, null)
+  def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
+    var robot = mutatingRobots.getOrElse(movement.color, null)
 	if(robot == null) {
 	  return robots
 	} else {
@@ -118,16 +118,12 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 	  val yDiff = diffs._2
 	  var newX = robot.posX+xDiff
 	  var newY = robot.posY+yDiff
-	  while(!(board.cells(robot.posX)(robot.posY).hasWall(movement.direction) || robotss.values.foldLeft(false)((res, rob) => res || (rob.posX == newX && rob.posY == newY)))) {
+	  while(!(board.cells(robot.posX)(robot.posY).hasWall(movement.direction) || mutatingRobots.values.foldLeft(false)((res, rob) => res || (rob.posX == newX && rob.posY == newY)))) {
 	    robot = new Robot(movement.color, newX, newY)
 		newX = robot.posX+xDiff
 	    newY = robot.posY+yDiff
 	  } 
-	  val newRobots = robotss.updated(movement.color, robot)
-	  for(r <- newRobots.values) {
-	    println(r.color + ": " + r.posX + " " + r.posY)
-	  }
-	  newRobots
+	  mutatingRobots.updated(movement.color, robot)
 	}
   }
 
@@ -135,7 +131,6 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 
   // validate a list of movements in this game, applying them from head to tail
   def validate(solution: List[Movement]): Boolean = {
-    println(solution)
     validate(robots, solution)
   }
   
