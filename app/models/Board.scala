@@ -44,6 +44,23 @@ class Board(val width: Int, val height: Int) {
   def setCell(x: Int, y: Int, cell: Cell) {
     cells(y)(x) = cell
   }
+  
+  // look for a goal by attributs (color and symbol). returns its coordinates or (-1, -1) if none found
+  def findGoalPosition(goal: Goal): (Int, Int) = {
+    if(goal != null) {
+      for (i <- 0 until width) {
+        for (j <- 0 until height) {
+	      val cGoal = cells(i)(j).goal
+	      if(cGoal != null) {
+		    if(cGoal.color == goal.color && cGoal.symbol == goal.symbol) {
+		      return (i, j)
+		    }
+	  	  }
+	    }
+	  }
+	}
+	(-1, -1)
+  }
 
   private def applyChange(x: Int, y: Int, map: Cell => Cell) {
     setCell(x, y, map(getCell(x, y)))

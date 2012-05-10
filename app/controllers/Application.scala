@@ -2,6 +2,8 @@ package controllers
 
 import play.api.mvc._
 import models._
+import models.Direction._
+import models.Color._
 import concurrent.Lock
 import play.api.libs.iteratee.Iteratee
 import controllers.Authentication.Secured
@@ -123,6 +125,33 @@ object Application extends Controller {
     }
     notifySummary()
   }
+  
+  def getString(jsValue: JsValue, id: String): String = {
+    (jsValue \ id).as[String]
+  }
+  
+  def parseMovement(s: String): Movement = {
+    val jsonMovement = Json.parse(s) \ "movement"
+	var matches = jsonMovement match {
+      case JsUndefined(error) => false
+      case _ => true;
+    }
+    if (matches) {
+	  try {
+	    new Movement(Color.withName(getString(jsonMovement, "robot")),
+	               (jsonMovement \ "originRow").as[Int],
+				   (jsonMovement \ "originColumn").as[Int],
+				   Direction.withName(getString(jsonMovement, "direction")))
+      } catch {
+	    case e: Exception =>
+		  //log exception
+		  println(e)
+		  null
+	  }
+    } else {
+	  null
+	}
+  }
 
   def messageReceived(message: String) {
     val messageJson: JsValue = Json.parse(message)
@@ -134,14 +163,16 @@ object Application extends Controller {
     }
     if (matches) {
       val player: String = (jsonSolution \ "player").as[String]
-      val score = (jsonSolution \ "moves").as[List[String]].length
-	  // TODO: use move list to check validity
-      lock.acquire();
-      try {
-        game.withPlayer(player).scored(score);
-        notifySummary() // null in order to set also the local leader board
-      } finally {
-        lock.release();
+      val solution = (jsonSolution \ "moves").as[List[String]]
+      val score = solution.length
+	  if(game.validate(solution.map(parseMovement))) {
+        lock.acquire()
+        try {
+          game.withPlayer(player).scored(solution.length)
+          notifySummary() // null in order to set also the local leader board
+        } finally {
+          lock.release()
+        }
       }
     }
 
