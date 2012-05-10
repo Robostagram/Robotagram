@@ -32,8 +32,7 @@ object gameMockRobotOverlap extends Game(DefaultBoard,Goal.randomGoal(), 120){
 class TestRobotPositionGeneration extends Specification{
 
    "generate random robots list  produce non center postion" in {
-      val robots:List[Robot] =   gameMockMiddlePosition.robots;
-      for(robot <- robots){
+      for(robot <- gameMockMiddlePosition.robots.values){
          if(robot.posX==7){ robot.posY must_!= 7}
          if(robot.posX==7){ robot.posY must_!= 8}
          if(robot.posX==8){ robot.posY must_!= 7}
@@ -43,8 +42,7 @@ class TestRobotPositionGeneration extends Specification{
 
     "produce unique position for each robot" in {
       var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
-      val robots:List[Robot] =   gameMockRobotOverlap.robots
-      for(robot <- robots){
+      for(robot <- gameMockRobotOverlap.robots.values){
         setPos.contains((robot.posX,robot.posY)) must beFalse
         setPos+=((robot.posX,robot.posY))
       }
