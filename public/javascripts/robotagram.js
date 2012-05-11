@@ -9,6 +9,12 @@ function keypressHandler(event) {
     if (event.which === SELECT_PREVIOUS) {
         selectPreviousRobot();
     }
+	if (event.which === REDO) {
+	    redo();
+	}
+	if (event.which === UNDO) {
+	    undo();
+	}
 }
 
 var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
@@ -81,6 +87,11 @@ var DIRECTION_RIGHT = 108;
 var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
 var MAGIC_NUMBER = 105; //substract this to a direction -> its index in DIRECTIONS
 
+// 120: x : undo
+// 99: c : redo
+var UNDO = 120;
+var REDO = 99;
+
 // ghost mode
 var GHOST_MODE = 103;
 
@@ -144,6 +155,10 @@ function moveRobot(direction) {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
                            });
+			// TODO no pop if redoing
+			while(moves.length > undoIndex) {
+			  moves.pop();
+			}
 			moves.push(JSON.stringify({"movement":{"robot":ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()], "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction":DIRECTIONS[direction-MAGIC_NUMBER]}}));
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
@@ -154,6 +169,35 @@ function moveRobot(direction) {
             }
         }
     }
+}
+
+function undo() {
+    if (undoIndex > 0) {
+	    var move = JSON.parse(moves[--undoIndex]).movement;
+		selectByColor(move.robot)
+		var $robot = $(".robot.selected")
+		if ($robot.length == 0) {
+		    // houston, guess what we got...
+			alert("kein robot!");
+		}
+		$("#currentScore").text(undoIndex + "");
+		// TODO find destination cell
+		//$robot.appendTo(destinationCell.children().first());
+	}
+}
+
+function redo() {
+    if(moves.length > undoIndex) {
+	    var move = JSON.parse(moves[undoIndex++]).movement;
+	    selectByColor(move.robot)
+		var $robot = $(".robot.selected")
+		if ($robot.length == 0) {
+		    // houston, guess what we got...
+			alert("kein robot!");
+		}
+		alert("moving robot! " + move.direction);
+		moveRobot(DIRECTIONS.indexOf(move.direction) + MAGIC_NUMBER);
+	}
 }
 
 function hasRobot(td) {
@@ -388,7 +432,7 @@ function reSyncGameStatusWithServer() {
 
     function sendScore() {
         // how to handle submission of a game that is finished ?
-        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":moves}});
+        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":moves.slice(0, undoIndex)}});
         gameSocket.send(message);
     }
 
