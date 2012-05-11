@@ -228,6 +228,16 @@ function initListeners() {
         e.preventDefault();
     });
 
+    // make the objective more obvious when hovering in the header
+    $("a#headerGoal span.symbol").hover(
+        function(){
+            $("div.symbol:not(#objective)").css("opacity", "0.2");
+        },
+        function(){
+            $("div.symbol:not(#objective)").css("opacity", "");
+        }
+    )
+
 
     var $robotOfObjective = $("#robotForObjective");
     //select the robot correspounding to the objective on page load

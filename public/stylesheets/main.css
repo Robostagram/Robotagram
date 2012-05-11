@@ -239,6 +239,14 @@ span.symbol {
     background-image: url("../images/symbols/red_moon.png");
 }
 
+/*div.symbol{
+    opacity: 0.3;
+}*/
+
+div.symbol#objective{
+    opacity: 1;
+}
+
 /*
 
   NAV BAR
