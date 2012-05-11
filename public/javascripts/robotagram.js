@@ -244,7 +244,7 @@ function initListeners() {
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
             var $cell = this.$element.closest("td.cell");
-            if($cell.data('data-row')== 0){
+            if($cell.data('row')== "0"){
                 return 'bottom';
             }
             return 'top';
@@ -257,7 +257,7 @@ function initListeners() {
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
             var $cell = this.$element.closest("td.cell");
-            if($cell.data('data-row')== 0){
+            if($cell.data('row')== "0"){
                 return 'bottom';
             }
             return 'top';
