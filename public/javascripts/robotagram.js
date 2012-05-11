@@ -260,7 +260,7 @@ function initListeners() {
     });
 
     // tooltip on robot on page load
-    $robotOfObjective.tooltip('show').effect('pulsate', { times:3 } , 400);
+    $robotOfObjective.tooltip('show').effect('shake', { times:3, distance:5, direction: 'up' } , 200);
     // but not for too long
     setTimeout(function(){$robotOfObjective.tooltip('hide');}, 3000);
     // tooltip on the objective a bit after the robot
