@@ -231,6 +231,9 @@ function initListeners() {
     // info if you hover the objective
     $('#headerGoal span').popover({placement:'bottom', title:"Bring the robot here !"});
     var $robotOfObjective = $("#robotForObjective");
+    //select the robot correspounding to the objective on page load
+    $robotOfObjective.addClass("selected");
+
     $robotOfObjective.tooltip({
         title:"Bring this robot ...",
         trigger:'manual',
