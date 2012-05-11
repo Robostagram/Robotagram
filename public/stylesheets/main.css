@@ -153,19 +153,19 @@ div.symbol {
 
 }
 
-.robot.blue {
+.robot.Blue {
     background-image: url("../images/symbols/blue_skull.png");
 }
 
-.robot.green {
+.robot.Green {
     background-image: url("../images/symbols/green_skull.png");
 }
 
-.robot.red {
+.robot.Red {
     background-image: url("../images/symbols/red_skull.png");
 }
 
-.robot.yellow {
+.robot.Yellow {
     background-image: url("../images/symbols/yellow_skull.png");
 }
 
@@ -175,67 +175,67 @@ span.symbol {
 
 /* symbols for goals */
 
-.symbol.gear.blue {
+.symbol.Gear.Blue {
     background-image: url("../images/symbols/blue_gear.png");
 }
 
-.symbol.star.blue {
+.symbol.Star.Blue {
     background-image: url("../images/symbols/blue_star.png");
 }
 
-.symbol.planet.blue {
+.symbol.Planet.Blue {
     background-image: url("../images/symbols/blue_planet.png");
 }
 
-.symbol.moon.blue {
+.symbol.Moon.Blue {
     background-image: url("../images/symbols/blue_moon.png");
 }
 
-.symbol.gear.green {
+.symbol.Gear.Green {
     background-image: url("../images/symbols/green_gear.png");
 }
 
-.symbol.star.green {
+.symbol.Star.Green {
     background-image: url("../images/symbols/green_star.png");
 }
 
-.symbol.planet.green {
+.symbol.Planet.Green {
     background-image: url("../images/symbols/green_planet.png");
 }
 
-.symbol.moon.green {
+.symbol.Moon.Green {
     background-image: url("../images/symbols/green_moon.png");
 }
 
-.symbol.gear.yellow {
+.symbol.Gear.Yellow {
     background-image: url("../images/symbols/yellow_gear.png");
 }
 
-.symbol.star.yellow {
+.symbol.Star.Yellow {
     background-image: url("../images/symbols/yellow_star.png");
 }
 
-.symbol.planet.yellow {
+.symbol.Planet.Yellow {
     background-image: url("../images/symbols/yellow_planet.png");
 }
 
-.symbol.moon.yellow {
+.symbol.Moon.Yellow {
     background-image: url("../images/symbols/yellow_moon.png");
 }
 
-.symbol.gear.red {
+.symbol.Gear.Red {
     background-image: url("../images/symbols/red_gear.png");
 }
 
-.symbol.star.red {
+.symbol.Star.Red {
     background-image: url("../images/symbols/red_star.png");
 }
 
-.symbol.planet.red {
+.symbol.Planet.Red {
     background-image: url("../images/symbols/red_planet.png");
 }
 
-.symbol.moon.red {
+.symbol.Moon.Red {
     background-image: url("../images/symbols/red_moon.png");
 }
 

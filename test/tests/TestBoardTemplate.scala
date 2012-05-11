@@ -11,10 +11,10 @@ class TestBoardTemplate extends Specification{
 
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")
-    contentAsString(html) must contain("red")
-    contentAsString(html) must contain("yellow")
-    contentAsString(html) must contain("green")
-    contentAsString(html) must contain("blue")
+    contentAsString(html) must contain("Red")
+    contentAsString(html) must contain("Yellow")
+    contentAsString(html) must contain("Green")
+    contentAsString(html) must contain("Blue")
 
   }
 }

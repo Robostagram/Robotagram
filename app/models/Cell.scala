@@ -1,5 +1,7 @@
 package models
 
+import models.Direction._
+
 class Cell(val wallTop: Boolean, val wallRight: Boolean, val wallBottom: Boolean, val wallLeft: Boolean, val goal: Goal) {
 
   def withRight(yesOrNo: Boolean = true): Cell = {
@@ -24,6 +26,13 @@ class Cell(val wallTop: Boolean, val wallRight: Boolean, val wallBottom: Boolean
 
   def rotate90deg(): Cell = {
     new Cell(wallLeft, wallTop, wallRight, wallBottom, goal)
+  }
+  
+  def hasWall(direction: Direction): Boolean = direction match {
+    case Up => wallTop
+    case Left => wallLeft
+    case Down => wallBottom
+    case Right => wallRight
   }
 }
 

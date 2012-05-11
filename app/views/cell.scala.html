@@ -4,7 +4,7 @@
 
 @renderWalls(cell: Cell) = {@if(cell.wallTop){wall-top} @if(cell.wallLeft){wall-left} @if(cell.wallBottom){wall-bottom} @if(cell.wallRight){wall-right}}
 
-@renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
+@renderColor(color: Color.Value) = {@color.toString}
 
 @renderGoalColor() = {@renderColor(c.goal.color)}
 
@@ -12,7 +12,7 @@
 
 @renderIdForRobotObjective() = @{if(robot.color == objective.color) {"id='robotForObjective'"} else {}}
 
-@renderSymbol() = {@if(c.goal.symbol == Symbol.Star){star}@if(c.goal.symbol == Symbol.Planet){planet}@if(c.goal.symbol == Symbol.Gear){gear}@if(c.goal.symbol == Symbol.Moon){moon}@if(c.goal.symbol == Symbol.Sun){sun}}
+@renderSymbol() = {@c.goal.symbol.toString}
 
 <td class="cell @renderWalls(c)" data-row="@x" data-column="@y" >
 <div class="cell" >

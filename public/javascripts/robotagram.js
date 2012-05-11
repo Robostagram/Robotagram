@@ -11,7 +11,7 @@ function keypressHandler(event) {
     }
 }
 
-var ROBOT_COLORS = ['blue', 'red', 'yellow', 'green'];
+var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
 
 // get the index of the selected robot in the ROBOT_COLORS array
 // returns 0 if no robot is selected
@@ -78,6 +78,9 @@ var DIRECTION_LEFT = 106;
 var DIRECTION_DOWN = 107;
 var DIRECTION_RIGHT = 108;
 
+var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
+var MAGIC_NUMBER = 105; //substract this to a direction -> its index in DIRECTIONS
+
 // ghost mode
 var GHOST_MODE = 103;
 
@@ -141,7 +144,7 @@ function moveRobot(direction) {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
                            });
-			moves.push(JSON.stringify({"movement":{"robot":getIndexOfCurrentlySelectedRobot(), "origin":{"row":originCell.data("row"), "column":originCell.data("column")}, "direction":direction}}));
+			moves.push(JSON.stringify({"movement":{"robot":ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()], "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction":DIRECTIONS[direction-MAGIC_NUMBER]}}));
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {

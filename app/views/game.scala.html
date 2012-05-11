@@ -1,6 +1,6 @@
 @(roomId : String,  game: Game, player: Player, user: User)(implicit flash: Flash)
 
-@renderColor(color: Color.Value) = {@if(color == Color.Red){red}@if(color == Color.Green){green}@if(color == Color.Blue){blue}@if(color == Color.Yellow){yellow}}
+@renderColor(color: Color.Value) = {@color.toString}
 
 @import models._
 
