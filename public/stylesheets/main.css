@@ -41,10 +41,15 @@ div#howToPlay {
 }
 
 div#howToPlay table {
-    margin: 0.2em auto
+    margin: 0.2em
 }
 
 table#keyboard-mapping {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+td#keyboard-mapping {
     vertical-align: middle;
     padding: 5px;
 }
