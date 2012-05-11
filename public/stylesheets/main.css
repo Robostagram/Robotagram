@@ -149,8 +149,8 @@ div.symbol, span.symbol {
     background-repeat: no-repeat;
 }
 
-div.symbol {
-
+div.symbol.transparent {
+    opacity: 0.2;;
 }
 
 .robot.Blue {
@@ -239,14 +239,6 @@ span.symbol {
     background-image: url("../images/symbols/red_moon.png");
 }
 
-/*div.symbol{
-    opacity: 0.3;
-}*/
-
-div.symbol#objective{
-    opacity: 1;
-}
-
 /*
 
   NAV BAR
@@ -287,7 +279,8 @@ a#headerGoal {
 }
 
 a#headerGoal span.symbol {
-    float: right; /*put it out of the float to avoid destorying the nav*/
+    float: right; /*put it out of the float to avoid destroying the nav*/
+    cursor:pointer;
 }
 
 a#headerRobot {

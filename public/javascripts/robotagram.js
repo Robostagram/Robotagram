@@ -229,14 +229,9 @@ function initListeners() {
     });
 
     // make the objective more obvious when hovering in the header
-    $("a#headerGoal span.symbol").hover(
-        function(){
-            $("div.symbol:not(#objective)").css("opacity", "0.2");
-        },
-        function(){
-            $("div.symbol:not(#objective)").css("opacity", "");
-        }
-    )
+    $("a#headerGoal span.symbol").click(function(){
+            $("div.symbol:not(#objective)").toggleClass("transparent");
+    });
 
 
     var $robotOfObjective = $("#robotForObjective");
