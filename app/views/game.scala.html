@@ -46,21 +46,35 @@
         <div id="howToPlay">
             <table>
                 <tr>
-                    <td>
-                        <table id="keyboard-keys" class="hidden-tablet">
+                    <td id="keyboard-mapping">
+                        <table class="hidden-tablet">
                             <tr>
                                 <td></td>
-                                <td><kbd>I</kbd></td>
+                                <td><kbd id="key-up">I</kbd></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>&uarr;</td>
                             </tr>
                             <tr>
-                                <td><kbd>J</kbd></td>
-                                <td><kbd>K</kbd></td>
-                                <td><kbd>L</kbd></td>
+                                <td><kbd id="key-left">J</kbd></td>
+                                <td></td>
+                                <td><kbd id="key-right">L</kbd></td>
+                                <td>=</td>
+                                <td>&larr;</td>
+                                <td></td>
+                                <td>&rarr;</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><kbd id="key-down">K</kbd></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>&darr;</td>
                             </tr>
                         </table>
                     </td>
-                    <td id="key-mapping" class="hidden-tablet">=</td>
                     <td>
                         <table id="arrow-keys">
                             <tr>
@@ -70,19 +84,23 @@
                             </tr>
                             <tr>
                                 <td><kbd id="key-left">&larr;</kbd></td>
-                                <td><kbd id="key-down">&darr;</kbd></td>
+                                <td></td>
                                 <td><kbd id="key-right">&rarr;</kbd></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><kbd id="key-down">&darr;</kbd></td>
+                                <td></td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             </table>
-            <div/>
             <p class="hidden-tablet">
-                <kbd>S</kbd>/<kbd>D</kbd> : select previous/next robot
+                <kbd id="key-prev">S</kbd>/<kbd id="key-next">D</kbd> : select previous/next robot
             </p>
             <p class="hidden-tablet">
-                <kbd>X</kbd>/<kbd>C</kbd> : undo/redo a move
+                <kbd id="key-undo">X</kbd>/<kbd id="key-redo">C</kbd> : undo/redo a move
             </p>
         </div>
 

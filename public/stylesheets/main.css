@@ -44,9 +44,14 @@ div#howToPlay table {
     margin: 0.2em auto
 }
 
-table#key-mapping {
+table#keyboard-mapping {
     vertical-align: middle;
     padding: 5px;
+}
+
+table#arrow-keys {
+    display: none;
+    visibility: hidden;
 }
 
 kbd {

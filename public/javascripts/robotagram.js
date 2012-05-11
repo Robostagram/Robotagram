@@ -283,6 +283,18 @@ function initListeners() {
     $("#key-right").click(function() {
         moveRobot(DIRECTION_RIGHT);
     });
+	$("#key-next").click(function() {
+        selectNextRobot();
+    });
+	$("#key-prev").click(function() {
+        selectPreviousRobot();
+    });
+	$("#key-undo").click(function() {
+        undo();
+    });
+	$("#key-redo").click(function() {
+        redo();
+    });
 
     // robot from header selects the robot on the board
     $("a#headerRobot").click(function (e) {

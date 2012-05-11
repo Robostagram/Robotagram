@@ -15,12 +15,7 @@ Landscape phone to portrait tablet
     font-size: 100px;
 } */
 
-table#keyboard-keys {
-    display: none;
-    visibility: hidden;
-}
-
-td#key-mapping {
+td#keyboard-mapping {
     visibility: hidden;
 }
 
