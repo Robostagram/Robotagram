@@ -159,8 +159,8 @@ div.symbol, span.symbol {
     background-repeat: no-repeat;
 }
 
-div.symbol {
-
+div.symbol.transparent {
+    opacity: 0.2;;
 }
 
 .robot.Blue {
@@ -275,8 +275,10 @@ ul#headerInfo {
 }
 
 a#currentScore {
-    min-width: 15px;
-    text-align: center;
+    min-width: 1.3em;
+    font-size:2em;
+    color:white;
+    text-align: right;
     padding-right: 0px;
     padding-left: 0px;
 }
@@ -289,7 +291,8 @@ a#headerGoal {
 }
 
 a#headerGoal span.symbol {
-    float: right; /*put it out of the float to avoid destorying the nav*/
+    float: right; /*put it out of the float to avoid destroying the nav*/
+    cursor:pointer;
 }
 
 a#headerRobot {

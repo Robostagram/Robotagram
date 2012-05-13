@@ -303,16 +303,23 @@ function initListeners() {
         e.preventDefault();
     });
 
-    // info if you hover the objective
-    $('#headerGoal span').popover({placement:'bottom', title:"Bring the robot here !"});
+    // make the objective more obvious when hovering in the header
+    $("a#headerGoal span.symbol").click(function(){
+            $("div.symbol:not(#objective)").toggleClass("transparent");
+    });
+
+
     var $robotOfObjective = $("#robotForObjective");
+    //select the robot correspounding to the objective on page load
+    $robotOfObjective.addClass("selected");
+
     $robotOfObjective.tooltip({
         title:"Bring this robot ...",
         trigger:'manual',
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
             var $cell = this.$element.closest("td.cell");
-            if($cell.data('data-row')== 0){
+            if($cell.data('row')== "0"){
                 return 'bottom';
             }
             return 'top';
@@ -325,7 +332,7 @@ function initListeners() {
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
             var $cell = this.$element.closest("td.cell");
-            if($cell.data('data-row')== 0){
+            if($cell.data('row')== "0"){
                 return 'bottom';
             }
             return 'top';
@@ -333,11 +340,11 @@ function initListeners() {
     });
 
     // tooltip on robot on page load
-    $robotOfObjective.tooltip('show');
+    $robotOfObjective.tooltip('show').effect('shake', { times:3, distance:5, direction: 'up' } , 200);
     // but not for too long
     setTimeout(function(){$robotOfObjective.tooltip('hide');}, 3000);
     // tooltip on the objective a bit after the robot
-    setTimeout(function(){$objective.tooltip('show');}, 1500);
+    setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
 
 
