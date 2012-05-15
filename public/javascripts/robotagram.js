@@ -131,7 +131,7 @@ function moveRobot(color, direction, keepHistory) {
         return;
     }
 
-    originCell = $robot.parents("td.cell");
+    originCell = $robot.closest("td.cell");
     // seulement si le robot est bien dans une cellule, pas en déplacement
     if (!moving && originCell.length > 0) {
 	    moving = true;
@@ -192,13 +192,13 @@ function undo() {
 	    if (!moving) {
 		    var newIndex = undoIndex - 1;
 			var move = moves[newIndex].movement;
-			selectByColor(move.robot)
-			var $robot = $(".robot.selected")
+            var $robot = $("td .robot." + move.robot);
+            selectByColor(move.robot); // make it visibly selected
 			if ($robot.length == 0) {
 				// houston, guess what we got...
 				alert("kein robot!");
 			}
-			var originCell = $robot.parents("td.cell");
+			var originCell = $robot.closest("td.cell");
 			if (originCell.length > 0) {
 				moving = true;
 				undoIndex = newIndex;
@@ -226,13 +226,13 @@ function redo() {
     if(moves.length > undoIndex) {
 	    if (!moving) {
 		    var move = moves[undoIndex].movement;
-			selectByColor(move.robot)
-			var $robot = $(".robot.selected")
+            var $robot = $("td .robot." + move.robot);
+			selectByColor(move.robot); // make it visibly selected
 			if ($robot.length == 0) {
 				// houston, guess what we got...
 				alert("kein robot!");
 			}
-			var originCell = $robot.parents("td.cell");
+			var originCell = $robot.closest("td.cell");
 			if (originCell.length > 0) {
 				moving = true;
 				$("#currentScore").text(++undoIndex + "");
@@ -272,15 +272,15 @@ function nextCell(td, direction) {
         case DIRECTION_UP:
             if (!td.is(".wall-top")) {
                 var $td = $(td);
-                var col = $td.parents("tr").children().index($td);
-                nextCell = $td.parents("tr").prev().children()[col];
+                var col = $td.closest("tr").children().index($td);
+                nextCell = $td.closest("tr").prev().children()[col];
                 nextCell = $(nextCell);
             }
             break;
         case DIRECTION_DOWN:
             if (!td.is(".wall-bottom")) {
-                var column = td.parents("tr").children().index(td);
-                nextCell = td.parents("tr").next().children()[column];
+                var column = td.closest("tr").children().index(td);
+                nextCell = td.closest("tr").next().children()[column];
                 nextCell = $(nextCell);
             }
             break;
