@@ -132,25 +132,25 @@ object Application extends Controller {
   
   def parseMovement(s: String): Movement = {
     val jsonMovement = Json.parse(s) \ "movement"
-	var matches = jsonMovement match {
+    var matches = jsonMovement match {
       case JsUndefined(error) => false
       case _ => true;
     }
     if (matches) {
-	  try {
-	    new Movement(Color.withName(getString(jsonMovement, "robot")),
-	               (jsonMovement \ "originRow").as[Int],
-				   (jsonMovement \ "originColumn").as[Int],
-				   Direction.withName(getString(jsonMovement, "direction")))
+      try {
+        new Movement(Color.withName(getString(jsonMovement, "robot")),
+                   (jsonMovement \ "originRow").as[Int],
+                   (jsonMovement \ "originColumn").as[Int],
+                   Direction.withName(getString(jsonMovement, "direction")))
       } catch {
-	    case e: Exception =>
-		  //log exception
-		  println(e)
-		  null
-	  }
+        case e: Exception =>
+          //log exception
+          println(e)
+          null
+      }
     } else {
-	  null
-	}
+      null
+    }
   }
 
   def messageReceived(message: String) {
@@ -165,7 +165,7 @@ object Application extends Controller {
       val player: String = (jsonSolution \ "player").as[String]
       val solution = (jsonSolution \ "moves").as[List[String]]
       val score = solution.length
-	  if(game.validate(solution.map(parseMovement))) {
+      if(game.validate(solution.map(parseMovement))) {
         lock.acquire()
         try {
           game.withPlayer(player).scored(solution.length)
