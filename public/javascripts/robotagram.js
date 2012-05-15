@@ -1,7 +1,23 @@
+var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
+
+var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
+var EVENT_ROBOT_MOVED = "moved.robot.robotagram";
+
+var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
+
+function requestSelectedRobotMovement(direction_keyboard_code){
+    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
+    var direction = DIRECTIONS[direction_keyboard_code - MAGIC_NUMBER];
+    var $robotToMove = $("td .robot." + color);
+    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+}
+
+
+
 // keyboard handler for robots moves
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
-        moveRobot(event.which);
+        requestSelectedRobotMovement(event.which);
     }
     if (event.which === SELECT_NEXT) {
         selectNextRobot();
@@ -107,8 +123,8 @@ var moving = false;
 
 // move the robot in the requested direction
 //
-function moveRobot(direction, keepHistory) {
-    var $robot = $(".robot.selected"), originCell, destinationCell = null, previousDestination, nextDestination;
+function moveRobot(color, direction, keepHistory) {
+    var $robot = $("td .robot." + color), originCell, destinationCell = null, previousDestination, nextDestination;
     if ($robot.length == 0) {
         // pas de robot
         alert("You must select a robot");
@@ -158,7 +174,7 @@ function moveRobot(direction, keepHistory) {
             while(!keepHistory && moves.length > undoIndex) {
                 moves.pop();
             }
-            moves.push(JSON.stringify({"movement":{"robot":ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()], "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction":DIRECTIONS[direction-MAGIC_NUMBER]}}));
+            moves.push({"movement":{"robot":ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()], "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction":DIRECTIONS[direction-MAGIC_NUMBER]}});
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {
@@ -175,7 +191,7 @@ function undo() {
     if (undoIndex > 0) {
 	    if (!moving) {
 		    var newIndex = undoIndex - 1;
-			var move = JSON.parse(moves[newIndex]).movement;
+			var move = moves[newIndex].movement;
 			selectByColor(move.robot)
 			var $robot = $(".robot.selected")
 			if ($robot.length == 0) {
@@ -209,7 +225,7 @@ function undo() {
 function redo() {
     if(moves.length > undoIndex) {
 	    if (!moving) {
-		    var move = JSON.parse(moves[undoIndex]).movement;
+		    var move = moves[undoIndex].movement;
 			selectByColor(move.robot)
 			var $robot = $(".robot.selected")
 			if ($robot.length == 0) {
@@ -292,16 +308,16 @@ function initListeners() {
 
     //on triche, et les touches affichées marchent comme un clavier
     $("#key-up").click(function() {
-        moveRobot(DIRECTION_UP);
+        requestSelectedRobotMovement(DIRECTION_UP);
     });
     $("#key-down").click(function() {
-        moveRobot(DIRECTION_DOWN);
+        requestSelectedRobotMovement(DIRECTION_DOWN);
     });
     $("#key-left").click(function() {
-        moveRobot(DIRECTION_LEFT);
+        requestSelectedRobotMovement(DIRECTION_LEFT);
     });
     $("#key-right").click(function() {
-        moveRobot(DIRECTION_RIGHT);
+        requestSelectedRobotMovement(DIRECTION_RIGHT);
     });
 	$("#key-next").click(function() {
         selectNextRobot();
@@ -382,6 +398,13 @@ function initListeners() {
     // launch the server polling to resync timer and game status (less frequent)
     doRefreshLoop();
     reSyncGameStatusWithServer();
+
+    // events going on in the game ?
+    $(window).on(REQUEST_ROBOT_MOVE, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+        moveRobot(color, MAGIC_NUMBER + (DIRECTIONS.indexOf(direction)) % 4);//keepHistory
+    });
+
 }
 
 // function called when end of game is reached
