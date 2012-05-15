@@ -171,6 +171,20 @@ function moveRobot(direction, keepHistory) {
     }
 }
 
+function closeWinModal() {
+    $("#winModal").modal('hide');
+}
+
+function resetBoard() {
+    while(undoIndex > 0) {
+	    undo();
+	}
+	moves = new Array();
+    $(".selected").removeClass("selected");
+    $("#robotForObjective").addClass("selected");
+	$("#currentScore").text(undoIndex + "");
+}
+
 function undo() {
     if (undoIndex > 0) {
 	    if (!moving) {
@@ -328,7 +342,6 @@ function initListeners() {
             $("div.symbol:not(#objective)").toggleClass("transparent");
     });
 
-
     var $robotOfObjective = $("#robotForObjective");
     //select the robot correspounding to the objective on page load
     $robotOfObjective.addClass("selected");
@@ -389,6 +402,7 @@ var endOfGameNotified = false;
 function notifyEndOfGame(){
     if(!endOfGameNotified){
         endOfGameNotified = true;
+        $("#winModal").modal('hide');
         $("#endOfGameModal").modal('show');
     }
 }

@@ -94,8 +94,9 @@
             <img src="http://www.bigshinyrobot.com/tools/flex.png" alt="Wouhou!" height="50%" width="50%">
         </div>
         <div class="modal-footer">
-            <a id="sendScore" class="btn btn-success" href="@routes.Application.getGame(roomId, game.uuid)" onClick="sendScore()" >Announce solution</a>
-            <a id="retry" class="btn btn-success" href="@routes.Application.getGame(roomId, game.uuid)" >Retry</a>
+            <a id="sendScore" class="btn btn-success" onClick="sendScore(), closeWinModal()" >Announce solution</a>
+            <a id="improve" class="btn btn-success" onClick="closeWinModal()" >Improve solution</a>
+            <a id="retry" class="btn btn-success" onClick="resetBoard(), closeWinModal()">Retry from zero</a>
         </div>
     </div>
 

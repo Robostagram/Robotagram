@@ -29,7 +29,7 @@ object Application extends Controller {
         notifySummary(playerName)
       }
     } catch {
-      case e => InternalServerError("WTF ? " + e);
+      case e => InternalServerError("WTF? " + e);
     } finally {
       lock.release();
     };
@@ -98,7 +98,7 @@ object Application extends Controller {
                 "duration" -> toJson(game.durationInSeconds),
                 "timeLeft" -> toJson(game.secondsLeft),
                 "percentageDone" -> toJson(game.percentageDone()),
-                "players" -> toJson(game.players.count(p => true)),
+                "players" -> toJson(game.players.size),
                 "status" -> toJson(state)
               )
             )
