@@ -10,8 +10,7 @@ import scala._
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
   val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
-  var players:Set[Player] = new HashSet[Player];
-
+  
   private var robotsList:HashMap[Color, Robot] = null
   def robots = {
     if(robotsList == null){
@@ -21,27 +20,6 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   }
 
   def isDone:Boolean = System.currentTimeMillis() > endTime
-
-  def withPlayer(name:String):Player = {
-    val option:Option[Player] = players.find(player => player.name == name)
-    if (option == None){
-      val player:Player = new Player(name)
-      players += player
-      return player
-    }
-    val player = option.get
-    player
-  }
-
-  def withoutPlayer(name: String): Player = {
-    val option: Option[Player] = players.find(player => player.name == name)
-    if (option == None) {
-      return null
-    }
-    val player: Player = option.get
-    players -= player
-    player
-  }
 
   def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
 

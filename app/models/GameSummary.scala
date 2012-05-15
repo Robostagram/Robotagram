@@ -12,9 +12,10 @@ class GameSummary(val scores: Map[String, Int], val endTime:Long, val totalDurat
 }
 
 object GameSummary {
-  def fromGame(game: Game):GameSummary = {
+  def fromRoom(room: Room):GameSummary = {
     var summary: Map[String, Int] = Map.empty;
-    game.players.foreach(player => summary = summary + (player.name -> player.highScore))
+    val game = room.game
+    room.players.foreach(player => summary = summary + (player.name -> player.highScore))
     new GameSummary(summary, game.endTime, game.durationInSeconds*1000)
   }
 }

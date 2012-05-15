@@ -1,4 +1,4 @@
-@(roomId : String,  game: Game, player: Player, user: User)(implicit flash: Flash)
+@(roomId : String,  room: Room, user: User)(implicit flash: Flash)
 
 @renderColor(color: Color.Value) = {@color.toString}
 
@@ -8,38 +8,38 @@
 @headerContent = {
     <ul id="headerInfo" class="nav">
         <li>
-            <a id="headerRobot"><div class="robot @renderColor(game.goal.color)"></div></a>
+            <a id="headerRobot"><div class="robot @renderColor(room.game.goal.color)"></div></a>
         </li>
         <li>
             <a id="headerArrow">&rarr;</a>
         </li>
         <li>
-            <a id="headerGoal">@gameGoal(game.goal)</a>
+            <a id="headerGoal">@gameGoal(room.game.goal)</a>
         </li>
         <li>
             <a id="currentScore">0</a>
         </li>
         <li class="divider-vertical"></li>
         <li>
-            <a id="timeLeft">@game.secondsLeft</a>
+            <a id="timeLeft">@room.game.secondsLeft</a>
         </li>
         <li id="timeProgress">
-            <a>@timer(game)</a>
+            <a>@timer(room.game)</a>
         </li>
 
     </ul>
 }
 
 @main("Robotagram Rocks !!!", user)(headerContent){
-<input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
+<input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
-        @renderBoard(game)
+        @renderBoard(room.game)
     </div>
     <div class="span4" id="gameZone">
         <h3>Leaderboard</h3>
         <div id="scores">
-        @scores(game)
+        @scores(room)
         </div>
         <h3>How to play</h3>
         <div id="howToPlay">
