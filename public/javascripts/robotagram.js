@@ -462,8 +462,9 @@ var SERVER_POLLING_REPEAT_TIME = 3000;
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doRefreshLoop(){
     var duration = parseInt($("#gameDuration").val(), 10);
+    var timeLeftWhenPageWasLoaded = parseInt($("#secondsLeftOnPageLoad").val(), 10);
     if(previousTimeLeft === -999){ // first time we display the progress bar, fill with full duration (hidden field in game)
-        previousTimeLeft = duration;
+        previousTimeLeft = timeLeftWhenPageWasLoaded;
     }
     // decrease the "time left" stuff ...
     var timeLeft = previousTimeLeft;

@@ -32,6 +32,7 @@
 
 @main("Robotagram Rocks !!!", user)(headerContent){
 <input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
+<input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@game.secondsLeft">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
         @renderBoard(game)
