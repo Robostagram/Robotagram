@@ -50,16 +50,16 @@ class Board(val width: Int, val height: Int) {
     if(goal != null) {
       for (i <- 0 until width) {
         for (j <- 0 until height) {
-	      val cGoal = cells(i)(j).goal
-	      if(cGoal != null) {
-		    if(cGoal.color == goal.color && cGoal.symbol == goal.symbol) {
-		      return (i, j)
-		    }
-	  	  }
-	    }
-	  }
-	}
-	(-1, -1)
+          val cGoal = cells(i)(j).goal
+          if(cGoal != null) {
+            if(cGoal.color == goal.color && cGoal.symbol == goal.symbol) {
+              return (i, j)
+            }
+          }
+        }
+      }
+    }
+    (-1, -1)
   }
 
   private def applyChange(x: Int, y: Int, map: Cell => Cell) {

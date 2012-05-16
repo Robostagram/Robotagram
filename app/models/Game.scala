@@ -30,7 +30,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   def randomRobots(board:Board): HashMap[Color, Robot] = {
     var robots = new HashMap[Color, Robot]()
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
-	for(c <- Color.values){
+    for(c <- Color.values){
       var posX:Int = getRandomPosition(board.width)
       var posY:Int = getRandomPosition(board.height)
       while(setPos.contains((posX,posY)) || unacceptableValue(posX, posY, board.width, board.height)){
@@ -46,8 +46,8 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   // detects middle (closed) square of the board, and goals
   def unacceptableValue(posX:Int, posY:Int, w:Int,h:Int):Boolean = {
     if(board.cells(posX)(posY).goal != null) {
-	  return true
-	}
+      return true
+    }
     var resultW = true;
     var resultH = true;
     var midH = h/2;
@@ -69,8 +69,8 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   def getRobot(x: Int, y: Int): Robot = {
     for(r: Robot <- robots.values) {
       if(r.posX == x && r.posY == y) {
-	    return r
-	  }
+        return r
+      }
     }
     null
   }
@@ -79,30 +79,30 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   // detects walls and other robots
   def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
     var robot = mutatingRobots.getOrElse(movement.color, null)
-	if(robot == null) {
-	  return robots
-	} else {
-	  if(robot.posX != movement.x || robot.posY != movement.y) {
-	    // TODO log invalid move?
-	    return robots
-	  }
-	  val diffs = movement.direction match {
-	    case Direction.Up => (-1,0)
-	    case Direction.Left => (0,-1)
-	    case Direction.Down => (1,0)
-	    case Direction.Right => (0,1)
-	  }
-	  val xDiff = diffs._1
-	  val yDiff = diffs._2
-	  var newX = robot.posX+xDiff
-	  var newY = robot.posY+yDiff
-	  while(!(board.cells(robot.posX)(robot.posY).hasWall(movement.direction) || mutatingRobots.values.foldLeft(false)((res, rob) => res || (rob.posX == newX && rob.posY == newY)))) {
-	    robot = new Robot(movement.color, newX, newY)
-		newX = robot.posX+xDiff
-	    newY = robot.posY+yDiff
-	  } 
-	  mutatingRobots.updated(movement.color, robot)
-	}
+    if(robot == null) {
+      return robots
+    } else {
+      if(robot.posX != movement.x || robot.posY != movement.y) {
+        // TODO log invalid move?
+        return robots
+      }
+      val diffs = movement.direction match {
+        case Direction.Up => (-1,0)
+        case Direction.Left => (0,-1)
+        case Direction.Down => (1,0)
+        case Direction.Right => (0,1)
+      }
+      val xDiff = diffs._1
+      val yDiff = diffs._2
+      var newX = robot.posX+xDiff
+      var newY = robot.posY+yDiff
+      while(!(board.cells(robot.posX)(robot.posY).hasWall(movement.direction) || mutatingRobots.values.foldLeft(false)((res, rob) => res || (rob.posX == newX && rob.posY == newY)))) {
+        robot = new Robot(movement.color, newX, newY)
+        newX = robot.posX+xDiff
+        newY = robot.posY+yDiff
+      } 
+      mutatingRobots.updated(movement.color, robot)
+    }
   }
 
   def getRandomPosition(maxValue:Int) = Random.nextInt(maxValue)
@@ -116,15 +116,15 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   // when all movements are applied, check the expected robot is on the matching goal
   private def validate(robotss: HashMap[Color, Robot], solution: List[Movement]): Boolean = solution match {
     case Nil => val goalPosition = board.findGoalPosition(goal)
-	            val robot = robotss.get(goal.color) match {
-				  case Some(r) => r
-				  case None => //TODO log?
-				               null
-				}
-				goalPosition != (-1, -1) &&
-				  robot != null &&
-				  goalPosition._1 == robot.posX &&
-				  goalPosition._2 == robot.posY
+                val robot = robotss.get(goal.color) match {
+                  case Some(r) => r
+                  case None => //TODO log?
+                               null
+                }
+                goalPosition != (-1, -1) &&
+                  robot != null &&
+                  goalPosition._1 == robot.posX &&
+                  goalPosition._2 == robot.posY
     case head :: tail => validate(move(robotss, head), tail)
   }
 }

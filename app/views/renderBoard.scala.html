@@ -6,7 +6,7 @@
     @for(x:Int <- 0 until game.board.cells.length) {
     <tr>
         @for(y:Int <- 0 until game.board.cells(x).length) {
-		    @cell(game.board.cells(x)(y), game.getRobot(x, y), game.goal, x, y)
+            @cell(game.board.cells(x)(y), game.getRobot(x, y), game.goal, x, y)
         }
     </tr>
     }

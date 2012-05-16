@@ -199,68 +199,68 @@ function resetBoard() {
 
 function undo() {
     if (undoIndex > 0) {
-	    if (!moving) {
-		    var newIndex = undoIndex - 1;
-			var move = moves[newIndex].movement;
+        if (!moving) {
+            var newIndex = undoIndex - 1;
+            var move = moves[newIndex].movement;
             var $robot = $("td .robot." + move.robot);
             selectByColor(move.robot); // make it visibly selected
-			if ($robot.length == 0) {
-				// houston, guess what we got...
-				alert("kein robot!");
-			}
-			var originCell = $robot.closest("td.cell");
-			if (originCell.length > 0) {
-				moving = true;
-				undoIndex = newIndex;
-				$("#currentScore").text(undoIndex + "");
-				originCell = originCell.first();
-				var previousDestination = originCell;
-				var oppositeDirection = MAGIC_NUMBER + (DIRECTIONS.indexOf(move.direction) +2) % 4;
-				var nextDestination = nextCell(previousDestination, oppositeDirection);
-				while (nextDestination.data("row") != move.originRow || nextDestination.data("column") != move.originColumn) {
-					previousDestination = nextDestination;
-					nextDestination = nextCell(previousDestination, oppositeDirection);
-				}
+            if ($robot.length == 0) {
+                // houston, guess what we got...
+                alert("kein robot!");
+            }
+            var originCell = $robot.closest("td.cell");
+            if (originCell.length > 0) {
+                moving = true;
+                undoIndex = newIndex;
+                $("#currentScore").text(undoIndex + "");
+                originCell = originCell.first();
+                var previousDestination = originCell;
+                var oppositeDirection = MAGIC_NUMBER + (DIRECTIONS.indexOf(move.direction) +2) % 4;
+                var nextDestination = nextCell(previousDestination, oppositeDirection);
+                while (nextDestination.data("row") != move.originRow || nextDestination.data("column") != move.originColumn) {
+                    previousDestination = nextDestination;
+                    nextDestination = nextCell(previousDestination, oppositeDirection);
+                }
 
-				// destination finale du robot
-				destinationCell = nextDestination;
+                // destination finale du robot
+                destinationCell = nextDestination;
 
-				$robot.appendTo(destinationCell.children().first());
-				moving = false;
-			}
+                $robot.appendTo(destinationCell.children().first());
+                moving = false;
+            }
         }
     }
 }
 
 function redo() {
     if(moves.length > undoIndex) {
-	    if (!moving) {
-		    var move = moves[undoIndex].movement;
+        if (!moving) {
+            var move = moves[undoIndex].movement;
             var $robot = $("td .robot." + move.robot);
-			selectByColor(move.robot); // make it visibly selected
-			if ($robot.length == 0) {
-				// houston, guess what we got...
-				alert("kein robot!");
-			}
-			var originCell = $robot.closest("td.cell");
-			if (originCell.length > 0) {
-				moving = true;
-				$("#currentScore").text(++undoIndex + "");
-				originCell = originCell.first();
-				var previousDestination = originCell;
-				var direction = MAGIC_NUMBER + DIRECTIONS.indexOf(move.direction);
-				var nextDestination = nextCell(previousDestination, direction);
-				while (nextDestination !== previousDestination) {
-					previousDestination = nextDestination;
-					nextDestination = nextCell(previousDestination, direction);
-				}
+            selectByColor(move.robot); // make it visibly selected
+            if ($robot.length == 0) {
+                // houston, guess what we got...
+                alert("kein robot!");
+            }
+            var originCell = $robot.closest("td.cell");
+            if (originCell.length > 0) {
+                moving = true;
+                $("#currentScore").text(++undoIndex + "");
+                originCell = originCell.first();
+                var previousDestination = originCell;
+                var direction = MAGIC_NUMBER + DIRECTIONS.indexOf(move.direction);
+                var nextDestination = nextCell(previousDestination, direction);
+                while (nextDestination !== previousDestination) {
+                    previousDestination = nextDestination;
+                    nextDestination = nextCell(previousDestination, direction);
+                }
 
-				// destination finale du robot
-				destinationCell = nextDestination;
+                // destination finale du robot
+                destinationCell = nextDestination;
 
-				$robot.appendTo(destinationCell.children().first());
-				moving = false;
-			}
+                $robot.appendTo(destinationCell.children().first());
+                moving = false;
+            }
         }
     }
 }
