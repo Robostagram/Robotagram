@@ -541,11 +541,9 @@ function reSyncGameStatusWithServer() {
     function sendScore() {
         // how to handle submission of a game that is finished ?
         // the server expects moves to be a list of strings, instead of a list of proper objects ...
-        // jsonify it before, but this can be improved
-        var movesToSend = moves.slice(0, undoIndex).map(function(){return JSON.stringify(this)});
+        // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
+        var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
         var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":movesToSend}});
-        console.debug(message);
-        console.debug(movesToSend);
         gameSocket.send(message);
     }
 
