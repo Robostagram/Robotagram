@@ -87,7 +87,6 @@ function selectByColor(colorName) {
     $("td .robot." + colorName).toggleClass("selected");
 }
 
-
 // direction:
 // 105: i : up
 // 106: j : left
@@ -407,7 +406,6 @@ function setUpHelpAndTooltips(){
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
 }
 
-
 function initListeners(){
     setUpGameControlHandlers();
 
@@ -455,16 +453,14 @@ function initListeners(){
         $("#winModal").modal('hide');
     });
 
-    // do it only once
-    $window.one(EVENT_GAME_SOLVED, function(e, numberOfMoves){
+    $window.on(EVENT_GAME_SOLVED, function(e, numberOfMoves){
         console.debug(e.type, e.namespace, numberOfMoves);
-        window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
+        //win modal shown does not imply redirection
+        //no need to deactivate leaveGame on unload
+        //window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
         $("#winModal").modal('show');
     });
-
-
 }
-
 
 // store the actual time left (as double, with details and stuff )
 // resync'd with server on a regular basis (pollTimer)
