@@ -1,7 +1,32 @@
+var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
+
+var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
+var EVENT_ROBOT_MOVED = "moved.robot.robotagram";
+
+var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
+var EVENT_GAME_SOLVED = "solved.game.robotagram";
+
+function requestSelectedRobotMovement(direction_keyboard_code){
+    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
+    var direction = directionCodeToString(direction_keyboard_code);
+    var $robotToMove = $("td .robot." + color);
+    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+}
+
+//user friendly version of a direction (Up, Down etc ...)
+function directionCodeToString(direction_keyboard_code){
+    return DIRECTIONS[direction_keyboard_code - MAGIC_NUMBER];
+}
+
+// the key code coming from a user friendly name of direction
+function directionStringToCode(directionName){
+    return MAGIC_NUMBER + (DIRECTIONS.indexOf(directionName)) % 4;
+}
+
 // keyboard handler for robots moves
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
-        moveRobot(event.which);
+        requestSelectedRobotMovement(event.which);
     }
     if (event.which === SELECT_NEXT) {
         selectNextRobot();
@@ -43,36 +68,25 @@ function selectNextRobot() {
     if (curColorIndex >= ROBOT_COLORS.length) {
         curColorIndex = 0;
     }
-
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
 // select the previous robot (order defined by ROBOT_COLORS
 function selectPreviousRobot() {
     var curColorIndex = getIndexOfCurrentlySelectedRobot();
-
     curColorIndex -= 1;
     if (curColorIndex < 0) {
         curColorIndex = ROBOT_COLORS.length - 1;
     }
-
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
 // mark the robot with given color as selected
 function selectByColor(colorName) {
-    $(".selected").toggleClass("selected");
+    $(".selected").toggleClass("selected"); //remove selected on currently selected stuff
     $("td .robot." + colorName).toggleClass("selected");
 }
 
-/* called when clicking on the robot */
-function robotClickHandler() {
-    var $this = $(this);
-    if (!$this.is(".selected")) {
-        $(".selected").toggleClass("selected");
-    }
-    $(this).toggleClass("selected");
-}
 
 // direction:
 // 105: i : up
@@ -98,24 +112,22 @@ var REDO = 99;
 var SELECT_PREVIOUS = 115;
 var SELECT_NEXT = 100;
 
-/* global variable for current number of moves ...*/
-//var moves = 0;
+/* stack of moves for undo/redo ...*/
 var moves = new Array();
 var undoIndex = 0;
 
 var moving = false;
 
-// move the robot in the requested direction
-//
-function moveRobot(direction, keepHistory) {
-    var $robot = $(".robot.selected"), originCell, destinationCell = null, previousDestination, nextDestination;
+// move the robot of a given color in the requested direction
+function moveRobot(color, direction, keepHistory) {
+    var $robot = $("td .robot." + color), originCell, destinationCell = null, previousDestination, nextDestination;
     if ($robot.length == 0) {
         // pas de robot
         alert("You must select a robot");
         return;
     }
 
-    originCell = $robot.parents("td.cell");
+    originCell = $robot.closest("td.cell");
     // seulement si le robot est bien dans une cellule, pas en déplacement
     if (!moving && originCell.length > 0) {
         moving = true;
@@ -131,7 +143,8 @@ function moveRobot(direction, keepHistory) {
         // destination finale du robot
         destinationCell = nextDestination;
         if (originCell !== destinationCell) { // = robot can move in that direction
-
+            // notify people that we start moving - possibly add in the coordinates ...
+            $robot.trigger(EVENT_ROBOT_MOVING, [directionCodeToString(direction), color]);
             // current absolute position ?
             var originalPos = originCell.offset();
             var origTop = originalPos.top;
@@ -154,17 +167,16 @@ function moveRobot(direction, keepHistory) {
                            function() {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
+                               $(this).trigger(EVENT_ROBOT_MOVED, [directionCodeToString(direction), color]); //notify that we ae done moving ...
                            });
             while(!keepHistory && moves.length > undoIndex) {
                 moves.pop();
             }
-            moves.push(JSON.stringify({"movement":{"robot":ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()], "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction":DIRECTIONS[direction-MAGIC_NUMBER]}}));
+            moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": directionCodeToString(direction)}});
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {
-
-                window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
-                $("#winModal").modal('show');
+                $(window).trigger(EVENT_GAME_SOLVED, [undoIndex]); //undoIndex is the number of moves
             }
         }
         moving = false;
@@ -187,68 +199,68 @@ function resetBoard() {
 
 function undo() {
     if (undoIndex > 0) {
-        if (!moving) {
-            var newIndex = undoIndex - 1;
-            var move = JSON.parse(moves[newIndex]).movement;
-            selectByColor(move.robot)
-            var $robot = $(".robot.selected")
-            if ($robot.length == 0) {
-                // houston, guess what we got...
-                alert("kein robot!");
-            }
-            var originCell = $robot.parents("td.cell");
-            if (originCell.length > 0) {
-                moving = true;
-                undoIndex = newIndex;
-                $("#currentScore").text(undoIndex + "");
-                originCell = originCell.first();
-                var previousDestination = originCell;
-                var oppositeDirection = MAGIC_NUMBER + (DIRECTIONS.indexOf(move.direction) +2) % 4;
-                var nextDestination = nextCell(previousDestination, oppositeDirection);
-                while (nextDestination.data("row") != move.originRow || nextDestination.data("column") != move.originColumn) {
-                    previousDestination = nextDestination;
-                    nextDestination = nextCell(previousDestination, oppositeDirection);
-                }
+	    if (!moving) {
+		    var newIndex = undoIndex - 1;
+			var move = moves[newIndex].movement;
+            var $robot = $("td .robot." + move.robot);
+            selectByColor(move.robot); // make it visibly selected
+			if ($robot.length == 0) {
+				// houston, guess what we got...
+				alert("kein robot!");
+			}
+			var originCell = $robot.closest("td.cell");
+			if (originCell.length > 0) {
+				moving = true;
+				undoIndex = newIndex;
+				$("#currentScore").text(undoIndex + "");
+				originCell = originCell.first();
+				var previousDestination = originCell;
+				var oppositeDirection = MAGIC_NUMBER + (DIRECTIONS.indexOf(move.direction) +2) % 4;
+				var nextDestination = nextCell(previousDestination, oppositeDirection);
+				while (nextDestination.data("row") != move.originRow || nextDestination.data("column") != move.originColumn) {
+					previousDestination = nextDestination;
+					nextDestination = nextCell(previousDestination, oppositeDirection);
+				}
 
-                // destination finale du robot
-                destinationCell = nextDestination;
+				// destination finale du robot
+				destinationCell = nextDestination;
 
-                $robot.appendTo(destinationCell.children().first());
-                moving = false;
-            }
+				$robot.appendTo(destinationCell.children().first());
+				moving = false;
+			}
         }
     }
 }
 
 function redo() {
     if(moves.length > undoIndex) {
-        if (!moving) {
-            var move = JSON.parse(moves[undoIndex]).movement;
-            selectByColor(move.robot)
-            var $robot = $(".robot.selected")
-            if ($robot.length == 0) {
-                // houston, guess what we got...
-                alert("kein robot!");
-            }
-            var originCell = $robot.parents("td.cell");
-            if (originCell.length > 0) {
-                moving = true;
-                $("#currentScore").text(++undoIndex + "");
-                originCell = originCell.first();
-                var previousDestination = originCell;
-                var direction = MAGIC_NUMBER + DIRECTIONS.indexOf(move.direction);
-                var nextDestination = nextCell(previousDestination, direction);
-                while (nextDestination !== previousDestination) {
-                    previousDestination = nextDestination;
-                    nextDestination = nextCell(previousDestination, direction);
-                }
+	    if (!moving) {
+		    var move = moves[undoIndex].movement;
+            var $robot = $("td .robot." + move.robot);
+			selectByColor(move.robot); // make it visibly selected
+			if ($robot.length == 0) {
+				// houston, guess what we got...
+				alert("kein robot!");
+			}
+			var originCell = $robot.closest("td.cell");
+			if (originCell.length > 0) {
+				moving = true;
+				$("#currentScore").text(++undoIndex + "");
+				originCell = originCell.first();
+				var previousDestination = originCell;
+				var direction = MAGIC_NUMBER + DIRECTIONS.indexOf(move.direction);
+				var nextDestination = nextCell(previousDestination, direction);
+				while (nextDestination !== previousDestination) {
+					previousDestination = nextDestination;
+					nextDestination = nextCell(previousDestination, direction);
+				}
 
-                // destination finale du robot
-                destinationCell = nextDestination;
+				// destination finale du robot
+				destinationCell = nextDestination;
 
-                $robot.appendTo(destinationCell.children().first());
-                moving = false;
-            }
+				$robot.appendTo(destinationCell.children().first());
+				moving = false;
+			}
         }
     }
 }
@@ -270,15 +282,15 @@ function nextCell(td, direction) {
         case DIRECTION_UP:
             if (!td.is(".wall-top")) {
                 var $td = $(td);
-                var col = $td.parents("tr").children().index($td);
-                nextCell = $td.parents("tr").prev().children()[col];
+                var col = $td.closest("tr").children().index($td);
+                nextCell = $td.closest("tr").prev().children()[col];
                 nextCell = $(nextCell);
             }
             break;
         case DIRECTION_DOWN:
             if (!td.is(".wall-bottom")) {
-                var column = td.parents("tr").children().index(td);
-                nextCell = td.parents("tr").next().children()[column];
+                var column = td.closest("tr").children().index(td);
+                nextCell = td.closest("tr").next().children()[column];
                 nextCell = $(nextCell);
             }
             break;
@@ -300,22 +312,31 @@ function nextCell(td, direction) {
     }
 }
 
-function initListeners() {
+// setup key handlers and click handlers related to the game (moving robots etc)
+function setUpGameControlHandlers(){
+
     $(window).keypress(keypressHandler);
-    $("td .robot").click(robotClickHandler);
+
+    $("td .robot").click(function(){
+        var $this = $(this);
+        if (!$this.is(".selected")) {
+            $(".selected").toggleClass("selected");
+        }
+        $(this).toggleClass("selected");
+    });
 
     //on triche, et les touches affichées marchent comme un clavier
     $("#key-up").click(function() {
-        moveRobot(DIRECTION_UP);
+        requestSelectedRobotMovement(DIRECTION_UP);
     });
     $("#key-down").click(function() {
-        moveRobot(DIRECTION_DOWN);
+        requestSelectedRobotMovement(DIRECTION_DOWN);
     });
     $("#key-left").click(function() {
-        moveRobot(DIRECTION_LEFT);
+        requestSelectedRobotMovement(DIRECTION_LEFT);
     });
     $("#key-right").click(function() {
-        moveRobot(DIRECTION_RIGHT);
+        requestSelectedRobotMovement(DIRECTION_RIGHT);
     });
     $("#key-next").click(function() {
         selectNextRobot();
@@ -330,6 +351,10 @@ function initListeners() {
         redo();
     });
 
+}
+
+// set up the (useless) events that happen when clicking in the header
+function setUpHeaderShortcuts(){
     // robot from header selects the robot on the board
     $("a#headerRobot").click(function (e) {
         $(".selected").removeClass("selected");
@@ -339,12 +364,13 @@ function initListeners() {
 
     // make the objective more obvious when hovering in the header
     $("a#headerGoal span.symbol").click(function(){
-            $("div.symbol:not(#objective)").toggleClass("transparent");
+        $("div.symbol:not(#objective)").toggleClass("transparent");
     });
+}
 
+// set up the tooltip on current robot and target objective ... should be less intrusive
+function setUpHelpAndTooltips(){
     var $robotOfObjective = $("#robotForObjective");
-    //select the robot correspounding to the objective on page load
-    $robotOfObjective.addClass("selected");
 
     $robotOfObjective.tooltip({
         title:"Bring this robot ...",
@@ -379,15 +405,26 @@ function initListeners() {
     // tooltip on the objective a bit after the robot
     setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
+}
 
+
+function initListeners(){
+    setUpGameControlHandlers();
+
+    setUpHeaderShortcuts();
+
+    setUpHelpAndTooltips();
+
+    var $robotOfObjective = $("#robotForObjective");
+    //select the robot correspounding to the objective on page load
+    $robotOfObjective.addClass("selected");
 
     connectPlayer();
 
     // when leaving the window, disconnect the user
     window.onunload = function() {
         // the game is finished ... just disconnect
-        leaveGame(); //continue propagation of event
-
+        leaveGame();
         // should probably ask confirmation to user ??
     };
 
@@ -395,17 +432,39 @@ function initListeners() {
     // launch the server polling to resync timer and game status (less frequent)
     doRefreshLoop();
     reSyncGameStatusWithServer();
+
+    // game event listeners
+    var $window = $(window);
+    // events going on in the game ?
+    $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+        moveRobot(color, directionStringToCode(direction));//keepHistory
+    });
+
+    $window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+    });
+    $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+    });
+
+    // do it only once
+    $window.one(EVENT_GAME_TIMEUP, function(e){
+        console.debug(e.type, e.namespace);
+        $("#endOfGameModal").modal('show');
+        $("#winModal").modal('hide');
+    });
+
+    // do it only once
+    $window.one(EVENT_GAME_SOLVED, function(e, numberOfMoves){
+        console.debug(e.type, e.namespace, numberOfMoves);
+        window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
+        $("#winModal").modal('show');
+    });
+
+
 }
 
-// function called when end of game is reached
-var endOfGameNotified = false;
-function notifyEndOfGame(){
-    if(!endOfGameNotified){
-        endOfGameNotified = true;
-        $("#winModal").modal('hide');
-        $("#endOfGameModal").modal('show');
-    }
-}
 
 // store the actual time left (as double, with details and stuff )
 // resync'd with server on a regular basis (pollTimer)
@@ -416,8 +475,9 @@ var SERVER_POLLING_REPEAT_TIME = 3000;
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doRefreshLoop(){
     var duration = parseInt($("#gameDuration").val(), 10);
-    if(previousTimeLeft === -999){
-        previousTimeLeft = duration;
+    var timeLeftWhenPageWasLoaded = parseInt($("#secondsLeftOnPageLoad").val(), 10);
+    if(previousTimeLeft === -999){ // first time we display the progress bar, fill with full duration (hidden field in game)
+        previousTimeLeft = timeLeftWhenPageWasLoaded;
     }
     // decrease the "time left" stuff ...
     var timeLeft = previousTimeLeft;
@@ -454,7 +514,7 @@ function doRefreshLoop(){
     $timeLeft.text(Math.ceil(timeLeft));
 
     if(timeLeft <= 0){
-        notifyEndOfGame();
+        $(window).trigger(EVENT_GAME_TIMEUP);
     }
     else
     {
@@ -470,7 +530,7 @@ function reSyncGameStatusWithServer() {
             // resync the time left
             previousTimeLeft = data.game.timeLeft;
             if (data.game.percentageDone <= 0) {
-                notifyEndOfGame();
+                $(window).trigger(EVENT_GAME_TIMEUP);
             }
             else {
                 setTimeout(reSyncGameStatusWithServer, SERVER_POLLING_REPEAT_TIME);
@@ -479,7 +539,7 @@ function reSyncGameStatusWithServer() {
         statusCode:{
             410:function () {
                 alert("The game you asked is finished .... ");
-                notifyEndOfGame();
+                $(window).trigger(EVENT_GAME_TIMEUP);
             }
         }
     });
@@ -504,7 +564,10 @@ function reSyncGameStatusWithServer() {
 
     function sendScore() {
         // how to handle submission of a game that is finished ?
-        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":moves.slice(0, undoIndex)}});
+        // the server expects moves to be a list of strings, instead of a list of proper objects ...
+        // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
+        var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
+        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":movesToSend}});
         gameSocket.send(message);
     }
 

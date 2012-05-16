@@ -62,6 +62,8 @@ table#arrow-keys {
 kbd {
     padding: 6px;
     margin: 2px 1px;
+    /*make them look clickable*/
+    cursor:pointer;
 }
 
 h2 {
