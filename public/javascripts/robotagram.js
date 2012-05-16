@@ -4,6 +4,7 @@ var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
 var EVENT_ROBOT_MOVED = "moved.robot.robotagram";
 
 var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
+var EVENT_GAME_SOLVED = "solved.game.robotagram";
 
 function requestSelectedRobotMovement(direction_keyboard_code){
     var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
@@ -17,6 +18,7 @@ function directionCodeToString(direction_keyboard_code){
     return DIRECTIONS[direction_keyboard_code - MAGIC_NUMBER];
 }
 
+// the key code coming from a user friendly name of direction
 function directionStringToCode(directionName){
     return MAGIC_NUMBER + (DIRECTIONS.indexOf(directionName)) % 4;
 }
@@ -81,7 +83,7 @@ function selectPreviousRobot() {
 
 // mark the robot with given color as selected
 function selectByColor(colorName) {
-    $(".selected").toggleClass("selected");
+    $(".selected").toggleClass("selected"); //remove selected on currently selected stuff
     $("td .robot." + colorName).toggleClass("selected");
 }
 
@@ -174,8 +176,7 @@ function moveRobot(color, direction, keepHistory) {
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {
-                window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
-                $("#winModal").modal('show');
+                $(window).trigger(EVENT_GAME_SOLVED, [undoIndex]); //undoIndex is the number of moves
             }
         }
         moving = false;
@@ -297,7 +298,7 @@ function nextCell(td, direction) {
     }
 }
 
-
+// setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
 
     $(window).keypress(keypressHandler);
@@ -338,7 +339,7 @@ function setUpGameControlHandlers(){
 
 }
 
-
+// set up the (useless) events that happen when clicking in the header
 function setUpHeaderShortcuts(){
     // robot from header selects the robot on the board
     $("a#headerRobot").click(function (e) {
@@ -354,6 +355,7 @@ function setUpHeaderShortcuts(){
 
 }
 
+// set up the tooltip on current robot and target objective ... should be less intrusive
 function setUpHelpAndTooltips(){
     var $robotOfObjective = $("#robotForObjective");
 
@@ -392,6 +394,7 @@ function setUpHelpAndTooltips(){
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
 }
 
+
 function initListeners(){
     setUpGameControlHandlers();
 
@@ -408,8 +411,7 @@ function initListeners(){
     // when leaving the window, disconnect the user
     window.onunload = function() {
         // the game is finished ... just disconnect
-        leaveGame(); //continue propagation of event
-
+        leaveGame();
         // should probably ask confirmation to user ??
     };
 
@@ -418,30 +420,38 @@ function initListeners(){
     doRefreshLoop();
     reSyncGameStatusWithServer();
 
+
+    // game event listeners
+    var $window = $(window);
     // events going on in the game ?
-    $(window).on(REQUEST_ROBOT_MOVE, function(e, direction, color){
+    $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
         console.debug(e.type, e.namespace, direction, color);
-        moveRobot(color, MAGIC_NUMBER + (DIRECTIONS.indexOf(direction)) % 4);//keepHistory
+        moveRobot(color, directionStringToCode(direction));//keepHistory
     });
 
-    $(window).on(EVENT_ROBOT_MOVING, function(e, direction, color){
+    $window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
         console.debug(e.type, e.namespace, direction, color);
     });
-    $(window).on(EVENT_ROBOT_MOVED, function(e, direction, color){
+    $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
         console.debug(e.type, e.namespace, direction, color);
     });
 
     // do it only once
-    $(window).one(EVENT_GAME_TIMEUP, function(e){
+    $window.one(EVENT_GAME_TIMEUP, function(e){
         console.debug(e.type, e.namespace);
         $("#endOfGameModal").modal('show');
     });
+
+    // do it only once
+    $window.one(EVENT_GAME_SOLVED, function(e, numberOfMoves){
+        console.debug(e.type, e.namespace, numberOfMoves);
+        window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
+        $("#winModal").modal('show');
+    });
+
+
 }
 
-// function called when end of game is reached
-function notifyEndOfGame(){
-    $(window).trigger(EVENT_GAME_TIMEUP);
-}
 
 // store the actual time left (as double, with details and stuff )
 // resync'd with server on a regular basis (pollTimer)
@@ -452,7 +462,7 @@ var SERVER_POLLING_REPEAT_TIME = 3000;
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doRefreshLoop(){
     var duration = parseInt($("#gameDuration").val(), 10);
-    if(previousTimeLeft === -999){
+    if(previousTimeLeft === -999){ // first time we display the progress bar, fill with full duration (hidden field in game)
         previousTimeLeft = duration;
     }
     // decrease the "time left" stuff ...
@@ -490,7 +500,7 @@ function doRefreshLoop(){
     $timeLeft.text(Math.ceil(timeLeft));
 
     if(timeLeft <= 0){
-        notifyEndOfGame();
+        $(window).trigger(EVENT_GAME_TIMEUP);
     }
     else
     {
@@ -506,7 +516,7 @@ function reSyncGameStatusWithServer() {
             // resync the time left
             previousTimeLeft = data.game.timeLeft;
             if (data.game.percentageDone <= 0) {
-                notifyEndOfGame();
+                $(window).trigger(EVENT_GAME_TIMEUP);
             }
             else {
                 setTimeout(reSyncGameStatusWithServer, SERVER_POLLING_REPEAT_TIME);
@@ -515,7 +525,7 @@ function reSyncGameStatusWithServer() {
         statusCode:{
             410:function () {
                 alert("The game you asked is finished .... ");
-                notifyEndOfGame();
+                $(window).trigger(EVENT_GAME_TIMEUP);
             }
         }
     });
