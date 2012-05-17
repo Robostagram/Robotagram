@@ -277,12 +277,13 @@ ul#headerInfo {
 }
 
 a#currentScore {
-    min-width: 1.3em;
+    width: 1.7em;/*fix the width of the score to make the calculation of width easier*/
     font-size:2em;
     color:white;
-    text-align: right;
+    text-align: center;
     padding-right: 0px;
     padding-left: 0px;
+    overflow: hidden; /* if the score is bigger than the container, don't break the layout !*/
 }
 
 /*symbol is 29px high and navbar is 40px high ... center vertically manually*/
