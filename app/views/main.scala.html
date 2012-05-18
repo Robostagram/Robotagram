@@ -1,4 +1,4 @@
-@(title: String, user: User)(headerContent: Html = null)(content: Html)(implicit flash: Flash)
+@(title: String, user: User)(headerContent: Html = null)(content: Html)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 <!DOCTYPE html>
 
@@ -27,7 +27,7 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-                <a class="brand" href="@controllers.routes.Home.index" title="Home">Robotagram</a>
+                <a class="brand" href="@controllers.routes.Home.index" title="Home">@Messages("app.name")</a>
                 <div id="headerExtraContent" style="width:0px;">
                     @headerContent
                 </div>
@@ -52,7 +52,7 @@
 </section>
 <footer>
     <span>
-        Ceci est le footer, il explique qui a fait cette merveille - <strong>Copyright Hermione 2012</strong>
+        @Messages("app.footer") - <strong>Copyright Hermione 2012</strong>
     </span>
 </footer>
 </div>

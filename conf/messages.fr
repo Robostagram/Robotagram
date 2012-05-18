@@ -1,0 +1,66 @@
+# FRENCH localization Messages
+
+# App identity
+# ============
+app.name=Robotagramme
+app.footer=le pied de page
+
+
+# Shared vocabulary
+# =================
+# taken from play samples computer-database
+common.players=participants
+common.actions=actions
+common.actions.join=Rejoindre
+
+common.user.logon=S''identifier
+common.user.logout=Se déconnecter
+
+
+# Home
+# ====
+home.title=Robotagramme
+home.welcome=Bienvenue
+# app.name is inserted before that
+home.introduction= est un jeu trop glucose.
+home.join=Rejoindre une partie!
+# example of pluralization taken from play samples computer-database
+home.rooms={0,choice,0#Aucune salle disponible|1#Une salle disponible|1<{0,number,integer} salles disponibles}
+
+# Game
+# ====
+game.title=Robotagram - Partie en cours
+game.leaderboard=Scores
+game.howtoplay=Comment jouer
+game.move=déplacer
+
+game.help.previousnext=selectionner le robot précédent/suivant
+game.help.undoredo=annuler/rejouer un déplacement
+
+game.solutionFound.title=Solution trouvée !
+game.solutionFound.details=Bravo, vous avez résolu ce tableau. Et maintenant ?
+game.solutionFound.announce=Annoncer ma solution
+game.solutionFound.improve=Améliorer ma solution
+game.solutionFound.retry=Recommencer depuis le début
+
+
+game.endOfGame.title=Le temps est écoulé!
+game.endOfGame.details=Une autre partie commence...
+game.endOfGame.giveup=Abandonner
+game.endOfGame.joinNext=Rejoindre la partie suivante!
+
+
+# Login
+# =====
+login.title=Robotagram - Identification
+login.form.legend=S''identifier
+login.form.intro=Choisissez un pseudo
+login.form.nickname.label=Pseudo
+login.form.nickname.watermark=casimir69, boris456, etc ...
+login.leave=Annuler
+login.play=Jouer !
+
+login.result.success=Vous êtes identifié
+logout.result.success=Vous êtes déconnecté
+login.authenticationRequired=Vous devez vous identifier pour accéder à la page demandée.
+

@@ -1,4 +1,4 @@
-@(requestedRoom: String , requestedGame: String, user: User)(implicit flash: Flash)
+@(requestedRoom: String , requestedGame: String, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @main("This game is over", user)(null){
 

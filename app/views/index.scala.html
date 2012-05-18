@@ -1,31 +1,31 @@
-@(user: User)(implicit flash: Flash)
+@(user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
-@main("Robotagram", user)(null) {
+@main(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
     <div class="span6" id="boardZone">
-        <h2>Welcome</h2>
-        <p><strong>Robotagram</strong> is a super great game etc.</p>
+        <h2>@Messages("home.welcome")</h2>
+        <p><strong>@Messages("app.name")</strong> @Messages("home.introduction")</p>
         <img src="http://botropolis.com/wp-content/uploads/ro34.jpg"
              alt="" style="-moz-box-shadow: 4px 4px 12px #aaa;-webkit-box-shadow: 4px 4px 12px #aaa;box-shadow: 4px 4px 12px #555;margin:0px auto;">
 
     </div>
     <div class="span6" id="roomList">
-        <h3>Join a game !</h3>
+        <h3>@Messages("home.join")</h3>
         <div id="join">
-            Current rooms :
+            @Messages("home.rooms", 1) :
             <table class="table table-condensed">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>players</th>
-                        <th>actions</th>
+                        <th>@Messages("common.players")</th>
+                        <th>@Messages("common.actions")</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th>default</th>
                         <td>9999</td>
-                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame("default")">Join</a></td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Application.currentGame("default")">@Messages("common.actions.join")</a></td>
                     </tr>
                 </tbody>
             </table>

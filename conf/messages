@@ -1,0 +1,65 @@
+# Messages
+
+# App identity
+# ============
+app.name=Robotagram
+app.footer=this is the footer
+
+
+# Shared vocabulary
+# =================
+# taken from play samples computer-database
+common.players=players
+common.actions=actions
+common.actions.join=Join
+
+common.user.logon=Log on
+common.user.logout=Log out
+
+
+# Home
+# ====
+home.title=Robotagram
+home.welcome=Welcome
+# app.name is inserted before that
+home.introduction= is a super great game etc.
+home.join=Join a game!
+# example of pluralization taken from play samples computer-database
+home.rooms={0,choice,0#No available rooms|1#One available room|1<{0,number,integer} available rooms}
+
+# Game
+# ====
+game.title=Robotagram - Game in progress
+game.leaderboard=Leaderboard
+game.howtoplay=How to play
+game.move=move
+
+game.help.previousnext=select previous/next robot
+game.help.undoredo=undo/redo a move
+
+game.solutionFound.title=Solution found !
+game.solutionFound.details=Congratulations, you found a solution. What do you want to do ?
+game.solutionFound.announce=Announce solution
+game.solutionFound.improve=Improve solution
+game.solutionFound.retry=Retry from zero
+
+
+game.endOfGame.title=Time is over !
+game.endOfGame.details=Another game is starting now ...
+game.endOfGame.giveup=Give up
+game.endOfGame.joinNext=Join the next game !
+
+
+# Login
+# =====
+login.title=Robotagram - Login
+login.form.legend=Login
+login.form.intro=Choose your nickname for the game
+login.form.nickname.label=Nickname
+login.form.nickname.watermark=casimir69, boris456, etc ...
+login.leave=Leave
+login.play=Play !
+
+login.result.success=You are now logged in
+logout.result.success=You have been logged out
+login.authenticationRequired=You must be authentified to access the page you requested.

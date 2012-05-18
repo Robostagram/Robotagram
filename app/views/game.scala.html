@@ -1,4 +1,4 @@
-@(roomId : String,  room: Room, user: User)(implicit flash: Flash)
+@(roomId : String,  room: Room, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
 
 @renderColor(color: Color.Value) = {@color.toString}
 
@@ -30,7 +30,7 @@
     </ul>
 }
 
-@main("Robotagram Rocks !!!", user)(headerContent){
+@main(Messages("game.title"), user)(headerContent){
 <input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">
 <input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@room.game.secondsLeft">
 <div class="row-fluid">
@@ -38,11 +38,11 @@
         @renderBoard(room.game)
     </div>
     <div class="span4" id="gameZone">
-        <h3>Leaderboard</h3>
+        <h3>@Messages("game.leaderboard")</h3>
         <div id="scores">
         @scores(room)
         </div>
-        <h3>How to play</h3>
+        <h3>@Messages("game.howtoplay")</h3>
         <div id="howToPlay">
             <table>
                 <tr>
@@ -60,7 +60,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td id="keyboard-mapping"> : move</td>
+                    <td id="keyboard-mapping"> : @Messages("game.move")</td>
                     <td>
                         <table id="arrow-keys">
                             <tr>
@@ -78,10 +78,10 @@
                 </tr>
             </table>
             <p class="hidden-tablet">
-                <kbd id="key-prev">S</kbd>/<kbd id="key-next">D</kbd> : select previous/next robot
+                <kbd id="key-prev">S</kbd>/<kbd id="key-next">D</kbd> : @Messages("game.help.previousnext")
             </p>
             <p class="hidden-tablet">
-                <kbd id="key-undo">X</kbd>/<kbd id="key-redo">C</kbd> : undo/redo a move
+                <kbd id="key-undo">X</kbd>/<kbd id="key-redo">C</kbd> : @Messages("game.help.undoredo")
             </p>
         </div>
 
@@ -89,31 +89,31 @@
 
     <div id="winModal" class="modal hide fade">
         <div class="modal-header">
-            <h3>Solution found !</h3>
+            <h3>@Messages("game.solutionFound.title")</h3>
         </div>
         <div class="modal-body" align="center">
             <img src="http://www.bigshinyrobot.com/tools/flex.png" alt="Wouhou!" height="50%" width="50%">
+            <p>@Messages("game.solutionFound.details")</p>
         </div>
         <div class="modal-footer">
-            <a id="sendScore" class="btn btn-success" onClick="sendScore(), closeWinModal()" >Announce solution</a>
-            <a id="improve" class="btn btn-success" onClick="closeWinModal()" >Improve solution</a>
-            <a id="retry" class="btn btn-success" onClick="resetBoard(), closeWinModal()">Retry from zero</a>
+
+            <a id="improve" class="btn btn-small" onClick="closeWinModal()" >@Messages("game.solutionFound.improve")</a>
+            <a id="retry" class="btn btn-small" onClick="resetBoard(); closeWinModal()">@Messages("game.solutionFound.retry")</a>
+            <a id="sendScore" class="btn btn-large btn-success" onClick="sendScore(), closeWinModal()" >@Messages("game.solutionFound.announce")</a>
         </div>
     </div>
 
     <div id="endOfGameModal" class="modal hide fade">
         <div class="modal-header">
-            <h3>Time is over !</h3>
+            <h3>@Messages("game.endOfGame.title")</h3>
         </div>
         <div class="modal-body" align="center">
-            <p>Time's up !</p>
-            <p>Another game is starting now ...</p>
-
+            <p>@Messages("game.endOfGame.details")</p>
         </div>
         <div class="modal-footer">
-            <a href="@routes.Home.index" class="btn">Give up</a>
+            <a href="@routes.Home.index" class="btn">@Messages("game.endOfGame.giveup")</a>
             @* "current" is the url for the current game in this room *@
-            <a id="joinNextGame" class="btn btn-success" href="@routes.Application.currentGame(roomId)" >Join the next game !</a>
+            <a id="joinNextGame" class="btn btn-success" href="@routes.Application.currentGame(roomId)" >@Messages("game.endOfGame.joinNext")</a>
         </div>
     </div>
 </div>

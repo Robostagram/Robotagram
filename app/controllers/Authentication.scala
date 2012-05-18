@@ -6,6 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 import models.{AnonymousUser, User}
 import play.api.data.validation.Constraints
+import play.api.i18n.Messages
 
 object Authentication extends Controller {
 
@@ -26,7 +27,7 @@ object Authentication extends Controller {
           }
           Redirect(destinationUrl)
             .withSession("username" -> postedNickname)
-            .flashing("success" -> "You are now logged in")
+            .flashing("success" -> Messages("login.result.success"))
         }
       )
   }
@@ -42,8 +43,8 @@ object Authentication extends Controller {
       Application.playerDisconnected(User.fromRequest.nickname);
       Redirect(routes.Home.index())
         .withNewSession
-        .flashing("success" -> "You have been logged out"
-      )
+        .flashing("success" -> Messages("logout.result.success"))
+
   }
 
   object Secured {
@@ -52,7 +53,7 @@ object Authentication extends Controller {
       implicit request => {
         User.fromRequest match {
           case AnonymousUser => Redirect(routes.Authentication.login(Some(request.uri)))
-                                    .flashing("info" -> "You must be authentified to access the page you requested." )
+                                    .flashing("info" -> Messages("login.authenticationRequired"))
           case _ => action(request)
         }
       }

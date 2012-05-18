@@ -1,9 +1,9 @@
-@(user: User)
+@(user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 <ul id="userInfoBar" class="nav pull-right">
     <li>
         @user match {
-            case AnonymousUser => { <a id="loginLink" href="@controllers.routes.Authentication.login(None)">Log on</a> }
-            case _ => { <a id="userName">@user.nickname</a></li><li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">Log out</a> }
+            case AnonymousUser => { <a id="loginLink" href="@controllers.routes.Authentication.login(None)">@Messages("common.user.logon")</a> }
+            case _ => { <a id="userName">@user.nickname</a></li><li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">@Messages("common.user.logout")</a> }
         }
     </li>
-</ul
+</ul>
