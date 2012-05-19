@@ -3,7 +3,7 @@
 # App identity
 # ============
 app.name=Robotagram
-app.footer=this is the footer
+app.footer=Use of <a href="http://glyphicons.com/">glyphicons</a> under the free <a href="http://creativecommons.org/licenses/by/3.0/deed.en" title="Creative Commons Attribution 3.0 Unported (CC BY 3.0)">Creative Commons Attribution 3.0 Unported (CC BY 3.0)</a>
 
 
 # Shared vocabulary
