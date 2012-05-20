@@ -3,7 +3,7 @@
 # App identity
 # ============
 app.name=Robotagramme
-app.footer=Utilisation de <a href="http://glyphicons.com/">glyphicons</a> avec la licence gratuite <a href="http://creativecommons.org/licenses/by/3.0/deed.en" title="Creative Commons Attribution 3.0 Unported (CC BY 3.0)">Creative Commons Attribution 3.0 Unported (CC BY 3.0)</a>
+app.footer=Utilisation de <a href="http://glyphicons.com/">glyphicons</a> avec la licence gratuite <a href="http://creativecommons.org/licenses/by/3.0/deed.en" title="Creative Commons Attribution 3.0 Unported (CC BY 3.0)">Creative Commons Attribution 3.0 Unported (CC BY 3.0)</a><br/>Utilisation de <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> avec la license <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a><br/>
 
 
 # Shared vocabulary
