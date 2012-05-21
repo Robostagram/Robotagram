@@ -5,9 +5,11 @@
     <div class="span6" id="boardZone">
         <h2>@Messages("home.welcome")</h2>
         <p><strong>@Messages("app.name")</strong> @Messages("home.introduction")</p>
-        <img src="@routes.Assets.at("images/robot_lovedraw.jpg")"
-             alt="image by lovedraw" style="-moz-box-shadow: 4px 4px 12px #aaa;-webkit-box-shadow: 4px 4px 12px #aaa;box-shadow: 4px 4px 12px #555;margin:0px auto;">
-        <a href="http://www.flickr.com/photos/lovedraw/7109416341/">Original image</a> by <a  href="http://www.flickr.com/photos/lovedraw/">lovedraw</a> under <a href="http://creativecommons.org/licenses/by-nd/2.0/deed.fr">CC BY-ND 2.0</a>
+        <img id="homePicture" src="@routes.Assets.at("images/robot_lovedraw.jpg")" alt="image by lovedraw">
+        <span id="homePictureLegend">
+            <a href="http://www.flickr.com/photos/lovedraw/7109416341/">Original image</a> by <a  href="http://www.flickr.com/photos/lovedraw/">lovedraw</a> under <a href="http://creativecommons.org/licenses/by-nd/2.0/deed.fr">CC BY-ND 2.0</a>
+        </span>
+
 
     </div>
     <div class="span6" id="roomList">

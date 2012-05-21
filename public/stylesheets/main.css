@@ -25,6 +25,26 @@ footer {
     margin-bottom: 0px;
 }
 
+footer a{
+    color:#A0A0A0;
+}
+footer a:hover{
+    color:#A0A0A0;
+}
+
+/* picture on home page */
+img#homePicture{
+            box-shadow: 4px 4px 12px #555;
+       -moz-box-shadow: 4px 4px 12px #aaa;
+    -webkit-box-shadow: 4px 4px 12px #aaa;
+    margin:0px auto;
+}
+span#homePictureLegend{
+    display:block;
+    text-align:right;
+    font-size:10px;
+}
+
 div#boardZone {
 }
 
