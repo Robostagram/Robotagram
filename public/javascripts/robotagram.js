@@ -372,7 +372,7 @@ function setUpHelpAndTooltips(){
     var $robotOfObjective = $("#robotForObjective");
 
     $robotOfObjective.tooltip({
-        title:"Bring this robot ...",
+        title:$_("game.tooltip.bringThisRobot"),
         trigger:'manual',
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
@@ -385,7 +385,7 @@ function setUpHelpAndTooltips(){
     });
     var $objective = $('#objective');
     $objective.tooltip({
-        title:"... to this objective !",
+        title:$_("game.tooltip.toThisObjective"),
         trigger:'manual',
         placement:function(){
             // are we on the first row ? then display the tooltip at the bottom ...
@@ -534,7 +534,7 @@ function reSyncGameStatusWithServer() {
         },
         statusCode:{
             410:function () {
-                alert("The game you asked is finished .... ");
+                //alert("The game you asked is finished .... ");
                 $(window).trigger(EVENT_GAME_TIMEUP);
             }
         }
