@@ -13,3 +13,8 @@ Log into the game and try to make the right robot to reach its goal. A robot can
 * [Play 2](http://www.playframework.org/)
 * [jQuery](http://jquery.com/) / [jQuery UI](http://jqueryui.com/)
 * [Twitter Bootstrap](http://twitter.github.com/bootstrap/)
+ 
+## Also using
+
+* Michael Hue's [KEYS.CSS](http://michaelhue.com/keyscss/)
+* [jquery-i18n-properties](http://code.google.com/p/jquery-i18n-properties/)
