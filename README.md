@@ -18,3 +18,4 @@ Log into the game and try to make the right robot to reach its goal. A robot can
 
 * Michael Hue's [KEYS.CSS](http://michaelhue.com/keyscss/)
 * [jquery-i18n-properties](http://code.google.com/p/jquery-i18n-properties/)
+* Ben Alman's [jquery-throttle-debounce](http://benalman.com/projects/jquery-throttle-debounce-plugin/)
