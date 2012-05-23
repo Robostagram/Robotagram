@@ -12,7 +12,7 @@ import play.api.libs.json.Json.toJson
 import play.api.data.Form
 import play.api.libs.json.{JsString, JsUndefined, Json, JsValue}
 
-object Application extends Controller {
+object Gaming extends Controller {
 
   // handle a game per room, with as many rooms as can be named (for now)
   var rooms: HashMap[String, Room] = new HashMap[String, Room]() // [roomId -> Room]
@@ -63,7 +63,7 @@ object Application extends Controller {
         val user = User.fromRequest(request)
         initializeGameIfNecessary(room, user.nickname)
 
-        Redirect(routes.Application.getGame(room.id, room.game.uuid))
+        Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
     }
   }
 

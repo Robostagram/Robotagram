@@ -12,10 +12,10 @@ GET     /logout                     controllers.Authentication.logout
 POST    /logout                     controllers.Authentication.logout
 
 # playing
-GET     /rooms/:roomId/games/current            controllers.Application.currentGame(roomId : String)
-GET     /rooms/:roomId/games/:gameId            controllers.Application.getGame(roomId : String, gameId : String)
-GET     /rooms/:roomId/games/:gameId/status     controllers.Application.status(roomId : String, gameId : String)
-GET     /connectPlayer/:player                  controllers.Application.connectPlayer(player: String)
+GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String)
+GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomId : String, gameId : String)
+GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.status(roomId : String, gameId : String)
+GET     /connectPlayer/:player                  controllers.Gaming.connectPlayer(player: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
