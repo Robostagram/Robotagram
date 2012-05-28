@@ -31,6 +31,8 @@
 }
 
 @main(Messages("game.title"), user)(headerContent){
+<input type="hidden" id="roomId" name="roomId" value="@roomId">
+<input type="hidden" id="gameId" name="gameId" value="@room.game.uuid">
 <input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">
 <input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@room.game.secondsLeft">
 <div class="row-fluid">
@@ -97,9 +99,9 @@
         </div>
         <div class="modal-footer">
 
-            <a id="improve" class="btn btn-small" onClick="closeWinModal()" >@Messages("game.solutionFound.improve")</a>
-            <a id="retry" class="btn btn-small" onClick="resetBoard(); closeWinModal()">@Messages("game.solutionFound.retry")</a>
-            <a id="sendScore" class="btn btn-large btn-success" onClick="sendScore(), closeWinModal()" >@Messages("game.solutionFound.announce")</a>
+            <a id="improve" class="btn btn-small" onClick="closeWinModal();" >@Messages("game.solutionFound.improve")</a>
+            <a id="retry" class="btn btn-small" onClick="resetBoard(); closeWinModal();">@Messages("game.solutionFound.retry")</a>
+            <a id="sendScore" class="btn btn-large btn-success loading" onClick="showLoading();sendScore(closeWinModal, alert, hideLoading);" >@Messages("game.solutionFound.announce")</a>
         </div>
     </div>
 
@@ -113,7 +115,7 @@
         <div class="modal-footer">
             <a href="@routes.Home.index" class="btn">@Messages("game.endOfGame.giveup")</a>
             @* "current" is the url for the current game in this room *@
-            <a id="joinNextGame" class="btn btn-success" href="@routes.Application.currentGame(roomId)" >@Messages("game.endOfGame.joinNext")</a>
+            <a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(roomId)" >@Messages("game.endOfGame.joinNext")</a>
         </div>
     </div>
 </div>

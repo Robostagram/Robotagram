@@ -540,6 +540,14 @@ function reSyncGameStatusWithServer() {
         }
     });
 }
+
+// shitty loading indicator to show something is happening ... putting it on body so far
+function showLoading(){
+    $("body").addClass("loading");
+}
+function hideLoading(){
+    $("body").removeClass("loading");
+}
 ///////////////////// WEB SOCKETS ////////////////////
 
     var gameSocket = null;
@@ -560,13 +568,36 @@ function reSyncGameStatusWithServer() {
         gameSocket.send(message);
     }
 
-    function sendScore() {
+    // submit the current score ...
+    // provide call back for what to do it :
+    // - submission succeeds
+    // - submission fails
+    // - done submitting and got the reply (after success and failure)
+    function sendScore(successCallback, failureCallback, completedCallback) {
         // how to handle submission of a game that is finished ?
         // the server expects moves to be a list of strings, instead of a list of proper objects ...
         // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
         var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
-        var message = JSON.stringify({"solution":{"player":$("#userName").text(), "moves":movesToSend}});
-        gameSocket.send(message);
+        // hidden inputs somewhere in the page ... to improve
+        var roomId = $("#roomId").val();
+        var gameId = $("#gameId").val();
+        jsRoutes.controllers.Gaming.submitSolution(roomId, gameId).ajax({
+            data:{"solution":JSON.stringify({"moves":movesToSend})},
+            statusCode: {
+                202: function() { // Accepted (202)
+                  successCallback();
+                },
+                406: function(){  // NotAcceptable (406)
+                  failureCallback("Solution not accepted - did you cheat ?");
+                },
+                410: function(){ // Gone (410)
+                  failureCallback("Too late, the game is over");
+                }
+            },
+            complete: function(){
+              completedCallback();
+            }
+        });
     }
 
     var receiveSummary = function(event) {

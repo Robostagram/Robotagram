@@ -3,14 +3,12 @@ package controllers
 import scala.collection.mutable.HashMap
 import play.api.mvc._
 import models._
-import models.Direction._
-import models.Color._
 import concurrent.Lock
 import play.api.libs.iteratee.Iteratee
 import controllers.Authentication.Secured
 import play.api.libs.json.Json.toJson
 import play.api.data.Form
-import play.api.libs.json.{JsString, JsUndefined, Json, JsValue}
+import play.api.libs.json.{JsUndefined, Json, JsValue}
 
 object Gaming extends Controller {
 
@@ -43,27 +41,19 @@ object Gaming extends Controller {
       lock.release()
     }
   }
-
-  private def getRoom(roomId: String): Room = {
-    val roomOpt = rooms.get(roomId)
-    if (roomOpt == None) {
-      NotFound("404 de la mort : room '" + roomId + "' does not exist. Only the room 'default' exists so far")
-    }
-    roomOpt.get
-  }
   
   
   //
   // GET /rooms/n/games/current
   //
   def currentGame(roomId: String) = Secured.Authenticated {
-    Action {
-      implicit request =>
-        val room = getRoom(roomId)
+    Action { implicit request =>
+      rooms.get(roomId).map { room =>
         val user = User.fromRequest(request)
         initializeGameIfNecessary(room, user.nickname)
-
         Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
+
+      }.getOrElse(Results.NotFound) //no room with that id
     }
   }
 
@@ -71,12 +61,10 @@ object Gaming extends Controller {
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
   //
   def getGame(roomId: String, gameId: String = null) = Secured.Authenticated {
-    Action {
-      implicit request =>
-        val room = getRoom(roomId)
+    Action { implicit request =>
+      rooms.get(roomId).map {room =>
         val user = User.fromRequest(request)
         initializeGameIfNecessary(room, user.nickname)
-        
         if (gameId != null && gameId != room.game.uuid) {
           // game is no longer being played
           // should not be a 200, but something else, probably a 30X (redirection )
@@ -84,29 +72,26 @@ object Gaming extends Controller {
         } else {
           Ok(views.html.game(room.id, room, user))
         }
+      }.getOrElse(NotFound) //no room with that id
     }
   }
 
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx/status
   //
-  def status(roomId: String, gameId: String) = Action {
-    // TODO : disable browser caching on this method
-    val roomOpt = rooms.get(roomId)
-    if (roomOpt == None) {
-      Gone("Room is closed");
-    }
-    val room = roomOpt.get
-    val game = room.game
-    if (game == null || gameId != game.uuid) {
-      Gone("Game " + gameId + " is not there anymore, current one: " + game.uuid);
-    }
-    else {
-      var state = "playing"
-      if (game.isDone) {
-        state = "finished"
-      }
-      Ok(toJson(Map(
+  def status(roomId: String, gameId: String) = Secured.Authenticated {
+    Action {
+      rooms.get(roomId).map { room =>
+        val game = room.game
+        if (game == null || gameId != game.uuid) {
+          Gone("Game " + gameId + " is not there anymore, current one: " + game.uuid);
+        }
+        else {
+          var state = "playing"
+          if (game.isDone) {
+            state = "finished"
+          }
+          Ok(toJson(Map(
             "game" -> toJson(
               Map(
                 "duration" -> toJson(game.durationInSeconds),
@@ -116,15 +101,58 @@ object Gaming extends Controller {
                 "status" -> toJson(state)
               )
             )
-      )))
+          )))
+        }
+      }.getOrElse(NotFound("Unknown room"))
+    }
+  }
+
+  //
+  // POST /rooms/:roomId/games/:gameId/solution
+  //
+  def submitSolution(roomId: String, gameId: String) = Secured.Authenticated {
+    Action { implicit request =>
+      rooms.get(roomId).map { room =>
+        val user = User.fromRequest(request)
+        initializeGameIfNecessary(room, user.nickname)
+
+        if (gameId != null && gameId != room.game.uuid) {
+          Gone("This game is over - score not submitted")
+        } else {
+          // extract posted solution from the request
+          Form("solution" -> play.api.data.Forms.text).bindFromRequest.fold(
+            noScore => BadRequest("No solution submitted"),
+            solution => {
+              findRoomOfPlayer(user.nickname).map {roomOfPlayer =>
+                val game = roomOfPlayer.game
+                val messageJson: JsValue = Json.parse(solution)
+                val moves = (messageJson \ "moves").as[List[String]]
+                val score = moves.length
+                if (game.validate(moves.map(parseMovement))) {
+                  lock.acquire()
+                  try {
+                    roomOfPlayer.withPlayer(user.nickname).scored(score)
+                    notifySummary(roomOfPlayer) // player=null in order to set also the local leader board
+                    Accepted("Solution accepted")
+                  } finally {
+                    lock.release()
+                  }
+                }
+                else{
+                  NotAcceptable("Solution not accepted")
+                }
+              }.getOrElse(BadRequest("unknown room for player")) // room of player does not exist
+            }
+          )
+        }
+      }.getOrElse(NotFound) //unknown roomId
     }
   }
   
   def findRoomOfPlayer(player: String): Option[Room] = {
-    roomsByPlayer.get(player) match {
-      case None => None
-      case Some(roomId) => rooms.get(roomId)
-    }
+    roomsByPlayer.get(player).map { roomIdOfPlayer =>
+      rooms.get(roomIdOfPlayer)
+    }.getOrElse(None)
   }
 
   /////////// Web sockets /////////////////
@@ -182,35 +210,8 @@ object Gaming extends Controller {
   def messageReceived(message: String) {
     val messageJson: JsValue = Json.parse(message)
 
-    val jsonSolution = messageJson \ "solution";
-    var matches:Boolean = (jsonSolution:Any) match {
-      case JsUndefined(error) => false
-      case _ => true;
-    }
-    if (matches) {
-      val player: String = (jsonSolution \ "player").as[String]
-      val roomOpt = findRoomOfPlayer(player)
-      if (roomOpt != None) {
-        val room = roomOpt.get
-        val game = room.game
-        val solution = (jsonSolution \ "moves").as[List[String]]
-        val score = solution.length
-        if (game.validate(solution.map(parseMovement))) {
-          lock.acquire()
-          try {
-            room.withPlayer(player).scored(solution.length)
-            notifySummary(room) // player=null in order to set also the local leader board
-          } finally {
-            lock.release()
-          }
-        }
-      } else {
-        // TODO log?
-      }
-    }
-
     val jsonLeave = messageJson \ "leave";
-    matches = (jsonLeave:Any) match {
+    var matches = (jsonLeave:Any) match {
       case JsUndefined(error) => false
       case _ => true;
     }

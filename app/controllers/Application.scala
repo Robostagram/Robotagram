@@ -30,7 +30,7 @@ object Application extends Controller {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        Gaming.currentGame, Gaming.getGame, Gaming.status, Gaming.connectPlayer,
+        Gaming.currentGame, Gaming.getGame, Gaming.status, Gaming.connectPlayer, Gaming.submitSolution,
         Authentication.login, Authentication.logout, Authentication.authenticate
       )
     ).as("text/javascript")

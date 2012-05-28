@@ -3,6 +3,26 @@ body {
     background-color: #DBDBDB;
 }
 
+
+/* loading indicator - shows up only when body has class loading */
+div#loadingIndicator{
+    position:absolute;
+    /* top left corner */
+    right:0px;
+    top:0px;
+    display:none;
+    height:32px;
+    width:32px;
+    background:url('/assets/images/ajax-loader.gif');
+    z-index:2000;
+    margin:5px;
+
+}
+
+body.loading div#loadingIndicator{
+    display:block;
+}
+
 /*
     structure de la page
 */
@@ -369,4 +389,5 @@ a#headerArrow {
 #timeProgress .progress .bar {
     height: 19px;
 }
+
 
