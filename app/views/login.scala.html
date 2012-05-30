@@ -1,8 +1,8 @@
-@(loginForm: Form[String], redirectTo: Option[String])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(loginForm: Form[(String, String)], redirectTo: Option[String])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @import helpers.CustomHelpers._
 
-@main(Messages("login.title"), AnonymousUser)(null) {
+@main(Messages("login.title"), None)(null) {
 
 @helper.form(routes.Authentication.authenticate(redirectTo), 'class -> "form-horizontal"){
     @*make it look like a modal, without js involved ... *@
@@ -18,6 +18,7 @@
                 <legend>@Messages("login.form.legend")</legend>
                 <p>@Messages("login.form.intro")</p>
                 @helper.inputText(loginForm("nickname"), '_label-> (Messages("login.form.nickname.label") + " : "), 'placeholder -> Messages("login.form.nickname.watermark"))
+                @helper.inputPassword(loginForm("password"), '_label-> (Messages("login.form.password.label") + " : "))
             </fieldset>
         </div>
         <div class="modal-footer">

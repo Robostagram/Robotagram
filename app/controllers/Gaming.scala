@@ -49,8 +49,8 @@ object Gaming extends Controller {
   def currentGame(roomId: String) = Secured.Authenticated {
     Action { implicit request =>
       rooms.get(roomId).map { room =>
-        val user = User.fromRequest(request)
-        initializeGameIfNecessary(room, user.nickname)
+        val user = User.fromRequest(request).get
+        initializeGameIfNecessary(room, user.name)
         Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
 
       }.getOrElse(Results.NotFound) //no room with that id
@@ -63,8 +63,8 @@ object Gaming extends Controller {
   def getGame(roomId: String, gameId: String = null) = Secured.Authenticated {
     Action { implicit request =>
       rooms.get(roomId).map {room =>
-        val user = User.fromRequest(request)
-        initializeGameIfNecessary(room, user.nickname)
+        val user = User.fromRequest(request).get
+        initializeGameIfNecessary(room, user.name)
         if (gameId != null && gameId != room.game.uuid) {
           // game is no longer being played
           // should not be a 200, but something else, probably a 30X (redirection )
@@ -113,8 +113,8 @@ object Gaming extends Controller {
   def submitSolution(roomId: String, gameId: String) = Secured.Authenticated {
     Action { implicit request =>
       rooms.get(roomId).map { room =>
-        val user = User.fromRequest(request)
-        initializeGameIfNecessary(room, user.nickname)
+        val user = User.fromRequest(request).get
+        initializeGameIfNecessary(room, user.name)
 
         if (gameId != null && gameId != room.game.uuid) {
           Gone("This game is over - score not submitted")
@@ -123,7 +123,7 @@ object Gaming extends Controller {
           Form("solution" -> play.api.data.Forms.text).bindFromRequest.fold(
             noScore => BadRequest("No solution submitted"),
             solution => {
-              findRoomOfPlayer(user.nickname).map {roomOfPlayer =>
+              findRoomOfPlayer(user.name).map {roomOfPlayer =>
                 val game = roomOfPlayer.game
                 val messageJson: JsValue = Json.parse(solution)
                 val moves = (messageJson \ "moves").as[List[String]]
@@ -131,7 +131,7 @@ object Gaming extends Controller {
                 if (game.validate(moves.map(parseMovement))) {
                   lock.acquire()
                   try {
-                    roomOfPlayer.withPlayer(user.nickname).scored(score)
+                    roomOfPlayer.withPlayer(user.name).scored(score)
                     notifySummary(roomOfPlayer) // player=null in order to set also the local leader board
                     Accepted("Solution accepted")
                   } finally {

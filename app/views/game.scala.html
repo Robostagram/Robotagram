@@ -30,7 +30,7 @@
     </ul>
 }
 
-@main(Messages("game.title"), user)(headerContent){
+@main(Messages("game.title"), Some(user))(headerContent){
 <input type="hidden" id="roomId" name="roomId" value="@roomId">
 <input type="hidden" id="gameId" name="gameId" value="@room.game.uuid">
 <input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">

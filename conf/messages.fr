@@ -57,6 +57,7 @@ login.form.legend=S''identifier
 login.form.intro=Choisissez un pseudo
 login.form.nickname.label=Pseudo
 login.form.nickname.watermark=casimir69, boris456, etc ...
+login.form.password.label=Mot de passe
 login.leave=Annuler
 login.play=Jouer !
 
