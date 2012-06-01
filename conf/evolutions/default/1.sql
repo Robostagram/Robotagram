@@ -5,6 +5,7 @@
 create table users (
   id                        bigint not null primary key,
   name                      varchar(255) not null unique,
+  email                     varchar(255) not null unique,
   password                  varchar(255) not null
 );
 

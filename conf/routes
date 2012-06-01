@@ -11,6 +11,11 @@ POST    /login                      controllers.Authentication.authenticate(redi
 GET     /logout                     controllers.Authentication.logout
 POST    /logout                     controllers.Authentication.logout
 
+# Account
+GET     /account/register                   controllers.Account.register
+POST    /account/register                   controllers.Account.createAccount
+GET     /account/created                    controllers.Account.accountCreated(username:String)
+
 # playing
 GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String)
 GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomId : String, gameId : String)

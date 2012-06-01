@@ -8,7 +8,7 @@ import anorm._
 import anorm.SqlParser._
 
 
-case class User(id: Pk[Long], name: String, password: String)
+case class User(id: Pk[Long], name: String, email: String, password: String)
 
 object User {
 
@@ -29,8 +29,9 @@ object User {
   val simple = {
       get[Pk[Long]]("users.id") ~
       get[String]("users.name") ~
+      get[String]("users.email") ~
       get[String]("users.password") map {
-      case id~name~password => User(id, name, password)
+      case id~name~email~password => User(id, name, email, password)
     }
   }
 
@@ -41,8 +42,29 @@ object User {
    */
   def findByName(name: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users where name = {name}").on(
+      SQL("""
+        SELECT id, name, email, password
+        FROM users
+        WHERE upper(name) = upper({name})
+        """
+      ).on(
         'name -> name
+      ).as(User.simple.singleOpt)
+    }
+  }
+
+  /**
+   * Retrieve a User from email.
+   */
+  def findByEmail(email: String): Option[User] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          SELECT id, name, email, password
+          FROM users
+          WHERE upper(email) = upper({email})
+          """
+      ).on(
+        'email -> email
       ).as(User.simple.singleOpt)
     }
   }
@@ -52,7 +74,11 @@ object User {
    */
   def findAll: Seq[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users").as(User.simple *)
+      SQL("""
+          select id, name, email, password
+          from users
+          """
+      ).as(User.simple *)
     }
   }
 
@@ -63,8 +89,9 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         select * from users where
-         name = {name} and password = {password}
+         SELECT id, name, email, password
+         FROM users
+         WHERE upper(name) = upper({name}) and password = {password}
         """
       ).on(
         'name -> name,
@@ -75,31 +102,40 @@ object User {
 
   /**
    * Create a User.
+   *
+   * return None if user cannot be created
    */
-  def create(user: User): User = {
-    DB.withConnection { implicit connection =>
+  def create(user: User): Option[Long] = {
+    findByName(user.name) match {
+      // check if a user does not exist already ( with same name / case-insensitive)
+      case Some(user) => None // a user exists with that name , stop here !
+      case _ =>
+        DB.withConnection { implicit connection =>
 
-    // Get the project id
-      val id: Long = user.id.getOrElse {
-        SQL("select next value for users_seq").as(scalar[Long].single)
-      }
+        // Get the user id
+          val id: Long = user.id.getOrElse {
+            SQL("select next value for users_seq").as(scalar[Long].single)
+          }
 
-      // Insert the project
-      SQL(
-        """
+          // Insert the user
+          SQL(
+            """
            insert into users values (
-             {id}, {name}, {password}
+             {id}, {name}, {email}, {password}
            )
-        """
-      ).on(
-        'id -> id,
-        'name -> user.name,
-        'password -> user.password
-      ).executeUpdate()
+            """
+          ).on(
+            'id -> id,
+            'name -> user.name,
+            'email -> user.email,
+            'password -> user.password
+          ).executeInsert()
 
-      user
+          Some(id)
 
+        }
     }
+
   }
 
 }

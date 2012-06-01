@@ -54,14 +54,42 @@ game.endOfGame.joinNext=Rejoindre la partie suivante!
 # =====
 login.title=Robotagram - Identification
 login.form.legend=S''identifier
-login.form.intro=Choisissez un pseudo
+login.form.intro=Saisissez votre pseudo/mot de passe
 login.form.nickname.label=Pseudo
 login.form.nickname.watermark=casimir69, boris456, etc ...
 login.form.password.label=Mot de passe
+login.notAMemberYet=Pas encore inscrit ?
 login.leave=Annuler
 login.play=Jouer !
 
 login.result.success=Vous êtes identifié
 logout.result.success=Vous êtes déconnecté
 login.authenticationRequired=Vous devez vous identifier pour accéder à la page demandée.
+
+# Register / create an account
+register.title=Inscription
+register.form.legend=S''inscrire
+register.form.intro=Les informations suivantes sont nécessaires pour s''inscrire.
+
+register.form.name.label=Pseudo
+register.form.name.watermark=Maurice28, TomSawyer99 etc
+register.form.email.label=E-mail
+register.form.email.watermark=hermione.granger@hogwarts.co.uk
+register.form.emailConfirmation.label=E-mail (confirmation)
+register.form.emailConfirmation.watermark=confirmer l''adresse e-mail
+register.form.password.label=Mot de passe
+register.form.password.watermark=chut! C''est un secret
+register.form.passwordConfirmation.label=Mot de passe (confirmation)
+register.form.passwordConfirmation.watermark=confirmer le mot de passe
+
+register.leave=Annuler
+register.createAccount=Créer un compte
+register.result.success=Votre compte a été créé
+register.result.failure=Votre compte n''a pas pu être créé
+
+register.accountCreated.title=Compte créé
+register.accountCreated.header=On y est presque
+register.accountCreated.message=Votre compte a bien été créé avec le pseudo "{0}".
+register.accountCreated.emailVerification=Votre compte n'est pas encore activé car nous voudrions d'abord vérifier votre adresse e-mail. Vérifiez votre boite aux lettres et cliquez sur le lien pour activer votre compte.
+
 

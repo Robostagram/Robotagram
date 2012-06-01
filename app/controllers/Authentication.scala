@@ -23,6 +23,8 @@ object Authentication extends Controller {
                     )
   )
 
+
+
   def authenticate(redirectTo: Option[String] = None) = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(

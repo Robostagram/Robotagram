@@ -1,0 +1,7 @@
+@(userName: String)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+@main(Messages("register.accountCreated.title"), None)(null) {
+        <h2>@Messages("register.accountCreated.header")</h2>
+        <p>@Messages("register.accountCreated.message", userName)</p>
+        <p>@Messages("register.accountCreated.emailVerification")</p>
+}

@@ -54,13 +54,43 @@ game.endOfGame.joinNext=Join the next game !
 # =====
 login.title=Robotagram - Login
 login.form.legend=Login
-login.form.intro=Choose your nickname for the game
+login.form.intro=Type in your username and password
 login.form.nickname.label=Nickname
 login.form.nickname.watermark=casimir69, boris456, etc ...
 login.form.password.label=Password
+login.notAMemberYet=Not registered yet ?
 login.leave=Leave
 login.play=Play !
 
 login.result.success=You are now logged in
 logout.result.success=You have been logged out
 login.authenticationRequired=You must be authentified to access the page you requested.
+
+# Register / create an account
+register.title=Registration
+register.form.legend=Sign in
+register.form.intro=Please fill in the following information in order to create your account.
+
+register.form.name.label=Username
+register.form.name.watermark=Maurice28, TomSawyer99 etc
+register.form.email.label=Your e-mail
+register.form.email.watermark=hermione.granger@hogwarts.co.uk
+register.form.emailConfirmation.label=E-mail (again)
+register.form.emailConfirmation.watermark=same as above
+register.form.password.label=Your password
+register.form.password.watermark=something only you should know
+register.form.passwordConfirmation.label=Password (again)
+register.form.passwordConfirmation.watermark=same as above
+
+register.leave=Cancel
+register.createAccount=Create an account
+register.result.success=Your account has been created
+register.result.failure=Your account could not be created
+
+register.accountCreated.title=Account created
+register.accountCreated.header=Just one last step
+register.accountCreated.message=Your account was created successfully with the name "{0}".
+register.accountCreated.emailVerification=Your account is not activated yet, because we need to verify your e-mail address. Check your mailbox and click on the link to activate your account.
+
+
+
