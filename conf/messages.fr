@@ -92,4 +92,9 @@ register.accountCreated.header=On y est presque
 register.accountCreated.message=Votre compte a bien été créé avec le pseudo "{0}".
 register.accountCreated.emailVerification=Votre compte n'est pas encore activé car nous voudrions d'abord vérifier votre adresse e-mail. Vérifiez votre boite aux lettres et cliquez sur le lien pour activer votre compte.
 
-
+# Already in an other room
+alreadyIn.title=Déjà dans une salle
+alreadyIn.whatdo=Quitter la salle actuelle ?
+alreadyIn.intro=Vous avez déjà rejoint une salle différente.
+alreadyIn.oldGame=Retourner dans ma salle
+alreadyIn.newGame=Quitter ma salle et rejoindre la nouvelle

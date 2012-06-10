@@ -1,0 +1,18 @@
+@(newRoomId: String, oldRoomId: String, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+@import helpers.CustomHelpers._
+
+@main(Messages("alreadyIn.title"), Some(user))(null) {
+
+    @*make it look like a modal, without js involved ... *@
+    <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
+        <div class="modal-body">
+            <legend>@Messages("alreadyIn.whatdo")</legend>
+            <p>@Messages("alreadyIn.intro")</p>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" href="@routes.Gaming.currentGame(oldRoomId)">@Messages("alreadyIn.oldGame")</a>
+            <a class="btn" href="@routes.Gaming.currentGame(newRoomId, true)">@Messages("alreadyIn.newGame")</a>
+        </div>
+    </div>
+}

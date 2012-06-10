@@ -13,7 +13,7 @@ import play.api.libs.json.{JsUndefined, Json, JsValue}
 object Gaming extends Controller {
 
   // handle a game per room, with as many rooms as can be named (for now)
-  var rooms: HashMap[String, Room] = new HashMap[String, Room]() // [roomId -> Room]
+  val rooms: HashMap[String, Room] = new HashMap[String, Room]() // [roomId -> Room]
   rooms += (("default", new Room("default")))
   rooms += (("default2", new Room("default2")))
   
@@ -42,37 +42,49 @@ object Gaming extends Controller {
     }
   }
   
-  
   //
   // GET /rooms/n/games/current
   //
-  def currentGame(roomId: String) = Secured.Authenticated {
+  def currentGame(roomId: String, forceLeaveRoom: Boolean = false) = Secured.Authenticated {
     Action { implicit request =>
-      rooms.get(roomId).map { room =>
-        val user = User.fromRequest(request).get
-        initializeGameIfNecessary(room, user.name)
-        Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
-
-      }.getOrElse(Results.NotFound) //no room with that id
+      val user = User.fromRequest(request).get
+      val currentRoomMaybe = roomsByPlayer.get(user.name)
+      if (!forceLeaveRoom && currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
+        Ok(views.html.alreadyIn(roomId, currentRoomMaybe.get, user))
+      } else {
+        if (forceLeaveRoom) {
+          playerDisconnected(user.name)
+        }
+        rooms.get(roomId).map { room =>
+          initializeGameIfNecessary(room, user.name)
+          Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
+        }.getOrElse(Results.NotFound) //no room with that id
+      }
     }
   }
+
+  // TODO get rid of GET /rooms/n/games/xx-xx-x-x-x-xxx, use only GET /rooms/n/games/current
 
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
   //
   def getGame(roomId: String, gameId: String = null) = Secured.Authenticated {
     Action { implicit request =>
-      rooms.get(roomId).map {room =>
-        val user = User.fromRequest(request).get
-        initializeGameIfNecessary(room, user.name)
-        if (gameId != null && gameId != room.game.uuid) {
-          // game is no longer being played
-          // should not be a 200, but something else, probably a 30X (redirection )
-          Ok(views.html.gameFinished(room.id, gameId, user))
-        } else {
-          Ok(views.html.game(room.id, room, user))
-        }
-      }.getOrElse(NotFound) //no room with that id
+      val user = User.fromRequest(request).get
+      val currentRoomMaybe = roomsByPlayer.get(user.name)
+      if (currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
+        Ok(views.html.alreadyIn(currentRoomMaybe.get, roomId, user))
+      } else {
+        rooms.get(roomId).map {room =>
+          if (gameId != null && gameId != room.game.uuid) {
+            // game is no longer being played
+            // should not be a 200, but something else, probably a 30X (redirection )
+            Ok(views.html.gameFinished(room.id, gameId, user))
+          } else {
+            Ok(views.html.game(room.id, room, user))
+          }
+        }.getOrElse(NotFound) //no room with that id
+      }
     }
   }
 

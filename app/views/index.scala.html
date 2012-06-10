@@ -1,4 +1,4 @@
-@(user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[User], rooms: Iterable[Room])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @main(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
@@ -25,11 +25,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @for(r:Room <- rooms) {
                     <tr>
-                        <th>default</th>
-                        <td>9999</td>
-                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame("default")">@Messages("common.actions.join")</a></td>
+                        <th>@r.id</th>
+                        <td>@r.players.size</td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(r.id)">@Messages("common.actions.join")</a></td>
                     </tr>
+                    }
                 </tbody>
             </table>
         </div>

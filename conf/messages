@@ -92,5 +92,9 @@ register.accountCreated.header=Just one last step
 register.accountCreated.message=Your account was created successfully with the name "{0}".
 register.accountCreated.emailVerification=Your account is not activated yet, because we need to verify your e-mail address. Check your mailbox and click on the link to activate your account.
 
-
-
+# Already in an other room
+alreadyIn.title=Already joined a room
+alreadyIn.whatdo=Leave current room?
+alreadyIn.intro=You are already participating to a game in another room.
+alreadyIn.oldGame=Rejoin my old room
+alreadyIn.newGame=Leave my old room and join the new one

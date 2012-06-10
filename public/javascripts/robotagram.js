@@ -420,7 +420,7 @@ function initListeners(){
     connectPlayer();
 
     // when leaving the window, disconnect the user
-    window.onunload = function() {
+    window.onbeforeunload = function() {
         // the game is finished ... just disconnect
         leaveGame();
         // should probably ask confirmation to user ??
