@@ -20,7 +20,7 @@
                 @helper.inputText(loginForm("nickname"), '_label-> (Messages("login.form.nickname.label") + " : "), 'placeholder -> Messages("login.form.nickname.watermark"))
                 @helper.inputPassword(loginForm("password"), '_label-> (Messages("login.form.password.label") + " : "))
             </fieldset>
-            <p style="float:right;">@Messages("login.notAMemberYet") <a class="" href="@routes.Account.register">&rarr; @Messages("register.createAccount")</a></p>
+            <p style="float:right;">@Messages("login.notAMemberYet") <a class="" href="@routes.Account.register"> @Messages("register.createAccount")</a></p>
         </div>
         <div class="modal-footer">
             <a class="btn" href="@routes.Home.index">@Messages("login.leave")</a>

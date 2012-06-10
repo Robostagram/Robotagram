@@ -114,7 +114,7 @@ object User {
 
         // Get the user id
           val id: Long = user.id.getOrElse {
-            SQL("select next value for users_seq").as(scalar[Long].single)
+            SQL("select nextval('users_seq')").as(scalar[Long].single)
           }
 
           // Insert the user
