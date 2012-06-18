@@ -1,4 +1,4 @@
-@(user: Option[User], rooms: Collection[Room])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[User], rooms: Seq[Room])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @main(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
