@@ -32,16 +32,16 @@ object Authentication extends Controller {
         failedPostedForm =>  Ok(views.html.login(failedPostedForm.fill(failedPostedForm("nickname").value.getOrElse(""), ""), redirectTo)),       // redisplay the page with posted form to show errors
         successForm => successForm match {
           case (user, password) => {
-          //should be a way of obtaining the tuple directly, right ?
-        var destinationUrl = ""
-        redirectTo match {
-        case Some(redirection) => destinationUrl = redirection
-        case _ => destinationUrl = routes.Home.index().absoluteURL()  // default to home
-        }
-        Redirect(destinationUrl)
-        .withSession("username" -> user)
-        .flashing("success" -> Messages("login.result.success"))
-        }
+            //should be a way of obtaining the tuple directly, right ?
+            var destinationUrl = ""
+            redirectTo match {
+              case Some(redirection) => destinationUrl = redirection
+              case _ => destinationUrl = routes.Home.index().absoluteURL()  // default to home
+            }
+            Redirect(destinationUrl)
+              .withSession("username" -> user) // store the current user name in the session (=encrypted cookie)
+              .flashing("success" -> Messages("login.result.success"))
+          }
 
         }
       )

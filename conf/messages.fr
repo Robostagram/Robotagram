@@ -27,29 +27,6 @@ home.join=Rejoindre une partie!
 # example of pluralization taken from play samples computer-database
 home.rooms={0,choice,0#Aucune salle disponible|1#Une salle disponible|1<{0,number,integer} salles disponibles}
 
-# Game
-# ====
-game.title=Robotagram - Partie en cours
-game.leaderboard=Scores
-game.howtoplay=Comment jouer
-game.move=déplacer
-
-game.help.previousnext=selectionner le robot précédent/suivant
-game.help.undoredo=annuler/rejouer un déplacement
-
-game.solutionFound.title=Solution trouvée !
-game.solutionFound.details=Bravo, vous avez résolu ce tableau. Et maintenant ?
-game.solutionFound.announce=Annoncer ma solution
-game.solutionFound.improve=Améliorer ma solution
-game.solutionFound.retry=Recommencer depuis le début
-
-
-game.endOfGame.title=Le temps est écoulé!
-game.endOfGame.details=Une autre partie commence...
-game.endOfGame.giveup=Abandonner
-game.endOfGame.joinNext=Rejoindre la partie suivante!
-
-
 # Login
 # =====
 login.title=Robotagram - Identification
@@ -90,7 +67,44 @@ register.result.failure=Votre compte n''a pas pu être créé
 register.accountCreated.title=Compte créé
 register.accountCreated.header=On y est presque
 register.accountCreated.message=Votre compte a bien été créé avec le pseudo "{0}".
-register.accountCreated.emailVerification=Votre compte n'est pas encore activé car nous voudrions d'abord vérifier votre adresse e-mail. Vérifiez votre boite aux lettres et cliquez sur le lien pour activer votre compte.
+register.accountCreated.emailVerification=Votre compte n'est pas encore activé car nous voudrions d''abord vérifier votre adresse e-mail. Vérifiez votre boite aux lettres et cliquez sur le lien pour activer votre compte.
+
+# Account activation
+activateAccount.accountActivated.title=Compte activé
+activateAccount.accountActivated.header=Compte activé avec succès
+activateAccount.accountActivated.message=Votre adresse e-mail est confirmée et votre compte est désormais actif. Vous pouvez vous connecter en tant que "{0}".
+activateAccount.accountActivated.joinGame=Rejoindre une partie
+
+activateAccount.accountActivationFailed.title=Echec d'activation du compte
+activateAccount.accountActivationFailed.header=Le compte n''a pas été activé
+activateAccount.accountActivationFailed.message=Le compte "{0}" n''a pas pu être activé. Avez-vous bien utilisé le lien que vous avez reçu par e-mail ?
+
+activateAccount.result.success=Votre compte est maintenant actif. Venez jouer avec nous !
+activateAccount.result.failure.unknownUser=Le compte que vous essayez d''activer n''a pas l'air d'exister.
+activateAccount.result.failure.accountAlreadyActive=Le compte que vous essayez d''activer est déjà actif. Essayez de vous connecter.
+activateAccount.result.failure=Le compte n''a pas pu être activé.
+
+
+# Game
+# ====
+game.title=Robotagram - Partie en cours
+game.leaderboard=Scores
+game.howtoplay=Comment jouer
+game.move=déplacer
+
+game.help.previousnext=selectionner le robot précédent/suivant
+game.help.undoredo=annuler/rejouer un déplacement
+
+game.solutionFound.title=Solution trouvée !
+game.solutionFound.details=Bravo, vous avez résolu ce tableau. Et maintenant ?
+game.solutionFound.announce=Annoncer ma solution
+game.solutionFound.improve=Améliorer ma solution
+game.solutionFound.retry=Recommencer depuis le début
+
+game.endOfGame.title=Le temps est écoulé!
+game.endOfGame.details=Une autre partie commence...
+game.endOfGame.giveup=Abandonner
+game.endOfGame.joinNext=Rejoindre la partie suivante!
 
 # Already in an other room
 alreadyIn.title=Déjà dans une salle

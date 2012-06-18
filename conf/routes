@@ -15,6 +15,7 @@ POST    /logout                     controllers.Authentication.logout
 GET     /account/register                   controllers.Account.register
 POST    /account/register                   controllers.Account.createAccount
 GET     /account/created                    controllers.Account.accountCreated(username:String)
+GET     /account/activate                   controllers.Account.activateAccount(name : String, token : String)
 
 # playing
 GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String, forceLeave: Boolean ?= false)

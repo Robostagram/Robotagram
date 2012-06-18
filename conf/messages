@@ -27,28 +27,6 @@ home.join=Join a game!
 # example of pluralization taken from play samples computer-database
 home.rooms={0,choice,0#No available rooms|1#One available room|1<{0,number,integer} available rooms}
 
-# Game
-# ====
-game.title=Robotagram - Game in progress
-game.leaderboard=Leaderboard
-game.howtoplay=How to play
-game.move=move
-
-game.help.previousnext=select previous/next robot
-game.help.undoredo=undo/redo a move
-
-game.solutionFound.title=Solution found !
-game.solutionFound.details=Congratulations, you found a solution. What do you want to do ?
-game.solutionFound.announce=Announce solution
-game.solutionFound.improve=Improve solution
-game.solutionFound.retry=Retry from zero
-
-
-game.endOfGame.title=Time is over !
-game.endOfGame.details=Another game is starting now ...
-game.endOfGame.giveup=Give up
-game.endOfGame.joinNext=Join the next game !
-
 
 # Login
 # =====
@@ -66,6 +44,8 @@ login.result.success=You are now logged in
 logout.result.success=You have been logged out
 login.authenticationRequired=You must be authentified to access the page you requested.
 
+# Account
+# =======
 # Register / create an account
 register.title=Registration
 register.form.legend=Sign in
@@ -91,6 +71,43 @@ register.accountCreated.title=Account created
 register.accountCreated.header=Just one last step
 register.accountCreated.message=Your account was created successfully with the name "{0}".
 register.accountCreated.emailVerification=Your account is not activated yet, because we need to verify your e-mail address. Check your mailbox and click on the link to activate your account.
+
+# Account activation
+activateAccount.accountActivated.title=Account activated
+activateAccount.accountActivated.header=Account successfully activated
+activateAccount.accountActivated.message=Your e-mail address has been confirmed and your account is now active. You can now log on as "{0}".
+activateAccount.accountActivated.joinGame=Join a game
+
+activateAccount.accountActivationFailed.title=Account activation failure
+activateAccount.accountActivationFailed.header=Account not activated
+activateAccount.accountActivationFailed.message=The account "{0}" could not be activated. Did you use the link from the e-mail you received ?
+
+activateAccount.result.success=Your account is now active. Come and play !
+activateAccount.result.failure.unknownUser=The account you are trying to activate does not seem to exist.
+activateAccount.result.failure.accountAlreadyActive=The account you are trying to activate is already active. Try logging on.
+activateAccount.result.failure=The account could not be activated.
+
+
+# Game
+# ====
+game.title=Robotagram - Game in progress
+game.leaderboard=Leaderboard
+game.howtoplay=How to play
+game.move=move
+
+game.help.previousnext=select previous/next robot
+game.help.undoredo=undo/redo a move
+
+game.solutionFound.title=Solution found !
+game.solutionFound.details=Congratulations, you found a solution. What do you want to do ?
+game.solutionFound.announce=Announce solution
+game.solutionFound.improve=Improve solution
+game.solutionFound.retry=Retry from zero
+
+game.endOfGame.title=Time is over !
+game.endOfGame.details=Another game is starting now ...
+game.endOfGame.giveup=Give up
+game.endOfGame.joinNext=Join the next game !
 
 # Already in an other room
 alreadyIn.title=Already joined a room

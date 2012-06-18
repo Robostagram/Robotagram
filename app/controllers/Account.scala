@@ -8,7 +8,6 @@ import play.api.data.Forms._
 import models.User
 import play.api.data.validation.Constraints
 import play.api.i18n.Messages
-import anorm.NotAssigned
 
 
 object Account extends Controller{
@@ -45,8 +44,8 @@ object Account extends Controller{
       failedPostedForm => Ok(views.html.register(failedPostedForm)),
       successForm => successForm match{
         case (name, email, _, password, _) => {
-          //TODO: try and create the user ...
-          User.create(new User(NotAssigned, name, email, password)).map {userId=>
+          User.create(None, name, email, password).map {userId=>
+            // TODO: send an email with the validation Url
             Redirect(routes.Account.accountCreated(name))
               .flashing("info" -> Messages("register.result.success"))
           }.getOrElse(
@@ -60,8 +59,31 @@ object Account extends Controller{
   }
 
   def accountCreated(userName : String) = Action{ implicit request =>
-     Ok(views.html.accountCreationConfirmation(userName))
+     User.findActivationByName(userName).map{ activationInfo =>
+       Ok(views.html.accountCreationConfirmation(userName, routes.Account.activateAccount(userName, activationInfo.activationToken).url))
+     }.getOrElse(NotAcceptable("unknown user ?!"))
+
   }
 
-
+  def activateAccount(name : String, token : String) = Action { implicit request =>
+    // look up the user by name and activation_token
+    User.findActivationByName(name).map{ activationInfo =>
+      activationInfo.activatedOn match {
+        // account is already activated
+        case Some(d) => Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure.accountAlreadyActive")))
+        // account is not activated yet
+        case _ => {
+          val result = User.activate(name, token)
+          if (result){
+            Ok(views.html.accountActivationConfirmation(name, Messages("activateAccount.result.success")))
+          }else{
+            Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure")))
+          }
+        }
+      }
+    }.getOrElse(
+      // unknown user !
+      Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure.unknownUser")))
+    )
+  }
 }
