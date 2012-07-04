@@ -1,7 +1,16 @@
 package models
 
+import play.api.Play.current
 import util.Random
 import scala.{Int, Array}
+import collection.mutable.ListBuffer
+import play.api.db.DB
+import anorm._
+import anorm.SqlParser._
+import scala.Tuple3
+import scala.Tuple4
+import scala.Some
+
 
 
 class Board(val width: Int, val height: Int) {
@@ -90,7 +99,8 @@ class Board(val width: Int, val height: Int) {
     newBoard
   }
 
-  def randomizeQuarters(): Board = {
+  // decide how to transform the board
+  def transformQuarters(quarterOrder: Tuple3[Int, Int, Int]) : Board= {
     if (width != height || width % 2 != 0) {
       //only square boards odd length can be shuffled by quarter
       this
@@ -114,9 +124,6 @@ class Board(val width: Int, val height: Int) {
       for (i <- 0 until half) {
         Array.copy(quarters(0).cells(i), 0, rBoard.cells(i), 0, half)
       }
-
-      //reorder randomly the quarters
-      val quarterOrder = QUARTER_COMBOS(new Random().nextInt(6))
 
       //North East quarter
       //diff gives the number of rotation to operate on the shuffled quarter
@@ -166,11 +173,19 @@ class Board(val width: Int, val height: Int) {
 
       rBoard
     }
+
+  }
+
+  def randomizeQuarters(): Board = {
+    //reorder randomly the quarters
+    val quarterOrder = QUARTER_COMBOS(new Random().nextInt(6))
+    transformQuarters(quarterOrder)
   }
 }
 
 object Board {
 
+  // these are REGEX !!
   val END_OF_LINE = "[\\r]{0,1}\\n"
   val BOARD_GOALS_SEP = END_OF_LINE + "\\#" + END_OF_LINE
   val GOAL_SEP = ","
@@ -237,4 +252,155 @@ object Board {
       board.cells(i)(j - 1) = board.cells(i)(j - 1).withRight(newCell.wallLeft)
     }
   }
+
+  // these are just strings appended in the output
+  val SERIALIZE_END_OF_LINE = "\r\n" // TODO : should probably be the system value of new line ?
+  val SERIALIZE_BOARD_GOALS_SEP = "#" + SERIALIZE_END_OF_LINE
+  def boardToString(board: Board): String = {
+    val result = new StringBuilder()
+    // 1,12,Yellow,Planet
+    val goals = new ListBuffer[Tuple4[Int,Int,Color.Color ,Symbol.Symbol]]()
+    for (i <- 0 to board.cells.length -1){
+      val row = board.cells(i)
+
+      for (j <- 0 to board.cells(i).length-1){
+        val c = row(j)
+        val walls = (c.wallTop, c.wallRight, c.wallBottom, c.wallLeft)
+        result.append(
+          walls match{
+            case (true, false, false, false) => 'a'
+            case (false, true, false, false) => 'b'
+            case (false, false, true, false) => 'c'
+            case (false, false, false, true) => 'd'
+            case (true, true, false, false)  => 'e'
+            case (true, false, true, false)  => 'f'
+            case (true, false, false, true)  => 'g'
+            case (false, true, true, false)  => 'h'
+            case (false, true, false, true)  => 'i'
+            case (false, false, true, true)  => 'j'
+            case (true, true, true, false)   => 'k'
+            case (true, true, false, true)   => 'l'
+            case (true, false, true, true)   => 'm'
+            case (false, true, true, true)   => 'n'
+            case (true, true, true, true)    => 'o'
+            case (false, false, false, false)=> ' ' // do not forget "no walls"
+          }
+        )
+
+        if (c.goal != null){
+          goals.append((i, j, c.goal.color, c.goal.symbol))
+        }
+
+      }
+      result.append(SERIALIZE_END_OF_LINE)
+
+    }
+    result.append(SERIALIZE_BOARD_GOALS_SEP)
+
+    // serialize the goals
+    goals.foreach { goal =>
+      goal match{
+        case (x, y, col, symb) => {
+          result.append(x + GOAL_SEP + y + GOAL_SEP + col.toString + GOAL_SEP + symb.toString)
+          result.append(SERIALIZE_END_OF_LINE)
+        }
+      }
+    }
+
+    result.toString()
+  }
+
+
+}
+
+case class DbBoard(id: Pk[Long], name: String, data: String)
+
+object DbBoard{
+
+  // -- Parsers
+
+  /**
+   * Parse a DbBoard from a ResultSet
+   */
+  val simple = {
+    get[Pk[Long]]("boards.id") ~
+      get[String]("boards.name") ~
+      get[String]("boards.data") map {
+      case id~name~data => DbBoard(id, name, data)
+    }
+  }
+
+
+  // -- Queries
+
+  /**
+   * Retrieve a Board from name.
+   */
+  def findByName(name: String): Option[models.DbBoard] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        SELECT id, name, data
+        FROM boards
+        WHERE upper(name) = upper({name})
+          """
+      ).on(
+        'name -> name
+      ).as(DbBoard.simple.singleOpt)
+    }
+  }
+
+
+  /**
+   * Retrieve all boards.
+   */
+  def findAll: Seq[DbBoard] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          select id, name, data
+          from boards
+          """
+      ).as(DbBoard.simple *)
+    }
+  }
+
+
+  /**
+   * Create a Board in the db.
+   *
+   * return None if board cannot be created
+   *
+   */
+  def create(id:Option[Long], name:String, data:String): Option[Long] = {
+    findByName(name) match {
+      // check if a board does not exist already ( with same name / case-insensitive)
+      case Some(_) => None // a board exists with that name , stop here !
+      case _ =>
+        DB.withConnection { implicit connection =>
+
+        // Get the board id (from db, or from arguments)
+        val theId: Long = id.getOrElse {
+          SQL("select nextval('boards_seq')").as(scalar[Long].single)
+        }
+
+        // Insert the board
+        SQL(
+          """
+         insert into boards (
+           id, name, data
+         )
+         values (
+           {id}, {name}, {data}
+         )
+          """
+        ).on(
+          'id -> theId,
+          'name -> name,
+          'data -> data
+        ).executeInsert()
+
+        Some(theId)
+      }
+    }
+  }
+
 }

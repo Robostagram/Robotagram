@@ -167,7 +167,7 @@ object User {
   def create(id:Option[Long], name:String, email:String, password:String, activated_on : Option[Date] = None): Option[Long] = {
     findByName(name) match {
       // check if a user does not exist already ( with same name / case-insensitive)
-      case Some(user) => None // a user exists with that name , stop here !
+      case Some(_) => None // a user exists with that name , stop here !
       case _ =>
         DB.withConnection { implicit connection =>
 
@@ -200,7 +200,6 @@ object User {
 
         }
     }
-
   }
 
 }

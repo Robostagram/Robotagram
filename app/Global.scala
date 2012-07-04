@@ -36,6 +36,19 @@ object InitialData {
         case (anId, name, email, pwd) =>  User.create(Some(anId.asInstanceOf[Long]), name, email, pwd, activated_on = Some(new util.Date()))
       })
     }
+
+    // populate the default boards (take the standard board and then make variations ...
+    if(DbBoard.findAll.isEmpty){
+      var standardBoard = Board.boardFromFile("app/resources/Standard.board");
+      val QUARTER_COMBOS = Array((1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1))
+      QUARTER_COMBOS.zipWithIndex.foreach(tup =>  tup match {
+        case (combination, index) =>
+          var boardId = (index + 1).asInstanceOf[Long] //start at one
+          var boardName = "Standard.board (" + combination._1 + ", " + combination._2 + ", " + combination._3 + ")"
+          var boardData = Board.boardToString(standardBoard.transformQuarters(combination))
+          DbBoard.create(Some(boardId), boardName, boardData)
+      })
+    }
     
   }
   
