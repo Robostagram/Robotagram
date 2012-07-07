@@ -1,0 +1,17 @@
+@(boards : Seq[DbBoard])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+
+@main("the boards...", None)(null) {
+    <h1>the boards !</h1>
+    <p>This is what we have in the DB so far ...</p>
+    <div>
+        @for(b:DbBoard <- boards) {
+        <div style="display:inline-block;" class="well">
+            @*make it float on the left ... just for the fun....*@
+            <strong style="position:absolute;padding:3px;margin-left: -17px;margin-top: -21px;float:left;">#@b.id</strong>
+            <pre style="font-size:10px;line-height:10px;padding:15px;background-color:white;">@b.data</pre>
+            <em>@b.name</em>
+        </div>
+        }
+    </div>
+}
