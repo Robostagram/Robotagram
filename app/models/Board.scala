@@ -310,6 +310,12 @@ object Board {
     result.toString()
   }
 
+  def loadById(id: Long): Option[Board] = {
+    DbBoard.findById(id).map{ dbBoard =>
+      boardFromString(dbBoard.data)
+    }
+  }
+
 
 }
 
@@ -332,6 +338,22 @@ object DbBoard{
 
 
   // -- Queries
+
+  /**
+   * Retrieve a Board from Id.
+   */
+  def findById(id: Long): Option[models.DbBoard] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        SELECT id, name, data
+        FROM boards
+        WHERE id ={id}
+          """
+      ).on(
+        'id -> id
+      ).as(DbBoard.simple.singleOpt)
+    }
+  }
 
   /**
    * Retrieve a Board from name.

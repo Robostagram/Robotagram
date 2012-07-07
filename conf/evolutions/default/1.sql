@@ -27,38 +27,40 @@ create table boards (
 create sequence boards_seq start with 1000;
 
 
--- ROOMS : should remain a small list ...
--- =====
-create table rooms (
-  id                        bigint not null primary key,
-  name                      varchar(255) not null unique
-);
-create sequence rooms_seq start with 1000;
-
-
--- GAMES : one game on a board in a room
--- =====
-create table games (
-  id                        bigint not null primary key,
-  name                      varchar(255) not null unique,
-  created_on                timestamp not null,
-
-  room_id                   bigint not null,
-  board_id                  bigint not null,
-  FOREIGN KEY (room_id) REFERENCES rooms (id),
-  FOREIGN KEY (board_id) REFERENCES boards (id)
-);
-
-create sequence games_seq start with 1000;
+-- TODO : db structure for rooms and games ... not dones yet
+---- ROOMS : should remain a small list ...
+---- =====
+--create table rooms (
+--  id                        bigint not null primary key,
+--  name                      varchar(255) not null unique
+--);
+--create sequence rooms_seq start with 1000;
+--
+--
+---- GAMES : one game on a board in a room
+---- =====
+--create table games (
+--  id                        bigint not null primary key,
+--  name                      varchar(255) not null unique,
+--  created_on                timestamp not null,
+--
+--  room_id                   bigint not null,
+--  board_id                  bigint not null,
+--  FOREIGN KEY (room_id) REFERENCES rooms (id),
+--  FOREIGN KEY (board_id) REFERENCES boards (id)
+--);
+--
+--create sequence games_seq start with 1000;
 
 
 # --- !Downs
 
-drop sequence if exists games_seq;
-drop table if exists games;
-
-drop sequence if exists rooms_seq;
-drop table if exists rooms;
+-- TODO : db structure for rooms and games ... not dones yet
+--drop sequence if exists games_seq;
+--drop table if exists games;
+--
+--drop sequence if exists rooms_seq;
+--drop table if exists rooms;
 
 drop sequence if exists boards_seq;
 drop table if exists boards;

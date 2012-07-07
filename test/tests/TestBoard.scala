@@ -6,12 +6,13 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.api.mvc.{Session, Cookies}
 
+
 class TestBoard extends Specification {
   "redirect to current game" in running(FakeApplication()) {
     {
-
-      var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "john")
-      val result = controllers.Application.currentGame("default").apply(req)
+      // FIXME : only works because we have that user in DB ...
+      var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "tibal")
+      val result = controllers.Gaming.currentGame("default").apply(req)
 
       status(result) mustEqual SEE_OTHER
       header("Location", result).get must startWith("/rooms/default/games/")
@@ -20,7 +21,7 @@ class TestBoard extends Specification {
 
 
   "redirect to login page if not logged on" in {
-    val result = controllers.Application.currentGame("default").apply(FakeRequest())
+    val result = controllers.Gaming.currentGame("default").apply(FakeRequest())
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER
@@ -43,6 +44,7 @@ object RequestTestHelper {
   }
 
   def withAuthenticatedUser(req: FakeRequest[play.api.mvc.AnyContent], userName: String): FakeRequest[play.api.mvc.AnyContent] = {
+    // would need a way to inject a user in DB with name "username" ...
     withSession(req, ("username" -> userName))
   }
 

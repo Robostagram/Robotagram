@@ -6,22 +6,22 @@ import models._
 
 class TestCellTemplate extends Specification {
   "render cell template" in {
-    var html = views.html.cell(EmptyCell.withLeft(true), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    var html = views.html.cell(EmptyCell.withLeft(true), None, new Goal(Color.Red, Symbol.Star), 0, 0)
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("wall-left")
 
-    html = views.html.cell(EmptyCell.withRight(true), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    html = views.html.cell(EmptyCell.withRight(true), None, new Goal(Color.Red, Symbol.Star), 0, 0)
     contentAsString(html) must contain("wall-right")
 
-    html = views.html.cell(EmptyCell.withTop(true), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    html = views.html.cell(EmptyCell.withTop(true), None, new Goal(Color.Red, Symbol.Star), 0, 0)
     contentAsString(html) must contain("wall-top")
 
-    html = views.html.cell(EmptyCell.withBottom(true), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    html = views.html.cell(EmptyCell.withBottom(true), None, new Goal(Color.Red, Symbol.Star), 0, 0)
     contentAsString(html) must contain("wall-bottom")
   }
 
   "render red star in cell template" in {
-    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Red, Symbol.Star)), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Red, Symbol.Star)), None, new Goal(Color.Red, Symbol.Star), 0, 0)
 
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("symbol")
@@ -31,7 +31,7 @@ class TestCellTemplate extends Specification {
     contentAsString(html) must not contain ("=>")
   }
   "render blue gear in cell template" in {
-    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Blue, Symbol.Gear)), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Blue, Symbol.Gear)), None, new Goal(Color.Red, Symbol.Star), 0, 0)
 
     contentAsString(html) must contain("symbol")
     contentAsString(html) must contain("Blue")
@@ -40,7 +40,7 @@ class TestCellTemplate extends Specification {
   }
   "render yellow planet in cell template" in {
 
-    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Yellow, Symbol.Planet)), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Yellow, Symbol.Planet)), None, new Goal(Color.Red, Symbol.Star), 0, 0)
 
     contentAsString(html) must contain("symbol")
     contentAsString(html) must contain("Yellow")
@@ -48,7 +48,7 @@ class TestCellTemplate extends Specification {
     contentAsString(html) must not contain ("=>")
   }
   "render green moon in cell template" in {
-    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Green, Symbol.Moon)), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Green, Symbol.Moon)), None, new Goal(Color.Red, Symbol.Star), 0, 0)
 
     contentAsString(html) must contain("symbol")
     contentAsString(html) must contain("Green")
@@ -56,7 +56,7 @@ class TestCellTemplate extends Specification {
     contentAsString(html) must not contain ("=>")
   }
   "render blue sun in cell template" in {
-    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Blue, Symbol.Sun)), null, new Goal(Color.Red, Symbol.Star), 0, 0)
+    val html = views.html.cell(EmptyCell.withGoal(new Goal(Color.Blue, Symbol.Sun)), None, new Goal(Color.Red, Symbol.Star), 0, 0)
 
     contentAsString(html) must contain("symbol")
     contentAsString(html) must contain("Blue")
@@ -65,13 +65,13 @@ class TestCellTemplate extends Specification {
   }
 
   "render robot in cells" in {
-    val html = views.html.cell(EmptyCell, new Robot(Color.Red, 0, 12), new Goal(Color.Red, Symbol.Star), 0, 0);
+    val html = views.html.cell(EmptyCell, Some(new Robot(Color.Red, 0, 12)), new Goal(Color.Red, Symbol.Star), 0, 0);
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")
     contentAsString(html) must contain("Red")
   }
   "do not render robot in cells" in {
-    val html = views.html.cell(EmptyCell, null, new Goal(Color.Red, Symbol.Star), 0, 0);
+    val html = views.html.cell(EmptyCell, None, new Goal(Color.Red, Symbol.Star), 0, 0);
     contentAsString(html) must not contain ("robot")
     contentAsString(html) must not contain ("Red")
     contentAsString(html) must not contain ("Green")

@@ -1,12 +1,18 @@
-@(game: Game)
+@(board: Board, goal: Option[Goal], robots: scala.collection.immutable.HashMap[Color.Color, Robot])
+    @import models._
+    @import scala.collection.immutable.HashMap
 
-@import models._
+
+    @getRobot(x: Int, y: Int) = @{
+        robots.values.find(r => r.posX == x && r.posY == y)
+    }
+
 
 <table id="boardGame">
-    @for(x:Int <- 0 until game.board.cells.length) {
+    @for(x:Int <- 0 until board.cells.length) {
     <tr>
-        @for(y:Int <- 0 until game.board.cells(x).length) {
-            @cell(game.board.cells(x)(y), game.getRobot(x, y), game.goal, x, y)
+        @for(y:Int <- 0 until board.cells(x).length) {
+            @cell(board.cells(x)(y), getRobot(x, y), goal, x, y)
         }
     </tr>
     }

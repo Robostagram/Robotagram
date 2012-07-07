@@ -1,4 +1,4 @@
-@(c: Cell, robot: Robot, objective: Goal, x: Int, y: Int)
+@(c: Cell, robot: Option[Robot] = None, objective: Option[Goal] = None, x: Int, y: Int)
 
 @import models._
 
@@ -8,15 +8,22 @@
 
 @renderGoalColor() = {@renderColor(c.goal.color)}
 
-@renderRobotColor() = {@renderColor(robot.color)}
+@renderRobotColor() = {@renderColor(robot.get.color)}
 
-@renderIdForRobotObjective() = @{if(robot.color == objective.color) {"id='robotForObjective'"} else {}}
+@renderIdForRobotObjective() = @{if(robot.get.color == objective.get.color) {"id='robotForObjective'"} else {}}
 
 @renderSymbol() = {@c.goal.symbol.toString}
 
+@renderIdForGoalObjective(goal:Goal, objective:Option[Goal]) = @{
+        objective.filter{o => o.color == goal.color && o.symbol == goal.symbol}
+            .map{_ =>  "id='objective'"}
+            .getOrElse("")
+}
+
 <td class="cell @renderWalls(c)" data-row="@x" data-column="@y" >
 <div class="cell" >
-    @if(c.goal != null && robot == null) {<div @if(c.goal.color == objective.color && c.goal.symbol == objective.symbol){id="objective"} class="symbol @renderGoalColor() @renderSymbol()"/>}
-    @if(robot != null) {<div @renderIdForRobotObjective() class="robot @renderRobotColor()"/>}
+
+    @if(c.goal != null && robot.isEmpty) {<div @renderIdForGoalObjective(c.goal, objective) class="symbol @renderGoalColor() @renderSymbol()"/>}
+    @if(!robot.isEmpty) {<div @renderIdForRobotObjective() class="robot @renderRobotColor()"/>}
 </div>
 </td>

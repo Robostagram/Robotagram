@@ -37,7 +37,7 @@
 <input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@room.game.secondsLeft">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
-        @renderBoard(room.game)
+        @renderBoard(room.game.board, Some(room.game.goal), room.game.robots)
     </div>
     <div class="span4" id="gameZone">
         <h3>@Messages("game.leaderboard")</h3>

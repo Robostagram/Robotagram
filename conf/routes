@@ -24,8 +24,10 @@ GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.status(roomId
 POST    /rooms/:roomId/games/:gameId/solution   controllers.Gaming.submitSolution(roomId : String, gameId : String)
 GET     /connectPlayer/:player                  controllers.Gaming.connectPlayer(player: String)
 
-# boards
+# boards ... with and without slash (why ?)
 GET     /boards                             controllers.Boards.index
+GET     /boards/                            controllers.Boards.index
+GET     /boards/:boardId                    controllers.Boards.preview(boardId : Long)
 
 # Javascript routing
 GET     /assets/javascripts/routes.js          controllers.Application.javascriptRoutes
