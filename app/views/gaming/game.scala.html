@@ -14,7 +14,7 @@
             <a id="headerArrow">&rarr;</a>
         </li>
         <li>
-            <a id="headerGoal">@gameGoal(room.game.goal)</a>
+            <a id="headerGoal">@shared.gameGoal(room.game.goal)</a>
         </li>
         <li>
             <a id="currentScore">0</a>
@@ -24,25 +24,25 @@
             <a id="timeLeft">@room.game.secondsLeft</a>
         </li>
         <li id="timeProgress">
-            <a>@timer(room.game)</a>
+            <a>@shared.timer(room.game)</a>
         </li>
 
     </ul>
 }
 
-@main(Messages("game.title"), Some(user))(headerContent){
+@_layout(Messages("game.title"), Some(user))(headerContent){
 <input type="hidden" id="roomId" name="roomId" value="@roomId">
 <input type="hidden" id="gameId" name="gameId" value="@room.game.uuid">
 <input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">
 <input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@room.game.secondsLeft">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
-        @renderBoard(room.game.board, Some(room.game.goal), room.game.robots)
+        @shared.renderBoard(room.game.board, Some(room.game.goal), room.game.robots)
     </div>
     <div class="span4" id="gameZone">
         <h3>@Messages("game.leaderboard")</h3>
         <div id="scores">
-        @scores(room)
+        @shared.scores(room)
         </div>
         <h3>@Messages("game.howtoplay")</h3>
         <div id="howToPlay">

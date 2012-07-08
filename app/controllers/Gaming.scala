@@ -50,7 +50,7 @@ object Gaming extends Controller {
       val user = User.fromRequest(request).get
       val currentRoomMaybe = roomsByPlayer.get(user.name)
       if (!forceLeaveRoom && currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
-        Ok(views.html.alreadyIn(roomId, currentRoomMaybe.get, user))
+        Ok(views.html.gaming.alreadyIn(roomId, currentRoomMaybe.get, user))
       } else {
         if (forceLeaveRoom) {
           playerDisconnected(user.name)
@@ -73,15 +73,15 @@ object Gaming extends Controller {
       val user = User.fromRequest(request).get
       val currentRoomMaybe = roomsByPlayer.get(user.name)
       if (currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
-        Ok(views.html.alreadyIn(currentRoomMaybe.get, roomId, user))
+        Ok(views.html.gaming.alreadyIn(currentRoomMaybe.get, roomId, user))
       } else {
         rooms.get(roomId).map {room =>
           if (gameId != null && gameId != room.game.uuid) {
             // game is no longer being played
             // should not be a 200, but something else, probably a 30X (redirection )
-            Ok(views.html.gameFinished(room.id, gameId, user))
+            Ok(views.html.gaming.gameFinished(room.id, gameId, user))
           } else {
-            Ok(views.html.game(room.id, room, user))
+            Ok(views.html.gaming.game(room.id, room, user))
           }
         }.getOrElse(NotFound) //no room with that id
       }

@@ -1,9 +1,10 @@
 @(board: Board, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 @import scala.collection.immutable.HashMap
-@main(Messages("home.title"), user)(null) {
+
+@_layout(Messages("home.title"), user)(null) {
 <div class="row-fluid">
     <div class="span8" id="boardZone">
-        @renderBoard(board, None, new HashMap[Color.Color, Robot]())
+        @shared.renderBoard(board, None, new HashMap[Color.Color, Robot]())
     </div>
     <div class="span4">
         <p>This is a preview of the board ...</p>

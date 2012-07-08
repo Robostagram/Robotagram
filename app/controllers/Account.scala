@@ -36,12 +36,12 @@ object Account extends Controller{
   )
 
   def register = Action{ implicit request =>
-    Ok(views.html.register(accountCreationForm))
+    Ok(views.html.account.register(accountCreationForm))
   }
 
   def createAccount = Action{ implicit request =>
     accountCreationForm.bindFromRequest.fold(
-      failedPostedForm => Ok(views.html.register(failedPostedForm)),
+      failedPostedForm => Ok(views.html.account.register(failedPostedForm)),
       successForm => successForm match{
         case (name, email, _, password, _) => {
           User.create(None, name, email, password).map {userId=>
@@ -50,7 +50,7 @@ object Account extends Controller{
               .flashing("info" -> Messages("register.result.success"))
           }.getOrElse(
             // create returned "None" ... creation failed
-            Ok(views.html.register(accountCreationForm.bindFromRequest()))
+            Ok(views.html.account.register(accountCreationForm.bindFromRequest()))
               .flashing("error" -> Messages("register.result.failure"))
           )
         }
@@ -60,7 +60,7 @@ object Account extends Controller{
 
   def accountCreated(userName : String) = Action{ implicit request =>
      User.findActivationByName(userName).map{ activationInfo =>
-       Ok(views.html.accountCreationConfirmation(userName, routes.Account.activateAccount(userName, activationInfo.activationToken).url))
+       Ok(views.html.account.accountCreationConfirmation(userName, routes.Account.activateAccount(userName, activationInfo.activationToken).url))
      }.getOrElse(NotAcceptable("unknown user ?!"))
 
   }
@@ -70,20 +70,20 @@ object Account extends Controller{
     User.findActivationByName(name).map{ activationInfo =>
       activationInfo.activatedOn match {
         // account is already activated
-        case Some(d) => Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure.accountAlreadyActive")))
+        case Some(d) => Ok(views.html.account.accountActivationFailure(name, Messages("activateAccount.result.failure.accountAlreadyActive")))
         // account is not activated yet
         case _ => {
           val result = User.activate(name, token)
           if (result){
-            Ok(views.html.accountActivationConfirmation(name, Messages("activateAccount.result.success")))
+            Ok(views.html.account.accountActivationConfirmation(name, Messages("activateAccount.result.success")))
           }else{
-            Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure")))
+            Ok(views.html.account.accountActivationFailure(name, Messages("activateAccount.result.failure")))
           }
         }
       }
     }.getOrElse(
       // unknown user !
-      Ok(views.html.accountActivationFailure(name, Messages("activateAccount.result.failure.unknownUser")))
+      Ok(views.html.account.accountActivationFailure(name, Messages("activateAccount.result.failure.unknownUser")))
     )
   }
 }

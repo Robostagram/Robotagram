@@ -12,7 +12,7 @@
     @for(x:Int <- 0 until board.cells.length) {
     <tr>
         @for(y:Int <- 0 until board.cells(x).length) {
-            @cell(board.cells(x)(y), getRobot(x, y), goal, x, y)
+            @shared.cell(board.cells(x)(y), getRobot(x, y), goal, x, y)
         }
     </tr>
     }

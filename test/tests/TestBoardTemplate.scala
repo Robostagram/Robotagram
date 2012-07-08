@@ -13,7 +13,7 @@ class TestBoardTemplate extends Specification{
     var robots = new HashMap[Color.Color, Robot]
     robots += ((robot.color, robot))
 
-    val html = views.html.renderBoard(Board.boardFromFile("app/resources/Standard.board"), Some(new Goal(Color.Blue, Symbol.Moon)), robots);
+    val html = views.html.shared.renderBoard(Board.boardFromFile("app/resources/Standard.board"), Some(new Goal(Color.Blue, Symbol.Moon)), robots);
 
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")

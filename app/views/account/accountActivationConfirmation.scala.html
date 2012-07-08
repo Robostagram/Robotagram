@@ -1,6 +1,7 @@
+
 @(userName: String, successMsg:String)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
-@main(Messages("activateAccount.accountActivated.title"), None)(null) {
+@_layout(Messages("activateAccount.accountActivated.title"), None)(null) {
     <div class="alert alert-success" data-dismiss="alert">
       <a title="close" class="close">&times;</a>
       @successMsg

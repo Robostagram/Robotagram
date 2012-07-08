@@ -2,7 +2,7 @@
 
 @import helpers.CustomHelpers._
 
-@main(Messages("login.title"), None)(null) {
+@_layout(Messages("login.title"), None)(null) {
 
 @helper.form(routes.Authentication.authenticate(redirectTo), 'class -> "form-horizontal"){
     @*make it look like a modal, without js involved ... *@

@@ -2,7 +2,7 @@
 
 @import helpers.CustomHelpers._
 
-@main(Messages("register.title"), None)(null) {
+@_layout(Messages("register.title"), None)(null) {
 
 @helper.form(routes.Account.createAccount, 'class -> "form-horizontal"){
     @*make it look like a modal, without js involved ... *@

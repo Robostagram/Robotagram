@@ -29,7 +29,7 @@ object Authentication extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         // forget the submitted password
-        failedPostedForm =>  Ok(views.html.login(failedPostedForm.fill(failedPostedForm("nickname").value.getOrElse(""), ""), redirectTo)),       // redisplay the page with posted form to show errors
+        failedPostedForm =>  Ok(views.html.authentication.login(failedPostedForm.fill(failedPostedForm("nickname").value.getOrElse(""), ""), redirectTo)),       // redisplay the page with posted form to show errors
         successForm => successForm match {
           case (user, password) => {
             //should be a way of obtaining the tuple directly, right ?
@@ -50,7 +50,7 @@ object Authentication extends Controller {
   // login + redirect url after login (optional, defaults to home page)
   def login(redirectTo: Option[String] = None) = Action {
     implicit request =>
-      Ok(views.html.login(loginForm, redirectTo))
+      Ok(views.html.authentication.login(loginForm, redirectTo))
   }
 
   def logout = Action {

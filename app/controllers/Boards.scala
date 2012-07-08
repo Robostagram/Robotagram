@@ -10,12 +10,12 @@ import models.{User, Board, DbBoard}
 object Boards extends Controller{
 
   def index = Action { implicit request =>
-    Ok(views.html.boardList(DbBoard.findAll, User.fromRequest))
+    Ok(views.html.boards.boardList(DbBoard.findAll, User.fromRequest))
   }
 
   def preview(id:Long) = Action { implicit request =>
     Board.loadById(id).map{board =>
-      Ok(views.html.previewBoard(board, User.fromRequest))
+      Ok(views.html.boards.previewBoard(board, User.fromRequest))
     }.getOrElse(NotFound)
   }
 

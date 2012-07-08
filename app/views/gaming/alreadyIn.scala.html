@@ -2,7 +2,7 @@
 
 @import helpers.CustomHelpers._
 
-@main(Messages("alreadyIn.title"), Some(user))(null) {
+@_layout(Messages("alreadyIn.title"), Some(user))(null) {
 
     @*make it look like a modal, without js involved ... *@
     <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
