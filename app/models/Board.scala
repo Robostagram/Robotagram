@@ -13,7 +13,7 @@ import scala.Some
 
 
 
-class Board(val width: Int, val height: Int) {
+class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 
   val QUARTER_COMBOS = Array((1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1))
 
@@ -90,7 +90,7 @@ class Board(val width: Int, val height: Int) {
   }
 
   def rotate90deg(): Board = {
-    val newBoard = new Board(height, width)
+    val newBoard = new Board(id, name, height, width)
     for (i <- 0 until width) {
       for (j <- 0 until height) {
         newBoard.cells(j)(width - i - 1) = cells(i)(j).rotate90deg()
@@ -109,7 +109,7 @@ class Board(val width: Int, val height: Int) {
 
       // NE, SE and SW quarters in that order
       val quarters = Array.fill(4) {
-        new Board(half, half)
+        new Board(0, "zz", half, half)
       }
       //fill the quarters
       for (i <- 0 until half) {
@@ -120,7 +120,7 @@ class Board(val width: Int, val height: Int) {
       }
 
       //first quarter is always the same, the other only are switched/rotated around
-      val rBoard = new Board(width, height)
+      val rBoard = new Board(id, name, width, height)
       for (i <- 0 until half) {
         Array.copy(quarters(0).cells(i), 0, rBoard.cells(i), 0, half)
       }
@@ -190,18 +190,18 @@ object Board {
   val BOARD_GOALS_SEP = END_OF_LINE + "\\#" + END_OF_LINE
   val GOAL_SEP = ","
 
-  def boardFromFile(path: String): Board = {
-    boardFromString(scala.io.Source.fromFile(path).mkString)
+  def boardFromFile(path: String, id:Long, name:String): Board = {
+    boardFromString(id, name, scala.io.Source.fromFile(path).mkString)
   }
 
-  def boardFromString(rawFile: String): Board = {
+  def boardFromString(id:Long, name:String, rawFile: String): Board = {
     val rawSplit = rawFile.split(BOARD_GOALS_SEP)
     val stringBoard = rawSplit(0)
     val goals = rawSplit(1)
     val lines = stringBoard.split(END_OF_LINE)
     val h = lines.length
     val w = lines(0).length
-    val board = new Board(w, h)
+    val board = new Board(id, name, w, h)
     var i = 0
     for (line <- lines) {
       var j = 0
@@ -312,7 +312,7 @@ object Board {
 
   def loadById(id: Long): Option[Board] = {
     DbBoard.findById(id).map{ dbBoard =>
-      boardFromString(dbBoard.data)
+      boardFromString(dbBoard.id.get, dbBoard.name, dbBoard.data)
     }
   }
 

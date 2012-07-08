@@ -4,7 +4,7 @@ import play.api.mvc._
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.User
+import models._
 import play.api.data.validation.Constraints
 import play.api.i18n.Messages
 
@@ -18,7 +18,7 @@ object Authentication extends Controller {
                                           .verifying(Constraints.pattern("""^([A-Za-z]|[0-9]|_)*$""".r, "Letters, numbers and _", "Must contain only non-accentuated letters, numbers or underscores")),
                       "password" -> text.verifying(Constraints.nonEmpty)
                     )verifying("Invalid user name or password", fields => fields match {
-                      case (e, p) => User.authenticate(e,p).isDefined
+                      case (e, p) => DbUser.authenticate(e,p).isDefined
                     }
                     )
   )

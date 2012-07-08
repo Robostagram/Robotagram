@@ -22,7 +22,7 @@ object InitialData {
   
   def insert() = {
     // populate users with some known names ;)
-    if(User.findAll.isEmpty) {
+    if(DbUser.findAll.isEmpty) {
       
       Seq(
         (0, "hermione", "hermione@robotagram.com", "hermione"),
@@ -33,13 +33,13 @@ object InitialData {
         (5, "tibal", "tibal@robotagram.com", "hermione"),
         (6, "nire", "nire@robotagram.com", "hermione")
       ).foreach( tup => tup match{
-        case (anId, name, email, pwd) =>  User.create(Some(anId.asInstanceOf[Long]), name, email, pwd, activated_on = Some(new util.Date()))
+        case (anId, name, email, pwd) =>  DbUser.create(Some(anId.asInstanceOf[Long]), name, email, pwd, activated_on = Some(new util.Date()))
       })
     }
 
     // populate the default boards (take the standard board and then make variations ...
     if(DbBoard.findAll.isEmpty){
-      var standardBoard = Board.boardFromFile("app/resources/Standard.board");
+      var standardBoard = Board.boardFromFile("app/resources/Standard.board", 0, "no name");
       val QUARTER_COMBOS = Array((1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1))
       QUARTER_COMBOS.zipWithIndex.foreach(tup =>  tup match {
         case (combination, index) =>

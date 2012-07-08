@@ -6,7 +6,7 @@ import org.specs2.specification.Scope
 trait EmptyBoard extends Scope {
   val height = 6
   val width = 7
-  val board = new Board(width, height)
+  val board = new Board(0, "theName", width, height)
 
 }
 

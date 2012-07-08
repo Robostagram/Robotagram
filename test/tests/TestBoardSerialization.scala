@@ -12,7 +12,7 @@ trait EmptyBoardFromFile extends Scope {
   var originalGoalsPartLines = originalGoalsPart.split(models.Board.END_OF_LINE)
 
 
-  val board = models.Board.boardFromString(originalBoardString)
+  val board = models.Board.boardFromString(0, "empty", originalBoardString)
   var serialized = models.Board.boardToString(board)
 
 }

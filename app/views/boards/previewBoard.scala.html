@@ -7,7 +7,7 @@
         @shared.renderBoard(board, None, new HashMap[Color.Color, Robot]())
     </div>
     <div class="span4">
-        <p>This is a preview of the board ...</p>
+        <p>This is a preview of the board <strong>#@board.id : <em>@board.name</em></strong></p>
         <a href="@controllers.routes.Boards.index">Back to the list of boards</a>
     </div>
 </div>

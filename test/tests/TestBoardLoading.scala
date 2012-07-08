@@ -7,7 +7,7 @@ import models.Symbol
 
 class TestBoardLoading extends Specification {
   "check empty board only borders" in {
-    val board = models.Board.boardFromFile("app/resources/EmptyWithBorder.board")
+    val board = models.Board.boardFromFile("app/resources/EmptyWithBorder.board", 0, "theName")
     board.width must equalTo(17)
     board.height must equalTo(17)
     for (i <- 0 to 16) {
@@ -49,7 +49,7 @@ class TestBoardLoading extends Specification {
   }
 
   "check board with borders and square center" in {
-    val board = models.Board.boardFromFile("app/resources/OneSquareWithBorder.board")
+    val board = models.Board.boardFromFile("app/resources/OneSquareWithBorder.board", 0, "theName")
     board.width must equalTo(16)
     board.height must equalTo(16)
     for (i <- 0 to 15) {

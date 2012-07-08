@@ -5,7 +5,7 @@ import play.api.mvc._
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.User
+import models._
 import play.api.data.validation.Constraints
 import play.api.i18n.Messages
 
@@ -28,10 +28,10 @@ object Account extends Controller{
       case (_, _, _, pw1, pw2) => pw1.equals(pw2)
     })
       .verifying("Username is already taken", fields => fields match {
-      case (name, _, _, _ , _) => !User.findByName(name).isDefined
+      case (name, _, _, _ , _) => !DbUser.findByName(name).isDefined
     })
       .verifying("An account already exists with that e-mail", fields => fields match {
-      case (_, email, _, _ , _) => !User.findByEmail(email).isDefined
+      case (_, email, _, _ , _) => !DbUser.findByEmail(email).isDefined
     })
   )
 
@@ -44,7 +44,7 @@ object Account extends Controller{
       failedPostedForm => Ok(views.html.account.register(failedPostedForm)),
       successForm => successForm match{
         case (name, email, _, password, _) => {
-          User.create(None, name, email, password).map {userId=>
+          DbUser.create(None, name, email, password).map {userId=>
             // TODO: send an email with the validation Url
             Redirect(routes.Account.accountCreated(name))
               .flashing("info" -> Messages("register.result.success"))
@@ -59,7 +59,7 @@ object Account extends Controller{
   }
 
   def accountCreated(userName : String) = Action{ implicit request =>
-     User.findActivationByName(userName).map{ activationInfo =>
+     DbUser.findActivationByName(userName).map{ activationInfo =>
        Ok(views.html.account.accountCreationConfirmation(userName, routes.Account.activateAccount(userName, activationInfo.activationToken).url))
      }.getOrElse(NotAcceptable("unknown user ?!"))
 
@@ -67,13 +67,13 @@ object Account extends Controller{
 
   def activateAccount(name : String, token : String) = Action { implicit request =>
     // look up the user by name and activation_token
-    User.findActivationByName(name).map{ activationInfo =>
+    DbUser.findActivationByName(name).map{ activationInfo =>
       activationInfo.activatedOn match {
         // account is already activated
         case Some(d) => Ok(views.html.account.accountActivationFailure(name, Messages("activateAccount.result.failure.accountAlreadyActive")))
         // account is not activated yet
         case _ => {
-          val result = User.activate(name, token)
+          val result = DbUser.activate(name, token)
           if (result){
             Ok(views.html.account.accountActivationConfirmation(name, Messages("activateAccount.result.success")))
           }else{

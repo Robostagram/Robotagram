@@ -7,23 +7,26 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 import java.util.{UUID, Date}
-import java.util
 
-
-case class User(id: Pk[Long], name: String, email: String)
-
-case class UserAccountActivation(id: Pk[Long], name: String, activationToken: String, activatedOn : Option[Date])
+case class User(id: Long, name: String, email: String)
 
 object User {
-
   def fromRequest(implicit request: Request[Any]): Option[User] = {
     request.session.get("username").map{userName =>
-      // we have an email in session ... look it up ...
-      User.findByName(userName).map{theUser =>
-        theUser
+    // we have an email in session ... look it up ...
+      DbUser.findByName(userName).map{theUser =>
+        new User(theUser.id.get, theUser.name, theUser.email)
       } // name does not match a known user
     }.getOrElse(None) // no name provided
   }
+
+}
+
+case class DbUser(id: Pk[Long], name: String, email: String)
+
+case class DbUserAccountActivation(id: Pk[Long], name: String, activationToken: String, activatedOn : Option[Date])
+
+object DbUser {
 
   // -- Parsers
 
@@ -34,7 +37,7 @@ object User {
       get[Pk[Long]]("users.id") ~
       get[String]("users.name") ~
       get[String]("users.email") map {
-      case id~name~email => User(id, name, email)
+      case id~name~email => DbUser(id, name, email)
     }
   }
 
@@ -46,7 +49,7 @@ object User {
       get[String]("users.name") ~
       get[String]("users.activation_token") ~
       get[Option[Date]]("users.activated_on") map {
-      case id~name~token~activationDate => UserAccountActivation(id, name, token,activationDate)
+      case id~name~token~activationDate => DbUserAccountActivation(id, name, token,activationDate)
     }
   }
 
@@ -55,7 +58,7 @@ object User {
   /**
    * Retrieve a User from name.
    */
-  def findByName(name: String): Option[User] = {
+  def findByName(name: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
         SELECT id, name, email
@@ -64,14 +67,14 @@ object User {
         """
       ).on(
         'name -> name
-      ).as(User.simple.singleOpt)
+      ).as(DbUser.simple.singleOpt)
     }
   }
 
   /**
    * Retrieve account activation information by name
    */
-  def findActivationByName(name:String) : Option[UserAccountActivation] = {
+  def findActivationByName(name:String) : Option[DbUserAccountActivation] = {
     DB.withConnection { implicit connection =>
       SQL("""
         SELECT id, name, activation_token, activated_on
@@ -80,7 +83,7 @@ object User {
           """
       ).on(
         'name -> name
-      ).as(User.activationInfo.singleOpt)
+      ).as(DbUser.activationInfo.singleOpt)
     }
   }
 
@@ -88,7 +91,7 @@ object User {
   /**
    * Retrieve a User from email.
    */
-  def findByEmail(email: String): Option[User] = {
+  def findByEmail(email: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
           SELECT id, name, email
@@ -97,27 +100,27 @@ object User {
           """
       ).on(
         'email -> email
-      ).as(User.simple.singleOpt)
+      ).as(DbUser.simple.singleOpt)
     }
   }
 
   /**
    * Retrieve all users.
    */
-  def findAll: Seq[User] = {
+  def findAll: Seq[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
           select id, name, email
           from users
           """
-      ).as(User.simple *)
+      ).as(DbUser.simple *)
     }
   }
 
   /**
    * Authenticate a User.
    */
-  def authenticate(name: String, password: String): Option[User] = {
+  def authenticate(name: String, password: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -130,7 +133,7 @@ object User {
       ).on(
         'name -> name,
         'password -> password
-      ).as(User.simple.singleOpt)
+      ).as(DbUser.simple.singleOpt)
     }
   }
 

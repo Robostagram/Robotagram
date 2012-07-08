@@ -10,7 +10,7 @@ import scala._
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
   val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
-  
+
   private var robotsList:HashMap[Color, Robot] = null
   def robots = {
     if(robotsList == null){
@@ -64,7 +64,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     }
     resultW && resultH
   }
-  
+
   // returns a robot if there's one at the specified coordinates
   def getRobot(x: Int, y: Int): Robot = {
     for(r: Robot <- robots.values) {
@@ -74,7 +74,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
     }
     null
   }
-  
+
   // create an updated set of robots matching the specified movement and this game and the previous state of the set
   // detects walls and other robots
   def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
@@ -100,7 +100,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
         robot = new Robot(movement.color, newX, newY)
         newX = robot.posX+xDiff
         newY = robot.posY+yDiff
-      } 
+      }
       mutatingRobots.updated(movement.color, robot)
     }
   }
@@ -111,7 +111,7 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   def validate(solution: List[Movement]): Boolean = {
     validate(robots, solution)
   }
-  
+
   // apply a list of movements to this game + specified robots set
   // when all movements are applied, check the expected robot is on the matching goal
   private def validate(robotss: HashMap[Color, Robot], solution: List[Movement]): Boolean = solution match {
@@ -132,5 +132,5 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 object Game {
   val DEFAULT_GAME_DURATION = 120
 
-  def randomGame():Game = new Game(Board.boardFromFile("app/resources/Standard.board").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION)
+  def randomGame():Game = new Game(Board.boardFromFile("app/resources/Standard.board", 0, "standard").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION)
 }

@@ -1,7 +1,7 @@
 package models
 
 
-object DefaultBoard extends Board(16, 16) {
+object DefaultBoard extends Board(0, "DefaultBoard", 16, 16) {
 
   // murs sur la droite et la gauche
   for (i <- 0 until height) {
