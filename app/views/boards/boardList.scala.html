@@ -1,7 +1,7 @@
 @(boards : Seq[DbBoard], user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 
-@_layout("the boards...", user)(null) {
+@_layout("Boards", user)(null) {
     <h1>the boards !</h1>
     <p>This is what we have in the DB so far ...</p>
     <div>
