@@ -49,6 +49,12 @@ object InitialData {
           DbBoard.create(Some(boardId), boardName, boardData)
       })
     }
+
+    // create the 2 default rooms ...
+    if(DbRoom.findAll.isEmpty){
+      DbRoom.create(Some(1), "default")
+      DbRoom.create(Some(2), "default2")
+    }
     
   }
   

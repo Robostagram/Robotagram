@@ -1,4 +1,4 @@
-@(user: Option[User], rooms: Seq[Room])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[User], rooms: Seq[DbRoom])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @_layout(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
@@ -25,11 +25,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for(r:Room <- rooms) {
+                    @for(r:DbRoom <- rooms) {
                     <tr>
-                        <th>@r.id</th>
-                        <td>@r.players.size</td>
-                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(r.id)">@Messages("common.actions.join")</a></td>
+                        <th>@r.name</th>
+                        <td><blink>TODO : XXXXX</blink></td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(r.name)">@Messages("common.actions.join")</a></td>
                     </tr>
                     }
                 </tbody>

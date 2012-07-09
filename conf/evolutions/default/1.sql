@@ -28,15 +28,15 @@ create sequence boards_seq start with 1000;
 
 
 -- TODO : db structure for rooms and games ... not dones yet
----- ROOMS : should remain a small list ...
----- =====
---create table rooms (
---  id                        bigint not null primary key,
---  name                      varchar(255) not null unique
---);
---create sequence rooms_seq start with 1000;
---
---
+-- ROOMS : should remain a small list ...
+-- =====
+create table rooms (
+  id                        bigint not null primary key,
+  name                      varchar(255) not null unique
+);
+create sequence rooms_seq start with 1000;
+
+
 ---- GAMES : one game on a board in a room
 ---- =====
 --create table games (
@@ -58,9 +58,9 @@ create sequence boards_seq start with 1000;
 -- TODO : db structure for rooms and games ... not dones yet
 --drop sequence if exists games_seq;
 --drop table if exists games;
---
---drop sequence if exists rooms_seq;
---drop table if exists rooms;
+
+drop sequence if exists rooms_seq;
+drop table if exists rooms;
 
 drop sequence if exists boards_seq;
 drop table if exists boards;

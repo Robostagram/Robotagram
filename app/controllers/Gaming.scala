@@ -13,11 +13,14 @@ import play.api.libs.json.{JsUndefined, Json, JsValue}
 object Gaming extends Controller {
 
   // handle a game per room, with as many rooms as can be named (for now)
+  // the list of possible rooms to create is taken from db
   val rooms: HashMap[String, Room] = new HashMap[String, Room]() // [roomId -> Room]
-  rooms += (("default", new Room("default")))
-  rooms += (("default2", new Room("default2")))
+  DbRoom.findAll.foreach{dbRoom =>
+    rooms += ((dbRoom.name, new Room(dbRoom.name)))
+  }
   
   // store where the users are
+  // this will probably get replaced by the "presence" management once we use Pusher ...
   var roomsByPlayer: HashMap[String, String] = new HashMap[String, String]() // [username -> roomId]
   val lock: Lock = new Lock()
 
@@ -25,7 +28,7 @@ object Gaming extends Controller {
   private def initializeGameIfNecessary(room: Room, playerName:String) {
     lock.acquire();
     roomsByPlayer -= playerName
-    roomsByPlayer += ((playerName, room.id))
+    roomsByPlayer += ((playerName, room.name))
     var game = room.game
     try {
       var createNewGame: Boolean = game == null || game.isDone
@@ -44,20 +47,20 @@ object Gaming extends Controller {
   
   //
   // GET /rooms/n/games/current
-  //
-  def currentGame(roomId: String, forceLeaveRoom: Boolean = false) = Secured.Authenticated {
+  // access the current active game of the room ... or initialize a new one
+  def currentGame(roomName: String, forceLeaveRoom: Boolean = false) = Secured.Authenticated {
     Action { implicit request =>
       val user = User.fromRequest(request).get
       val currentRoomMaybe = roomsByPlayer.get(user.name)
-      if (!forceLeaveRoom && currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
-        Ok(views.html.gaming.alreadyIn(roomId, currentRoomMaybe.get, user))
+      if (!forceLeaveRoom && currentRoomMaybe != None && currentRoomMaybe.get != roomName) {
+        Ok(views.html.gaming.alreadyIn(roomName, currentRoomMaybe.get, user))
       } else {
         if (forceLeaveRoom) {
           playerDisconnected(user.name)
         }
-        rooms.get(roomId).map { room =>
+        rooms.get(roomName).map { room =>
           initializeGameIfNecessary(room, user.name)
-          Redirect(routes.Gaming.getGame(room.id, room.game.uuid))
+          Redirect(routes.Gaming.getGame(room.name, room.game.uuid))
         }.getOrElse(Results.NotFound) //no room with that id
       }
     }
@@ -68,20 +71,20 @@ object Gaming extends Controller {
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
   //
-  def getGame(roomId: String, gameId: String = null) = Secured.Authenticated {
+  def getGame(roomName: String, gameId: String = null) = Secured.Authenticated {
     Action { implicit request =>
       val user = User.fromRequest(request).get
       val currentRoomMaybe = roomsByPlayer.get(user.name)
-      if (currentRoomMaybe != None && currentRoomMaybe.get != roomId) {
-        Ok(views.html.gaming.alreadyIn(currentRoomMaybe.get, roomId, user))
+      if (currentRoomMaybe != None && currentRoomMaybe.get != roomName) {
+        Ok(views.html.gaming.alreadyIn(currentRoomMaybe.get, roomName, user))
       } else {
-        rooms.get(roomId).map {room =>
+        rooms.get(roomName).map {room =>
           if (gameId != null && gameId != room.game.uuid) {
             // game is no longer being played
             // should not be a 200, but something else, probably a 30X (redirection )
-            Ok(views.html.gaming.gameFinished(room.id, gameId, user))
+            Ok(views.html.gaming.gameFinished(room.name, gameId, user))
           } else {
-            Ok(views.html.gaming.game(room.id, room, user))
+            Ok(views.html.gaming.game(room.name, room, user))
           }
         }.getOrElse(NotFound) //no room with that id
       }
@@ -91,9 +94,9 @@ object Gaming extends Controller {
   //
   // GET /rooms/n/games/xx-xx-x-x-x-xxx/status
   //
-  def status(roomId: String, gameId: String) = Secured.Authenticated {
+  def gameStatus(roomName: String, gameId: String) = Secured.Authenticated {
     Action {
-      rooms.get(roomId).map { room =>
+      rooms.get(roomName).map { room =>
         val game = room.game
         if (game == null || gameId != game.uuid) {
           Gone("Game " + gameId + " is not there anymore, current one: " + game.uuid);
@@ -122,9 +125,9 @@ object Gaming extends Controller {
   //
   // POST /rooms/:roomId/games/:gameId/solution
   //
-  def submitSolution(roomId: String, gameId: String) = Secured.Authenticated {
+  def submitSolution(roomName: String, gameId: String) = Secured.Authenticated {
     Action { implicit request =>
-      rooms.get(roomId).map { room =>
+      rooms.get(roomName).map { room =>
         val user = User.fromRequest(request).get
         initializeGameIfNecessary(room, user.name)
 

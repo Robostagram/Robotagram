@@ -1,7 +1,7 @@
 package controllers
 
-import play.api.mvc.{Action, Controller}
-import models.User
+import play.api.mvc._
+import models._
 
 
 object Home extends Controller {
@@ -9,7 +9,7 @@ object Home extends Controller {
   def index = Action {
     implicit request => {
       val user = User.fromRequest(request)
-      Ok(views.html.home.index(user, Gaming.rooms.values.toSeq))
+      Ok(views.html.home.index(user, DbRoom.findAll))
     }
   }
 

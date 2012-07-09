@@ -20,8 +20,9 @@ GET     /account/activate                   controllers.Account.activateAccount(
 # playing
 GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String, forceLeave: Boolean ?= false)
 GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomId : String, gameId : String)
-GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.status(roomId : String, gameId : String)
+GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.gameStatus(roomId : String, gameId : String)
 POST    /rooms/:roomId/games/:gameId/solution   controllers.Gaming.submitSolution(roomId : String, gameId : String)
+
 GET     /connectPlayer/:player                  controllers.Gaming.connectPlayer(player: String)
 
 # boards ... with and without slash (why ?)
