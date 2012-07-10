@@ -178,7 +178,7 @@ object Gaming extends Controller {
     implicit request =>
       findRoomOfPlayer(player) match {
         case None => (null, null) // TODO no connection, log
-        case Some(room) => (in, room.withPlayer(player).channel)
+        case Some(room) => (in, room.withPlayer(player).channel) //TODO: add user to the room and notify everybody in the room (new player)
       }
   }
 
