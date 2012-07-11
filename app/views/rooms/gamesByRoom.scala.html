@@ -1,0 +1,32 @@
+@(room : DbRoom, games : Seq[DbGame], user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+
+@_layout("Games in the room", user)(null) {
+<h1>Games in room "@room.name"</h1>
+<p>This is what we have in the DB so far for this room ...</p>
+<div>
+    @for(g:DbGame <- games) {
+    <div style="display:inline-block;" class="well">
+        @*make it float on the left ... just for the fun....*@
+        <strong style="position:absolute;padding:3px;margin-left: -17px;margin-top: -21px;float:left;">#@g.id</strong>
+        <pre style="font-size:10px;line-height:10px;padding:15px;background-color:white;">
+created_on: @g.created_on
+valid_until: @g.valid_until
+goal_symbol: @g.goal_symbol
+goal_color: @g.goal_color
+robot_blue_x: @g.robot_blue_x
+robot_blue_y: @g.robot_blue_y
+robot_red_x: @g.robot_red_x
+robot_red_y: @g.robot_red_y
+robot_green_x: @g.robot_green_x
+robot_green_y: @g.robot_green_y
+robot_yellow_x: @g.robot_yellow_x
+robot_yellow_y: @g.robot_yellow_y
+room_id: @g.room_id
+board_id: @g.board_id
+        </pre>
+        <a href="@controllers.routes.Boards.preview(g.board_id)">See board template (@g.board_id)&rarr;</a>
+    </div>
+    }
+</div>
+}

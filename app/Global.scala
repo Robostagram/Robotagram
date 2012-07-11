@@ -3,6 +3,7 @@ import play.api._
 
 import models._
 import anorm._
+import util.Random
 
 object Global extends GlobalSettings {
   
@@ -55,6 +56,14 @@ object InitialData {
       DbRoom.create(Some(1), "default")
       DbRoom.create(Some(2), "default2")
     }
+
+    DbGame.getActiveInRoomOrCreate("default", () => {
+      var idOfBoardToLoad = new Random().nextInt(6) + 1
+      var b = Board.loadById(idOfBoardToLoad).get
+      var g = Goal.randomGoal()
+      var robots = Board.randomRobots(b)
+      DbGame.prepareGameToStore(1, Game.DEFAULT_GAME_DURATION,b, g, robots)
+    })
     
   }
   

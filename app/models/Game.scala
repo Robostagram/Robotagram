@@ -2,7 +2,7 @@ package models
 
 import play.api.Play.current
 import models.Color._
-import scala.collection.immutable.HashMap
+import collection.immutable.HashMap
 import java.util.UUID
 import scala._
 import anorm._
@@ -101,11 +101,12 @@ object Game {
     var idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
     new Game(Board.loadById(idOfBoardToLoad).get, Goal.randomGoal(), DEFAULT_GAME_DURATION)
   }
+
+
 }
 
 
-case class DbGame(id: Pk[String],
-                  name: String,
+case class DbGame(id: String,
                   created_on : Date,
                   valid_until : Date,
                   goal_symbol:String,
@@ -123,14 +124,40 @@ case class DbGame(id: Pk[String],
 
 object DbGame{
 
+  //prepare
+  def prepareGameToStore(roomId:Long, durationInSeconds:Long, board:Board, goal:Goal, robots:HashMap[Color, Robot]):DbGame = {
+    val uuid = UUID.randomUUID()
+    val originalTimeStamp = System.currentTimeMillis()
+    val startDate = new Date(originalTimeStamp)
+    val endDate = new Date (originalTimeStamp + 1000 * durationInSeconds)
+
+    val goal_color = goal.color.toString
+    val goal_symbol = goal.symbol.toString
+
+    val board_id = board.id
+
+    val robot_blue_x = robots.get(Color.Blue).get.posX
+    val robot_blue_y = robots.get(Color.Blue).get.posY
+
+    val robot_red_x = robots.get(Color.Red).get.posX
+    val robot_red_y = robots.get(Color.Red).get.posY
+
+    val robot_green_x = robots.get(Color.Green).get.posX
+    val robot_green_y = robots.get(Color.Green).get.posY
+
+    val robot_yellow_x = robots.get(Color.Yellow).get.posX
+    val robot_yellow_y = robots.get(Color.Yellow).get.posY
+
+    return new DbGame( uuid.toString, startDate, endDate,goal_symbol, goal_color, robot_blue_x, robot_blue_y, robot_red_x, robot_red_y, robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,roomId, board_id)
+  }
+
   // -- Parsers
 
   /**
    * Parse a DbGame from a ResultSet
    */
   val fullRow = {
-    get[Pk[String]]("games.id") ~
-      get[String]("games.name") ~
+    get[String]("games.id") ~
       get[Date]("games.created_on") ~
       get[Date]("games.valid_until") ~
       get[String]("games.goal_symbol") ~
@@ -145,14 +172,14 @@ object DbGame{
       get[Int]("games.robot_yellow_y") ~
       get[Long]("games.room_id") ~
       get[Long]("games.board_id") map {
-      case id~name~createdOn~validUntil
+      case id~createdOn~validUntil
         ~goalSymbol~goalColor
         ~robotBlueX~robotBlueY
         ~robotRedX~robotRedY
         ~robotGreenX~robotGreenY
         ~robotYellowX~robotYellowY
         ~roomId~boardId
-      => DbGame(id, name, createdOn, validUntil,
+      => DbGame(id, createdOn, validUntil,
         goalSymbol, goalColor,
         robotBlueX, robotBlueY,
         robotRedX, robotRedY,
@@ -167,36 +194,110 @@ object DbGame{
   // -- Queries
 
   /**
-   * Retrieve a Game from Id.
+   * Retrieve a Game from Id in a given room
    */
-  def findById(id: String): Option[models.DbGame] = {
+  def findByRoomAndId(roomName:String, gameId: String): Option[models.DbGame] = {
     DB.withConnection { implicit connection =>
       SQL("""
-        SELECT *
-        FROM games
-        WHERE id ={id}
+        SELECT games.*
+        FROM rooms
+        INNER JOIN games
+          on games.room_id = rooms.id
+          and games.id = {gameId}
+        WHERE rooms.name ={roomName}
           """
       ).on(
-        'id -> id
+        'roomName -> roomName,
+        'gameId -> gameId
       ).as(DbGame.fullRow.singleOpt)
     }
   }
 
-  /**
-   * Retrieve a Room from name.
-   */
-  def findByName(name: String): Option[models.DbGame] = {
+  def findActiveGameInRoom(roomName:String) : Option[DbGame] = {
     DB.withConnection { implicit connection =>
       SQL("""
-        SELECT *
-        FROM games
-        WHERE upper(name) = upper({name})
+        SELECT games.*
+        FROM rooms
+        INNER JOIN games
+          on games.room_id = rooms.id
+          and games.valid_until < now()
+        WHERE rooms.name ={roomName}
           """
       ).on(
-        'name -> name
+        'roomName -> roomName
       ).as(DbGame.fullRow.singleOpt)
     }
   }
+
+  // return the active game in a room or create it using the construction method provided
+  def getActiveInRoomOrCreate(roomName:String, creationCallBack: () => DbGame) : Option[DbGame] = {
+    DB.withTransaction { implicit conn =>
+      // si if there is an active game
+      SQL("""
+        SELECT games.*
+        FROM rooms
+        INNER JOIN games
+          on games.room_id = rooms.id
+          and games.valid_until > {now}
+        WHERE rooms.name ={roomName}
+          """
+      ).on(
+        'roomName -> roomName,
+        'now -> new Date()
+      ).as(DbGame.fullRow.singleOpt)
+      .orElse{
+        // what we should insert
+        var game = creationCallBack.apply()
+        Some(create(game))
+      }
+    }
+
+  }
+
+  /**
+   * Create a Game.
+   */
+  def create(game: DbGame): DbGame = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          insert into games (
+            id, created_on, valid_until, goal_symbol, goal_color,
+            robot_blue_x, robot_blue_y, robot_red_x, robot_red_y,
+            robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,
+            room_id, board_id
+          )
+          values (
+            {id}, {created_on}, {valid_until}, {goal_symbol}, {goal_color},
+            {robot_blue_x}, {robot_blue_y}, {robot_red_x}, {robot_red_y},
+            {robot_green_x}, {robot_green_y}, {robot_yellow_x}, {robot_yellow_y},
+            {room_id}, {board_id}
+          )
+        """
+      ).on(
+        'id -> game.id ,
+        'created_on -> game.created_on,
+        'valid_until -> game.valid_until,
+        'goal_symbol -> game.goal_symbol,
+        'goal_color -> game.goal_color,
+        'robot_blue_x -> game.robot_blue_x,
+        'robot_blue_y -> game.robot_blue_y,
+        'robot_red_x -> game.robot_red_x,
+        'robot_red_y -> game.robot_red_y,
+        'robot_green_x -> game.robot_green_y,
+        'robot_green_y -> game.robot_green_y,
+        'robot_yellow_x -> game.robot_yellow_x,
+        'robot_yellow_y -> game.robot_yellow_y,
+        'room_id -> game.room_id,
+        'board_id -> game.board_id
+      ).executeUpdate()
+
+      game
+
+    }
+  }
+
+
 
 
   /**
@@ -206,9 +307,27 @@ object DbGame{
     DB.withConnection { implicit connection =>
       SQL("""
           select *
-          from rooms
+          from games
           """
       ).as(DbGame.fullRow *)
+    }
+  }
+
+  // list all games in room ... the newest first
+  def getLatestGamesByRoom(roomId : Long, limit:Int) = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          select TOP {limit} *
+          from games
+          where room_id = {roomId}
+          order by created_on DESC
+          """
+      )
+      .on(
+        'roomId -> roomId,
+        'limit -> limit
+      )
+      .as(DbGame.fullRow *)
     }
   }
 
