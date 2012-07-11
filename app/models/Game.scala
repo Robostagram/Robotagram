@@ -9,8 +9,7 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db.DB
 import anorm.~
-import scala.Some
-import java.util.Date
+import java.util.{Date,Random}
 
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
@@ -97,8 +96,11 @@ class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
 
 object Game {
   val DEFAULT_GAME_DURATION = 120
-
-  def randomGame():Game = new Game(Board.boardFromFile("app/resources/Standard.board", 0, "standard").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION)
+  val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
+  def randomGame():Game = {
+    var idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
+    new Game(Board.loadById(idOfBoardToLoad).get, Goal.randomGoal(), DEFAULT_GAME_DURATION)
+  }
 }
 
 

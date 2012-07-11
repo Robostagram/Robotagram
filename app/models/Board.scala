@@ -1,28 +1,18 @@
 package models
 
 import play.api.Play.current
-import util.Random
-import scala.{Int, Array}
+import scala._
 import collection.mutable.ListBuffer
 import play.api.db.DB
 import anorm._
 import anorm.SqlParser._
-import scala.Tuple3
-import scala.Tuple4
-import scala.Some
 import collection.immutable.{HashSet, HashMap}
 import models.Color._
-import scala.Tuple2
-import scala.Tuple3
-import scala.Tuple4
-import models.Color
 import anorm.~
-import scala.Some
+import scala.util.Random
 
 
 class Board(val id : Long, val name : String, val width: Int, val height: Int) {
-
-  val QUARTER_COMBOS = Array((1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1))
 
   val cells: Array[Array[Cell]] = Array.fill(height, width) {
     EmptyCell
@@ -181,12 +171,6 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
       rBoard
     }
 
-  }
-
-  def randomizeQuarters(): Board = {
-    //reorder randomly the quarters
-    val quarterOrder = QUARTER_COMBOS(new Random().nextInt(6))
-    transformQuarters(quarterOrder)
   }
 }
 
