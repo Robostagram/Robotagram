@@ -1,11 +1,19 @@
 package models
 
+import play.api.Play.current
 import models.Color._
 import scala.util.Random
 import scala.collection.immutable.HashSet
 import scala.collection.immutable.HashMap
 import java.util.UUID
 import scala._
+import anorm._
+import anorm.SqlParser._
+import play.api.db.DB
+import scala.Tuple2
+import anorm.~
+import scala.Some
+import java.util.Date
 
 class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
   val uuid:String = UUID.randomUUID().toString;
@@ -133,4 +141,115 @@ object Game {
   val DEFAULT_GAME_DURATION = 120
 
   def randomGame():Game = new Game(Board.boardFromFile("app/resources/Standard.board", 0, "standard").randomizeQuarters(), Goal.randomGoal(), DEFAULT_GAME_DURATION)
+}
+
+
+case class DbGame(id: Pk[String],
+                  name: String,
+                  created_on : Date,
+                  valid_until : Date,
+                  goal_symbol:String,
+                  goal_color:String,
+                  robot_blue_x:Int,
+                  robot_blue_y:Int,
+                  robot_red_x:Int,
+                  robot_red_y:Int,
+                  robot_green_x:Int,
+                  robot_green_y:Int,
+                  robot_yellow_x:Int,
+                  robot_yellow_y:Int,
+                  room_id:Long,
+                  board_id:Long)
+
+object DbGame{
+
+  // -- Parsers
+
+  /**
+   * Parse a DbGame from a ResultSet
+   */
+  val fullRow = {
+    get[Pk[String]]("games.id") ~
+      get[String]("games.name") ~
+      get[Date]("games.created_on") ~
+      get[Date]("games.valid_until") ~
+      get[String]("games.goal_symbol") ~
+      get[String]("games.goal_color") ~
+      get[Int]("games.robot_blue_x") ~
+      get[Int]("games.robot_blue_y") ~
+      get[Int]("games.robot_red_x") ~
+      get[Int]("games.robot_red_y") ~
+      get[Int]("games.robot_green_x") ~
+      get[Int]("games.robot_green_y") ~
+      get[Int]("games.robot_yellow_x") ~
+      get[Int]("games.robot_yellow_y") ~
+      get[Long]("games.room_id") ~
+      get[Long]("games.board_id") map {
+      case id~name~createdOn~validUntil
+        ~goalSymbol~goalColor
+        ~robotBlueX~robotBlueY
+        ~robotRedX~robotRedY
+        ~robotGreenX~robotGreenY
+        ~robotYellowX~robotYellowY
+        ~roomId~boardId
+      => DbGame(id, name, createdOn, validUntil,
+        goalSymbol, goalColor,
+        robotBlueX, robotBlueY,
+        robotRedX, robotRedY,
+        robotGreenX, robotGreenY,
+        robotYellowX, robotYellowX,
+        roomId, boardId
+      )
+    }
+  }
+
+
+  // -- Queries
+
+  /**
+   * Retrieve a Game from Id.
+   */
+  def findById(id: String): Option[models.DbGame] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        SELECT *
+        FROM games
+        WHERE id ={id}
+          """
+      ).on(
+        'id -> id
+      ).as(DbGame.fullRow.singleOpt)
+    }
+  }
+
+  /**
+   * Retrieve a Room from name.
+   */
+  def findByName(name: String): Option[models.DbGame] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        SELECT *
+        FROM games
+        WHERE upper(name) = upper({name})
+          """
+      ).on(
+        'name -> name
+      ).as(DbGame.fullRow.singleOpt)
+    }
+  }
+
+
+  /**
+   * Retrieve all boards.
+   */
+  def findAll: Seq[DbGame] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          select *
+          from rooms
+          """
+      ).as(DbGame.fullRow *)
+    }
+  }
+
 }
