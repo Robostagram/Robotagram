@@ -10,7 +10,14 @@ import anorm.SqlParser._
 import scala.Tuple3
 import scala.Tuple4
 import scala.Some
-
+import collection.immutable.{HashSet, HashMap}
+import models.Color._
+import scala.Tuple2
+import scala.Tuple3
+import scala.Tuple4
+import models.Color
+import anorm.~
+import scala.Some
 
 
 class Board(val id : Long, val name : String, val width: Int, val height: Int) {
@@ -184,6 +191,50 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 }
 
 object Board {
+
+  // get random robots positions for each color for a given board
+  def randomRobots(board:Board): HashMap[Color, Robot] = {
+    var robots = new HashMap[Color, Robot]()
+    var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
+    for(c <- Color.values){
+      var posX:Int = Random.nextInt(board.width)
+      var posY:Int = Random.nextInt(board.height)
+      while(setPos.contains((posX,posY)) || unacceptableValue(board, posX, posY)){
+        posX = Random.nextInt(board.width)
+        posY = Random.nextInt(board.height)
+      }
+      setPos+=((posX,posY))
+      robots += ((c, new Robot(c,posX,posY)))
+    }
+    robots
+  }
+
+
+  // detects middle (closed) square of the board, and goals
+  def unacceptableValue(board:Board, posX:Int, posY:Int):Boolean = {
+    if(board.cells(posX)(posY).goal != null) {
+      return true
+    }
+    val h = board.height
+    val w = board.width
+
+    var resultW = true
+    var resultH = true
+    var midH = h/2;
+    var midW = w/2;
+    if(w % 2 ==0){
+      resultW = posX==midW||posX==midW-1
+    } else{
+      resultW = posX==(w-1)/2
+    }
+    if(h % 2 ==0){
+      resultH = posY==midH||posY==midH-1
+    } else{
+      resultH = posY==(h-1)/2
+    }
+    resultW && resultH
+  }
+
 
   // these are REGEX !!
   val END_OF_LINE = "[\\r]{0,1}\\n"
