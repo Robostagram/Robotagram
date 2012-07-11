@@ -13,4 +13,11 @@ object Home extends Controller {
     }
   }
 
+  def adminIndex = Action {
+    implicit request => {
+      val user = User.fromRequest(request)
+      Ok(views.html.home.adminIndex(user))
+    }
+  }
+
 }
