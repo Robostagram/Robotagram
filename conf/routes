@@ -37,7 +37,8 @@ GET     /admin/boards/                            controllers.Boards.index
 GET     /admin/boards/:boardId                    controllers.Boards.preview(boardId : Long)
 
 # rooms
-GET     /admin/rooms/:roomName                    controllers.Rooms.gamesByRoom(roomName: String)
+GET     /admin/rooms/:roomName/games              controllers.Rooms.gamesByRoom(roomName: String)
+GET     /admin/rooms/:roomName/games/:gameId      controllers.Rooms.previewGame(roomName: String, gameId : String)
 
 
 

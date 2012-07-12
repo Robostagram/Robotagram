@@ -1,0 +1,17 @@
+@(room: DbRoom, game:Game, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@import scala.collection.immutable.HashMap
+
+@_layout("Game preview #" + game.id, user)(null) {
+<div class="row-fluid">
+    <div class="span8" id="boardZone">
+        @shared.renderBoard(game.board, Some(game.goal), game.robots)
+    </div>
+    <div class="span4 well">
+        <h3>Preview</h3>
+        <p>This is a preview of the game <strong>#@game.id</strong></p>
+        <a href="@controllers.routes.Rooms.gamesByRoom(room.name)" style="float:right;">&larr;Back to the list of games in the room</a>
+    </div>
+</div>
+
+}
+
