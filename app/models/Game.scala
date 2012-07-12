@@ -2,6 +2,7 @@ package models
 
 import play.api.Play.current
 import models.Color._
+import models.Symbol._
 import collection.immutable.HashMap
 import java.util.UUID
 import scala._
@@ -11,18 +12,10 @@ import play.api.db.DB
 import anorm.~
 import java.util.{Date,Random}
 
-class Game(val board:Board, val goal: Goal,val durationInSeconds:Int){
-  val uuid:String = UUID.randomUUID().toString;
-  val endTime:Long = System.currentTimeMillis() + durationInSeconds*1000;
-
-  private var robotsList:HashMap[Color, Robot] = null
-  def robots = {
-    if(robotsList == null){
-      // random positions of robots that make sense for the board
-      robotsList = Board.randomRobots(board)
-    }
-    robotsList
-  }
+class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, val endDate:Date, val robots:HashMap[Color, Robot]){
+  val uuid:String = id;
+  val endTime:Long = endDate.getTime;
+  val durationInSeconds = ((endDate.getTime - startDate.getTime)/1000.0).toInt
 
   def isDone:Boolean = System.currentTimeMillis() > endTime
 
@@ -99,9 +92,32 @@ object Game {
   val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
   def randomGame():Game = {
     var idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
-    new Game(Board.loadById(idOfBoardToLoad).get, Goal.randomGoal(), DEFAULT_GAME_DURATION)
+    var board = Board.loadById(idOfBoardToLoad).get
+    var robots = Board.randomRobots(board)
+
+    val originalTimeStamp = System.currentTimeMillis()
+    val startDate = new Date(originalTimeStamp)
+    val endDate = new Date (originalTimeStamp + 1000 * DEFAULT_GAME_DURATION)
+
+    new Game(UUID.randomUUID().toString, board, Goal.randomGoal(), startDate, endDate, robots)
   }
 
+  def load(roomName:String, gameId:String):Option[Game] = {
+    DbGame.findByRoomAndId(roomName, gameId).map{ dbGame =>
+      Board.loadById(dbGame.board_id).map{board =>
+        var goal = new Goal(Color.withName(dbGame.goal_color), Symbol.withName(dbGame.goal_symbol))
+        //load the robots
+        var robots = new HashMap[Color, Robot]()
+        robots += ((Color.Blue, new Robot(Color.Blue, dbGame.robot_blue_x, dbGame.robot_blue_y)))
+        robots += ((Color.Red, new Robot(Color.Red, dbGame.robot_red_x, dbGame.robot_red_y)))
+        robots += ((Color.Green, new Robot(Color.Green, dbGame.robot_green_x, dbGame.robot_green_y)))
+        robots += ((Color.Yellow, new Robot(Color.Yellow, dbGame.robot_yellow_x, dbGame.robot_yellow_y)))
+
+        new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
+      }
+    }
+    .getOrElse(None)
+  }
 
 }
 
@@ -230,7 +246,7 @@ object DbGame{
   }
 
   // return the active game in a room or create it using the construction method provided
-  def getActiveInRoomOrCreate(roomName:String, creationCallBack: () => DbGame) : Option[DbGame] = {
+  def getActiveInRoomOrCreate(roomName:String, creationCallBack: () => DbGame) : DbGame = {
     DB.withTransaction { implicit conn =>
       // si if there is an active game
       SQL("""
@@ -245,13 +261,12 @@ object DbGame{
         'roomName -> roomName,
         'now -> new Date()
       ).as(DbGame.fullRow.singleOpt)
-      .orElse{
+      .getOrElse{
         // what we should insert
         var game = creationCallBack.apply()
-        Some(create(game))
+        create(game)
       }
     }
-
   }
 
   /**
