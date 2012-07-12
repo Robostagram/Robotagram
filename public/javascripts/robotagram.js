@@ -435,26 +435,26 @@ function initListeners(){
     var $window = $(window);
     // events going on in the game ?
     $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
-        console.debug(e.type, e.namespace, direction, color);
+        //console.debug(e.type, e.namespace, direction, color);
         moveRobot(color, directionStringToCode(direction));//keepHistory
     });
 
-    $window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
+    /*$window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
         console.debug(e.type, e.namespace, direction, color);
     });
     $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
         console.debug(e.type, e.namespace, direction, color);
-    });
+    });*/
 
     // do it only once
     $window.one(EVENT_GAME_TIMEUP, function(e){
-        console.debug(e.type, e.namespace);
+        //console.debug(e.type, e.namespace);
         $("#endOfGameModal").modal('show');
         $("#winModal").modal('hide');
     });
 
     $window.on(EVENT_GAME_SOLVED, function(e, numberOfMoves){
-        console.debug(e.type, e.namespace, numberOfMoves);
+        //console.debug(e.type, e.namespace, numberOfMoves);
         //win modal shown does not imply redirection
         //no need to deactivate leaveGame on unload
         //window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
@@ -521,7 +521,7 @@ function doRefreshLoop(){
 
 function reSyncGameStatusWithServer() {
     $.ajax({
-        url:document.URL + '/status',
+        url: jsRoutes.controllers.Gaming.gameStatus($("#roomId").val(), $("#gameId").val()).url,
         success:function (data) {
             // resync the time left
             previousTimeLeft = data.game.timeLeft;

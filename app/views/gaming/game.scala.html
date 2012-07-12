@@ -1,4 +1,4 @@
-@(roomId : String,  room: Room, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
+@(room: DbRoom, game:Game, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
 
 @renderColor(color: Color.Value) = {@color.toString}
 
@@ -8,36 +8,36 @@
 @headerContent = {
     <ul id="headerInfo" class="nav">
         <li>
-            <a id="headerRobot"><div class="robot @renderColor(room.game.goal.color)"></div></a>
+            <a id="headerRobot"><div class="robot @renderColor(game.goal.color)"></div></a>
         </li>
         <li>
             <a id="headerArrow">&rarr;</a>
         </li>
         <li>
-            <a id="headerGoal">@shared.gameGoal(room.game.goal)</a>
+            <a id="headerGoal">@shared.gameGoal(game.goal)</a>
         </li>
         <li>
             <a id="currentScore">0</a>
         </li>
         <li class="divider-vertical"></li>
         <li>
-            <a id="timeLeft">@room.game.secondsLeft</a>
+            <a id="timeLeft">@game.secondsLeft</a>
         </li>
         <li id="timeProgress">
-            <a>@shared.timer(room.game)</a>
+            <a>@shared.timer(game)</a>
         </li>
 
     </ul>
 }
 
 @_layout(Messages("game.title"), Some(user))(headerContent){
-<input type="hidden" id="roomId" name="roomId" value="@roomId">
-<input type="hidden" id="gameId" name="gameId" value="@room.game.uuid">
-<input type="hidden" id="gameDuration" name="gameDuration" value="@room.game.durationInSeconds">
-<input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@room.game.secondsLeft">
+<input type="hidden" id="roomId" name="roomId" value="@room.name">
+<input type="hidden" id="gameId" name="gameId" value="@game.uuid">
+<input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
+<input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@game.secondsLeft">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
-        @shared.renderBoard(room.game.board, Some(room.game.goal), room.game.robots)
+        @shared.renderBoard(game.board, Some(game.goal), game.robots)
     </div>
     <div class="span4" id="gameZone">
         <h3>@Messages("game.leaderboard")</h3>
@@ -115,7 +115,7 @@
         <div class="modal-footer">
             <a href="@routes.Home.index" class="btn">@Messages("game.endOfGame.giveup")</a>
             @* "current" is the url for the current game in this room *@
-            <a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(roomId)" >@Messages("game.endOfGame.joinNext")</a>
+            <a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(room.name)" >@Messages("game.endOfGame.joinNext")</a>
         </div>
     </div>
 </div>

@@ -104,19 +104,33 @@ object Game {
 
   def load(roomName:String, gameId:String):Option[Game] = {
     DbGame.findByRoomAndId(roomName, gameId).map{ dbGame =>
-      Board.loadById(dbGame.board_id).map{board =>
-        var goal = new Goal(Color.withName(dbGame.goal_color), Symbol.withName(dbGame.goal_symbol))
-        //load the robots
-        var robots = new HashMap[Color, Robot]()
-        robots += ((Color.Blue, new Robot(Color.Blue, dbGame.robot_blue_x, dbGame.robot_blue_y)))
-        robots += ((Color.Red, new Robot(Color.Red, dbGame.robot_red_x, dbGame.robot_red_y)))
-        robots += ((Color.Green, new Robot(Color.Green, dbGame.robot_green_x, dbGame.robot_green_y)))
-        robots += ((Color.Yellow, new Robot(Color.Yellow, dbGame.robot_yellow_x, dbGame.robot_yellow_y)))
-
-        new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
-      }
+      Some(fromDb(dbGame))
     }
     .getOrElse(None)
+  }
+
+  private def fromDb(dbGame:DbGame):Game = {
+    var board = Board.loadById(dbGame.board_id).get
+    var goal = new Goal(Color.withName(dbGame.goal_color), Symbol.withName(dbGame.goal_symbol))
+    //load the robots
+    var robots = new HashMap[Color, Robot]()
+    robots += ((Color.Blue, new Robot(Color.Blue, dbGame.robot_blue_x, dbGame.robot_blue_y)))
+    robots += ((Color.Red, new Robot(Color.Red, dbGame.robot_red_x, dbGame.robot_red_y)))
+    robots += ((Color.Green, new Robot(Color.Green, dbGame.robot_green_x, dbGame.robot_green_y)))
+    robots += ((Color.Yellow, new Robot(Color.Yellow, dbGame.robot_yellow_x, dbGame.robot_yellow_y)))
+
+    new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
+  }
+
+  def getActiveInRoomOrCreate(roomName:String) : Game = {
+    var gameFromDb = DbGame.getActiveInRoomOrCreate(roomName, () => {
+      var idOfBoardToLoad = new Random().nextInt(6) + 1
+      var b = Board.loadById(idOfBoardToLoad).get
+      var g = Goal.randomGoal()
+      var robots = Board.randomRobots(b)
+      DbGame.prepareGameToStore(1, Game.DEFAULT_GAME_DURATION,b, g, robots)
+    })
+    fromDb(gameFromDb)
   }
 
 }

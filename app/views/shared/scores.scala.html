@@ -1,4 +1,4 @@
-@(room: Room)
+@(room: DbRoom)
 
 @import models._
 
@@ -10,8 +10,6 @@
         </tr>
     </thead>
     <tbody id="leaderBoard">
-        @for(p:Player <- room.players){
-            <tr id="score_@p.name"><th>@p.name</th><td><span id="best_score_@p.name">@if(p.highScore == -1){-}else{@p.highScore}</span></td></tr>
-        }
+        <tr ><th>XX</th><td><span>TODO - players of room async</span></td></tr>
     </tbody>
 </table>

@@ -58,17 +58,19 @@ object Gaming extends Controller {
         if (forceLeaveRoom) {
           playerDisconnected(user.name)
         }
-        rooms.get(roomName).map { room =>
-          initializeGameIfNecessary(room, user.name)
-          Redirect(routes.Gaming.getGame(room.name, room.game.uuid))
+        DbRoom.findByName(roomName).map { room =>
+          val g = Game.getActiveInRoomOrCreate(room.name)
+          Ok(views.html.gaming.game(room, g, user))
+          //initializeGameIfNecessary(room, user.name)
+          //Redirect(routes.Gaming.getGame(room.name, room.game.uuid))
         }.getOrElse(Results.NotFound) //no room with that id
       }
     }
   }
 
-  // TODO get rid of GET /rooms/n/games/xx-xx-x-x-x-xxx, use only GET /rooms/n/games/current
 
-  //
+  // history of a board ... get access to previously played game
+  // if game is still active, redirect to the game active board ("current")
   // GET /rooms/n/games/xx-xx-x-x-x-xxx
   //
   def getGame(roomName: String, gameId: String = null) = Secured.Authenticated {
@@ -78,15 +80,16 @@ object Gaming extends Controller {
       if (currentRoomMaybe != None && currentRoomMaybe.get != roomName) {
         Ok(views.html.gaming.alreadyIn(currentRoomMaybe.get, roomName, user))
       } else {
-        rooms.get(roomName).map {room =>
-          if (gameId != null && gameId != room.game.uuid) {
-            // game is no longer being played
-            // should not be a 200, but something else, probably a 30X (redirection )
-            Ok(views.html.gaming.gameFinished(room.name, gameId, user))
-          } else {
-            Ok(views.html.gaming.game(room.name, room, user))
-          }
-        }.getOrElse(NotFound) //no room with that id
+        DbRoom.findByName(roomName).map{ dbRoom =>
+          DbGame.findByRoomAndId(roomName, gameId).map { game =>
+            if(game.valid_until.getTime > System.currentTimeMillis()){
+              // game is active
+              Redirect(routes.Gaming.currentGame(dbRoom.name))
+            }else{
+              Ok(views.html.gaming.gameFinished(dbRoom.name, gameId, user))
+            }
+          }.getOrElse(NotFound)
+        }.getOrElse(NotFound)
       }
     }
   }
@@ -96,12 +99,8 @@ object Gaming extends Controller {
   //
   def gameStatus(roomName: String, gameId: String) = Secured.Authenticated {
     Action {
-      rooms.get(roomName).map { room =>
-        val game = room.game
-        if (game == null || gameId != game.uuid) {
-          Gone("Game " + gameId + " is not there anymore, current one: " + game.uuid);
-        }
-        else {
+      DbRoom.findByName(roomName).map{ dbRoom =>
+        Game.load(roomName, gameId).map { game =>
           var state = "playing"
           if (game.isDone) {
             state = "finished"
@@ -112,13 +111,13 @@ object Gaming extends Controller {
                 "duration" -> toJson(game.durationInSeconds),
                 "timeLeft" -> toJson(game.secondsLeft),
                 "percentageDone" -> toJson(game.percentageDone()),
-                "players" -> toJson(room.players.size),
                 "status" -> toJson(state)
               )
-            )
-          )))
-        }
-      }.getOrElse(NotFound("Unknown room"))
+            ))))
+
+        }.getOrElse(Gone("Game " + gameId + " does not exist for room " + roomName))
+      }
+      .getOrElse(NotFound("room " + roomName + " does not exist"))
     }
   }
 
