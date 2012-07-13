@@ -1,10 +1,12 @@
 package models
 
 import collection.mutable.HashMap
-import play.api.libs.iteratee.{Enumerator, PushEnumerator}
+import concurrent.Lock
 
 
 class WsRoom(val name: String ) {
+  private val lock: Lock = new Lock()
+
   // playerName -> channel
   private var players : HashMap[String, WsPlayer] = new HashMap[String, WsPlayer]()
 
@@ -16,6 +18,28 @@ class WsRoom(val name: String ) {
     players.get(playerName)
   }
 
+  def join(playerName:String) : WsPlayer = {
+    lock.acquire()
+    try{
+      var p = new WsPlayer(playerName)
+      players += ((playerName, p))
+      p
+    }
+    finally{
+      lock.release()
+    }
+  }
+
+  def disconnectPlayer(playerName : String) {
+    lock.acquire()
+    try{
+      players -= playerName
+    }
+    finally{
+      lock.release()
+    }
+  }
+
   // send a message to all players in the room
   def sendAll(message: String, exceptPlayer: Option[String] = None){
     players.filter( t => t match {
@@ -24,13 +48,4 @@ class WsRoom(val name: String ) {
     ).values.foreach(p=> p.send(message))
   }
 
-}
-
-class WsPlayer(val name : String){
-
-  private val channel: PushEnumerator[String] = Enumerator.imperative[String]();
-
-  def send(message: String) {
-    channel.push(message)
-  }
 }

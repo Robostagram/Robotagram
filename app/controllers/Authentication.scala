@@ -55,9 +55,9 @@ object Authentication extends Controller {
 
   def logout = Action {
     implicit request =>
-      User.fromRequest.map { user=>
+      /*User.fromRequest.map { user=>
         Gaming.playerDisconnected(user.name);
-      }
+      }*/
       Redirect(routes.Home.index())
         .withNewSession
         .flashing("success" -> Messages("logout.result.success"))

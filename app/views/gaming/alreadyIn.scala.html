@@ -3,7 +3,11 @@
 @import helpers.CustomHelpers._
 
 @_layout(Messages("alreadyIn.title"), Some(user))(null) {
-
+    <!--
+    DEBUG :
+    oldRoom :  @oldRoomId
+    new Room : @newRoomId
+    -->
     @*make it look like a modal, without js involved ... *@
     <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
         <div class="modal-body">

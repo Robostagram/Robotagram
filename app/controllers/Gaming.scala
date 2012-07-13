@@ -1,6 +1,5 @@
 package controllers
 
-import scala.collection.mutable.HashMap
 import play.api.mvc._
 import models._
 import concurrent.Lock
@@ -8,42 +7,14 @@ import play.api.libs.iteratee.Iteratee
 import controllers.Authentication.Secured
 import play.api.libs.json.Json.toJson
 import play.api.data.Form
-import play.api.libs.json.{JsUndefined, Json, JsValue}
+import play.api.libs.json._
+import play.api.libs.json.JsUndefined
+import play.api.libs.json.JsString
+import play.api.libs.json.JsObject
 
 object Gaming extends Controller {
 
-  // handle a game per room, with as many rooms as can be named (for now)
-  // the list of possible rooms to create is taken from db
-  val rooms: HashMap[String, Room] = new HashMap[String, Room]() // [roomId -> Room]
-  DbRoom.findAll.foreach{dbRoom =>
-    rooms += ((dbRoom.name, new Room(dbRoom.name)))
-  }
-  
-  // store where the users are
-  // this will probably get replaced by the "presence" management once we use Pusher ...
-  var roomsByPlayer: HashMap[String, String] = new HashMap[String, String]() // [username -> roomId]
   val lock: Lock = new Lock()
-
-
-  private def initializeGameIfNecessary(room: Room, playerName:String) {
-    lock.acquire();
-    roomsByPlayer -= playerName
-    roomsByPlayer += ((playerName, room.name))
-    var game = room.game
-    try {
-      var createNewGame: Boolean = game == null || game.isDone
-      if (createNewGame) {
-        room.players.foreach(player => player.channel.close())
-        room.game = Game.randomGame()
-      } else {  // if game already existed, notify other users of new user
-        notifySummary(room, playerName)
-      }
-    } catch {
-      case e => InternalServerError("WTF? " + e)
-    } finally {
-      lock.release()
-    }
-  }
   
   //
   // GET /rooms/n/games/current
@@ -51,18 +22,20 @@ object Gaming extends Controller {
   def currentGame(roomName: String, forceLeaveRoom: Boolean = false) = Secured.Authenticated {
     Action { implicit request =>
       val user = User.fromRequest(request).get
-      val currentRoomMaybe = roomsByPlayer.get(user.name)
-      if (!forceLeaveRoom && currentRoomMaybe != None && currentRoomMaybe.get != roomName) {
-        Ok(views.html.gaming.alreadyIn(roomName, currentRoomMaybe.get, user))
+      // is it really a problem to be connected to 2 rooms ?
+      // it is probably more problematic to be in the same room in 2 different windows ...
+      val currentRoomMaybe = WsManager.roomForPlayer(user.name)
+      if (!forceLeaveRoom && !currentRoomMaybe.isEmpty && currentRoomMaybe.get.name != roomName) {
+        Ok(views.html.gaming.alreadyIn(roomName, currentRoomMaybe.get.name, user))
       } else {
         if (forceLeaveRoom) {
-          playerDisconnected(user.name)
+          // nothing special ... it will cut the ws
+          //playerDisconnected(user.name)
         }
         DbRoom.findByName(roomName).map { room =>
-          val g = Game.getActiveInRoomOrCreate(room.name)
+          val g = Game.getActiveInRoomOrCreate(room.id.get)
           Ok(views.html.gaming.game(room, g, user))
           //initializeGameIfNecessary(room, user.name)
-          //Redirect(routes.Gaming.getGame(room.name, room.game.uuid))
         }.getOrElse(Results.NotFound) //no room with that id
       }
     }
@@ -75,22 +48,17 @@ object Gaming extends Controller {
   //
   def getGame(roomName: String, gameId: String = null) = Secured.Authenticated {
     Action { implicit request =>
-      val user = User.fromRequest(request).get
-      val currentRoomMaybe = roomsByPlayer.get(user.name)
-      if (currentRoomMaybe != None && currentRoomMaybe.get != roomName) {
-        Ok(views.html.gaming.alreadyIn(currentRoomMaybe.get, roomName, user))
-      } else {
-        DbRoom.findByName(roomName).map{ dbRoom =>
-          DbGame.findByRoomAndId(roomName, gameId).map { game =>
-            if(game.valid_until.getTime > System.currentTimeMillis()){
-              // game is active
-              Redirect(routes.Gaming.currentGame(dbRoom.name))
-            }else{
-              Ok(views.html.gaming.gameFinished(dbRoom.name, gameId, user))
-            }
-          }.getOrElse(NotFound)
+      val user = User.fromRequest(request)
+      DbRoom.findByName(roomName).map{ dbRoom =>
+        DbGame.findByRoomAndId(roomName, gameId).map { game =>
+          if(game.valid_until.getTime > System.currentTimeMillis()){
+            // game is active
+            Redirect(routes.Gaming.currentGame(dbRoom.name))
+          }else{
+            Ok(views.html.gaming.gameFinished(dbRoom.name, gameId, user))
+          }
         }.getOrElse(NotFound)
-      }
+      }.getOrElse(NotFound)
     }
   }
 
@@ -126,27 +94,25 @@ object Gaming extends Controller {
   //
   def submitSolution(roomName: String, gameId: String) = Secured.Authenticated {
     Action { implicit request =>
-      rooms.get(roomName).map { room =>
-        val user = User.fromRequest(request).get
-        initializeGameIfNecessary(room, user.name)
-
-        if (gameId != null && gameId != room.game.uuid) {
-          Gone("This game is over - score not submitted")
-        } else {
-          // extract posted solution from the request
-          Form("solution" -> play.api.data.Forms.text).bindFromRequest.fold(
-            noScore => BadRequest("No solution submitted"),
-            solution => {
-              findRoomOfPlayer(user.name).map {roomOfPlayer =>
-                val game = roomOfPlayer.game
+      var user = User.fromRequest.get
+      DbRoom.findByName(roomName).map{ dbRoom =>
+        Game.load(roomName, gameId).map { game =>
+          if(game.isDone){
+            Gone("This game is over - score not submitted")
+          }
+          else{
+            // extract posted solution from the request
+            Form("solution" -> play.api.data.Forms.text).bindFromRequest.fold(
+              noScore => BadRequest("No solution submitted"),
+              solution => {
                 val messageJson: JsValue = Json.parse(solution)
                 val moves = (messageJson \ "moves").as[List[String]]
                 val score = moves.length
                 if (game.validate(moves.map(parseMovement))) {
                   lock.acquire()
                   try {
-                    roomOfPlayer.withPlayer(user.name).scored(score)
-                    notifySummary(roomOfPlayer) // player=null in order to set also the local leader board
+                    //TODO: persist score !
+                    notifyRoom(roomName, "room.player.submittedSolution", Seq[String](user.name, score.toString))
                     Accepted("Solution accepted")
                   } finally {
                     lock.release()
@@ -155,43 +121,39 @@ object Gaming extends Controller {
                 else{
                   NotAcceptable("Solution not accepted")
                 }
-              }.getOrElse(BadRequest("unknown room for player")) // room of player does not exist
-            }
-          )
+              }
+            )
+          }
         }
+        .getOrElse(NotFound) // unknown game in room
       }.getOrElse(NotFound) //unknown roomId
     }
-  }
-  
-  def findRoomOfPlayer(player: String): Option[Room] = {
-    roomsByPlayer.get(player).map { roomIdOfPlayer =>
-      rooms.get(roomIdOfPlayer)
-    }.getOrElse(None)
   }
 
   /////////// Web sockets /////////////////
 
-  val in = Iteratee.foreach[String](messageReceived)
 
-  def connectPlayer(player: String) = WebSocket.using[String] {
-    implicit request =>
-      findRoomOfPlayer(player) match {
-        case None => (null, null) // TODO no connection, log
-        case Some(room) => (in, room.withPlayer(player).channel) //TODO: add user to the room and notify everybody in the room (new player)
-      }
+  def connectPlayer(roomName : String,player: String) = WebSocket.using[String] { implicit request =>
+      logMessage(roomName, player, "<CONNECTING>")
+      val wsPlayer = WsManager.room(roomName).get.join(player)
+      // make an incoming channel to receive messages from that user
+      val incomingPlayerChannel = Iteratee
+        .foreach[String]( s=> messageReceivedFromPlayer(roomName, player, s))
+        .mapDone{ _ => // handle client closing connection
+          //forget about that user in that room
+          WsManager.room(roomName).map{r=>
+            r.disconnectPlayer(player)
+          }
+          notifyRoom(roomName, "room.player.disconnected", Seq[String](player))
+          logMessage(roomName, player, "<DISCONNECTED>")
+        }
+      notifyRoom(roomName, "room.player.connected", Seq[String](player))
+      // plug in the input and output ...
+      (incomingPlayerChannel, wsPlayer.channel) //TODO: add user to the room and notify everybody in the room (new player)
   }
 
-  def playerDisconnected(player: String) {
-    findRoomOfPlayer(player) match {
-        case None => Unit //TODO log?
-        case Some(room) => roomsByPlayer -= player
-                           val removedPlayer: Player = room.withoutPlayer(player)
-                           if(removedPlayer != null){
-                             // may be disconnected but having never played so far ....
-                             removedPlayer.channel.close()
-                           }
-                           notifySummary(room)
-    }
+  def logMessage(roomName:String, playerName:String, message:String){
+    System.out.println("[" + roomName + "]" + playerName + ">" + message)
   }
   
   def getString(jsValue: JsValue, id: String): String = {
@@ -221,23 +183,32 @@ object Gaming extends Controller {
     }
   }
 
-  def messageReceived(message: String) {
-    val messageJson: JsValue = Json.parse(message)
-
-    val jsonLeave = messageJson \ "leave";
-    var matches = (jsonLeave:Any) match {
-      case JsUndefined(error) => false
-      case _ => true;
-    }
-    if (matches){
-      val player: String = (jsonLeave \ "player").as[String]
-      playerDisconnected(player);
-    }
+  def messageReceivedFromPlayer( roomName:String, playerName:String, message: String) {
+    logMessage(roomName, playerName, "MSG:" + message)
+    // we don't specially care about the messages actually ...
+    // we get the disconnection of the user from the Iteratee.mapDone
   }
 
   def notifySummary(room: Room, fromPlayer: String = null) {
     val summary: JsValue = GameSummary.fromRoom(room).toJson;
     val message: String = Json.stringify(summary)
     room.players.filter(player => player.name != fromPlayer).foreach(player => player.sendJSon(message))
+  }
+
+
+  // send something to all players connected to a room
+  def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
+    var jsonArgs:JsArray = new JsArray()
+
+    if (messageArgs != null){
+      jsonArgs = JsArray( messageArgs.map(s => JsString(s)) )
+      //jsonArgs = messageArgs.map(s=> JsString(s))
+    }
+
+    var msg = JsObject(Seq("args" -> jsonArgs, "type" -> JsString(messageType)))
+
+    WsManager.room(roomName).map{r=>
+      r.sendAll(Json.stringify( msg))
+    }
   }
 }

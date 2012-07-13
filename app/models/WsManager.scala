@@ -1,9 +1,11 @@
 package models
 
 import collection.mutable.HashMap
+import concurrent.Lock
 
 // in charge of handling the web sockets channels and rooms
 object WsManager {
+  private val lock: Lock = new Lock()
 
   // roomName -> Room
   private val rooms : HashMap[String, WsRoom] = new HashMap[String, WsRoom]()
@@ -13,7 +15,13 @@ object WsManager {
   }
 
   private def addRoom(roomName:String){
-    rooms += ((roomName, new WsRoom(roomName)))
+    lock.acquire()
+    try{
+      rooms += ((roomName, new WsRoom(roomName)))
+    }
+    finally{
+      lock.release()
+    }
   }
 
   // get room by name

@@ -23,7 +23,7 @@ GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomI
 GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.gameStatus(roomId : String, gameId : String)
 POST    /rooms/:roomId/games/:gameId/solution   controllers.Gaming.submitSolution(roomId : String, gameId : String)
 
-GET     /connectPlayer/:player                  controllers.Gaming.connectPlayer(player: String)
+GET     /rooms/:roomId/connect/:player                  controllers.Gaming.connectPlayer(roomId : String, player: String)
 
 
 # ADMINISTRATOR FEATURES ... or debugging ...

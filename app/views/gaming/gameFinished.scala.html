@@ -1,6 +1,6 @@
-@(requestedRoom: String , requestedGame: String, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(requestedRoom: String , requestedGame: String, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
-@_layout("This game is over", Some(user))(null){
+@_layout("This game is over", user)(null){
 
     <p>The game @requestedGame is over ...</p>
     <p>Join this one! <a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(requestedRoom)">Join</a></p>

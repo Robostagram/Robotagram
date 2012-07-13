@@ -419,10 +419,15 @@ function initListeners(){
 
     connectPlayer();
 
+    var askConfirmationBeforeLeavingPage = true;
+
     // when leaving the window, disconnect the user
     window.onbeforeunload = function() {
         // the game is finished ... just disconnect
-        leaveGame();
+        if(!askConfirmationBeforeLeavingPage){
+            return
+        }
+        return "A game is active ... are you sure you want to leave ?";
         // should probably ask confirmation to user ??
     };
 
@@ -449,6 +454,7 @@ function initListeners(){
     // do it only once
     $window.one(EVENT_GAME_TIMEUP, function(e){
         //console.debug(e.type, e.namespace);
+        askConfirmationBeforeLeavingPage = false; // it's ok to leave the page, now
         $("#endOfGameModal").modal('show');
         $("#winModal").modal('hide');
     });
@@ -557,15 +563,10 @@ function hideLoading(){
             var urlBase = window.location.href.substr("http://".length);
             urlBase = urlBase.substr(0, urlBase.indexOf('/'));
             // relativeUrl for connection for player
-            var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#userName").text()).url; // starts with /)
+            var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
             gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
-            gameSocket.onmessage = receiveSummary;
+            gameSocket.onmessage = messageReceived;
         }
-    }
-
-    function leaveGame() {
-        var message = JSON.stringify({"leave":{"player":$("#userName").text()}});
-        gameSocket.send(message);
     }
 
     // submit the current score ...
@@ -598,6 +599,10 @@ function hideLoading(){
               completedCallback();
             }
         });
+    }
+
+    var messageReceived = function(event){
+        console.debug("SERVER>" + event.data);
     }
 
     var receiveSummary = function(event) {

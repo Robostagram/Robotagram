@@ -122,13 +122,13 @@ object Game {
     new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
   }
 
-  def getActiveInRoomOrCreate(roomName:String) : Game = {
-    var gameFromDb = DbGame.getActiveInRoomOrCreate(roomName, () => {
+  def getActiveInRoomOrCreate(roomId:Long) : Game = {
+    var gameFromDb = DbGame.getActiveInRoomOrCreate(roomId, () => {
       var idOfBoardToLoad = new Random().nextInt(6) + 1
       var b = Board.loadById(idOfBoardToLoad).get
       var g = Goal.randomGoal()
       var robots = Board.randomRobots(b)
-      DbGame.prepareGameToStore(1, Game.DEFAULT_GAME_DURATION,b, g, robots)
+      DbGame.prepareGameToStore(roomId, Game.DEFAULT_GAME_DURATION,b, g, robots)
     })
     fromDb(gameFromDb)
   }
@@ -260,25 +260,57 @@ object DbGame{
   }
 
   // return the active game in a room or create it using the construction method provided
-  def getActiveInRoomOrCreate(roomName:String, creationCallBack: () => DbGame) : DbGame = {
+  def getActiveInRoomOrCreate(roomId:Long, creationCallBack: () => DbGame) : DbGame = {
     DB.withTransaction { implicit conn =>
-      // si if there is an active game
+      // if there is an active game
       SQL("""
         SELECT games.*
-        FROM rooms
-        INNER JOIN games
-          on games.room_id = rooms.id
+        FROM games
+        WHERE games.room_id = {roomId}
           and games.valid_until > {now}
-        WHERE rooms.name ={roomName}
           """
       ).on(
-        'roomName -> roomName,
+        'roomId -> roomId,
         'now -> new Date()
       ).as(DbGame.fullRow.singleOpt)
       .getOrElse{
         // what we should insert
         var game = creationCallBack.apply()
-        create(game)
+        //create(game)
+        SQL(
+          """
+          insert into games (
+            id, created_on, valid_until, goal_symbol, goal_color,
+            robot_blue_x, robot_blue_y, robot_red_x, robot_red_y,
+            robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,
+            room_id, board_id
+          )
+          values (
+            {id}, {created_on}, {valid_until}, {goal_symbol}, {goal_color},
+            {robot_blue_x}, {robot_blue_y}, {robot_red_x}, {robot_red_y},
+            {robot_green_x}, {robot_green_y}, {robot_yellow_x}, {robot_yellow_y},
+            {room_id}, {board_id}
+          )
+          """
+        ).on(
+          'id -> game.id ,
+          'created_on -> game.created_on,
+          'valid_until -> game.valid_until,
+          'goal_symbol -> game.goal_symbol,
+          'goal_color -> game.goal_color,
+          'robot_blue_x -> game.robot_blue_x,
+          'robot_blue_y -> game.robot_blue_y,
+          'robot_red_x -> game.robot_red_x,
+          'robot_red_y -> game.robot_red_y,
+          'robot_green_x -> game.robot_green_y,
+          'robot_green_y -> game.robot_green_y,
+          'robot_yellow_x -> game.robot_yellow_x,
+          'robot_yellow_y -> game.robot_yellow_y,
+          'room_id -> game.room_id,
+          'board_id -> game.board_id
+        ).executeUpdate()
+
+        game
       }
     }
   }
