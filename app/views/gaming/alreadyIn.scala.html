@@ -1,13 +1,8 @@
-@(newRoomId: String, oldRoomId: String, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(roomId: String, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @import helpers.CustomHelpers._
 
 @_layout(Messages("alreadyIn.title"), Some(user))(null) {
-    <!--
-    DEBUG :
-    oldRoom :  @oldRoomId
-    new Room : @newRoomId
-    -->
     @*make it look like a modal, without js involved ... *@
     <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
         <div class="modal-body">
@@ -15,8 +10,10 @@
             <p>@Messages("alreadyIn.intro")</p>
         </div>
         <div class="modal-footer">
-            <a class="btn" href="@routes.Gaming.currentGame(oldRoomId)">@Messages("alreadyIn.oldGame")</a>
-            <a class="btn" href="@routes.Gaming.currentGame(newRoomId, true)">@Messages("alreadyIn.newGame")</a>
+            <a class="btn" href="@routes.Home.index">@Messages("alreadyIn.home")</a>
+            @helper.form(routes.Gaming.eject(roomId, Some(routes.Gaming.currentGame(roomId).url))){
+                <input type="submit" class="btn btn-primary" value="@Messages("alreadyIn.kickOther")"/>
+            }
         </div>
     </div>
 }

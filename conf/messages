@@ -109,9 +109,9 @@ game.endOfGame.details=Another game is starting now ...
 game.endOfGame.giveup=Give up
 game.endOfGame.joinNext=Join the next game !
 
-# Already in an other room
-alreadyIn.title=Already joined a room
-alreadyIn.whatdo=Leave current room?
-alreadyIn.intro=You are already participating to a game in another room.
-alreadyIn.oldGame=Rejoin my old room
-alreadyIn.newGame=Leave my old room and join the new one
+# Already in the same room in another window
+alreadyIn.title=Already in this room
+alreadyIn.whatdo=Disconnect the other connection?
+alreadyIn.intro=You are already connected to this room... maybe in another browser window or tab.
+alreadyIn.home=Cancel
+alreadyIn.kickOther=Cut the other connection and join the room here

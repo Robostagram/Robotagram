@@ -405,7 +405,7 @@ function setUpHelpAndTooltips(){
     setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
 }
-
+var gameIsOn = false; // is there a game currently being played ?
 function initListeners(){
     setUpGameControlHandlers();
 
@@ -419,15 +419,15 @@ function initListeners(){
 
     connectPlayer();
 
-    var askConfirmationBeforeLeavingPage = true;
+    gameIsOn = true;
 
     // when leaving the window, disconnect the user
     window.onbeforeunload = function() {
         // the game is finished ... just disconnect
-        if(!askConfirmationBeforeLeavingPage){
+        if(!gameIsOn){ // no game is playing ... no need to ask confirmation before leaving
             return
         }
-        return "A game is active ... are you sure you want to leave ?";
+        return $_("game.leave.gameIsActive.confirm")
         // should probably ask confirmation to user ??
     };
 
@@ -454,7 +454,7 @@ function initListeners(){
     // do it only once
     $window.one(EVENT_GAME_TIMEUP, function(e){
         //console.debug(e.type, e.namespace);
-        askConfirmationBeforeLeavingPage = false; // it's ok to leave the page, now
+        gameIsOn = false; // it's ok to leave the page, now
         $("#endOfGameModal").modal('show');
         $("#winModal").modal('hide');
     });
@@ -535,7 +535,9 @@ function reSyncGameStatusWithServer() {
                 $(window).trigger(EVENT_GAME_TIMEUP);
             }
             else {
-                setTimeout(reSyncGameStatusWithServer, SERVER_POLLING_REPEAT_TIME);
+                if(gameIsOn){
+                    setTimeout(reSyncGameStatusWithServer, SERVER_POLLING_REPEAT_TIME);
+                }
             }
         },
         statusCode:{
@@ -603,6 +605,13 @@ function hideLoading(){
 
     var messageReceived = function(event){
         console.debug("SERVER>" + event.data);
+        var d = JSON.parse(event.data); // parse it
+
+        if(d.type === "player.kickout"){
+            gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
+            alert("You have been kicked on in this window : " + d.args[0]);
+            // redirect home ??
+        }
     }
 
     var receiveSummary = function(event) {

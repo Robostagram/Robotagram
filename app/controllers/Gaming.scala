@@ -19,25 +19,35 @@ object Gaming extends Controller {
   //
   // GET /rooms/n/games/current
   // access the current active game of the room ... or initialize a new one
-  def currentGame(roomName: String, forceLeaveRoom: Boolean = false) = Secured.Authenticated {
+  def currentGame(roomName: String) = Secured.Authenticated {
     Action { implicit request =>
       val user = User.fromRequest(request).get
-      // is it really a problem to be connected to 2 rooms ?
-      // it is probably more problematic to be in the same room in 2 different windows ...
-      val currentRoomMaybe = WsManager.roomForPlayer(user.name)
-      if (!forceLeaveRoom && !currentRoomMaybe.isEmpty && currentRoomMaybe.get.name != roomName) {
-        Ok(views.html.gaming.alreadyIn(roomName, currentRoomMaybe.get.name, user))
-      } else {
-        if (forceLeaveRoom) {
-          // nothing special ... it will cut the ws
-          //playerDisconnected(user.name)
-        }
-        DbRoom.findByName(roomName).map { room =>
-          val g = Game.getActiveInRoomOrCreate(room.id.get)
-          Ok(views.html.gaming.game(room, g, user))
-          //initializeGameIfNecessary(room, user.name)
-        }.getOrElse(Results.NotFound) //no room with that id
+      DbRoom.findByName(roomName).map { room =>
+        val g = Game.getActiveInRoomOrCreate(room.id.get)
+        Ok(views.html.gaming.game(room, g, user))
+        //initializeGameIfNecessary(room, user.name)
+      }.getOrElse(Results.NotFound) //no room with that id
+    }
+  }
+
+  //
+  // POST /rooms/n/eject
+  // force closing the existing connections to this room for the current player
+  def eject(roomName: String, redirectTo: Option[String] = None) = Secured.Authenticated {
+    Action { implicit request =>
+      val user = User.fromRequest(request).get
+      WsManager.roomForPlayer(user.name).map{r=>
+        r.player(user.name).map(p=> p.send(makeJsonMessage("player.kickout", Seq[String]("A connexion to the game was open from somewhere else and request this one to be closed."))))
+        r.kickPlayer(user.name)
       }
+      // redirect to targetUrl ... or to current game in the room
+      redirectTo.map(url =>
+        Redirect(url)
+      )
+      .getOrElse(
+        // no redirection url : redirect home
+        Redirect(routes.Home.index())
+      )
     }
   }
 
@@ -138,11 +148,11 @@ object Gaming extends Controller {
       val wsPlayer = WsManager.room(roomName).get.join(player)
       // make an incoming channel to receive messages from that user
       val incomingPlayerChannel = Iteratee
-        .foreach[String]( s=> messageReceivedFromPlayer(roomName, player, s))
+        .foreach[String]( s=> messageReceivedFromPlayer(roomName, player, s)) //bind on incoming messages
         .mapDone{ _ => // handle client closing connection
           //forget about that user in that room
           WsManager.room(roomName).map{r=>
-            r.disconnectPlayer(player)
+            r.forgetPlayer(player)
           }
           notifyRoom(roomName, "room.player.disconnected", Seq[String](player))
           logMessage(roomName, player, "<DISCONNECTED>")
@@ -196,19 +206,22 @@ object Gaming extends Controller {
   }
 
 
-  // send something to all players connected to a room
-  def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
+  def makeJsonMessage(messageType:String, messageArgs:Seq[String] = null) : String = {
     var jsonArgs:JsArray = new JsArray()
 
     if (messageArgs != null){
       jsonArgs = JsArray( messageArgs.map(s => JsString(s)) )
-      //jsonArgs = messageArgs.map(s=> JsString(s))
     }
 
-    var msg = JsObject(Seq("args" -> jsonArgs, "type" -> JsString(messageType)))
+    Json.stringify( JsObject(Seq("args" -> jsonArgs, "type" -> JsString(messageType))))
+  }
+
+  // send something to all players connected to a room
+  def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
+    var msg = makeJsonMessage(messageType, messageArgs)
 
     WsManager.room(roomName).map{r=>
-      r.sendAll(Json.stringify( msg))
+      r.sendAll(msg)
     }
   }
 }

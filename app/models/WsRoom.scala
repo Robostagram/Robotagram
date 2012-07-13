@@ -30,7 +30,8 @@ class WsRoom(val name: String ) {
     }
   }
 
-  def disconnectPlayer(playerName : String) {
+  // when a client disconnects, remove it from here !
+  def forgetPlayer(playerName : String) {
     lock.acquire()
     try{
       players -= playerName
@@ -38,6 +39,14 @@ class WsRoom(val name: String ) {
     finally{
       lock.release()
     }
+  }
+
+  // close "nicely" the connection of the user  and forget him/her
+  def kickPlayer(playerName:String){
+    player(playerName).map{p=>
+      p.sayGoodBye()
+    }
+    forgetPlayer(playerName)
   }
 
   // send a message to all players in the room
