@@ -115,6 +115,7 @@ object Gaming extends Controller {
             Form("solution" -> play.api.data.Forms.text).bindFromRequest.fold(
               noScore => BadRequest("No solution submitted"),
               solution => {
+                logMessage(roomName, user.name, "<SOLUTION>" + solution)
                 val messageJson: JsValue = Json.parse(solution)
                 val moves = (messageJson \ "moves").as[List[String]]
                 val score = moves.length
@@ -122,6 +123,7 @@ object Gaming extends Controller {
                   lock.acquire()
                   try {
                     //TODO: persist score !
+                    DbScore.insert(game.id, user.id, score, solution)
                     notifyRoom(roomName, "room.player.submittedSolution", Seq[String](user.name, score.toString))
                     Accepted("Solution accepted")
                   } finally {
@@ -194,7 +196,7 @@ object Gaming extends Controller {
   }
 
   def messageReceivedFromPlayer( roomName:String, playerName:String, message: String) {
-    logMessage(roomName, playerName, "MSG:" + message)
+    logMessage(roomName, playerName, "IN-MSG:" + message)
     // we don't specially care about the messages actually ...
     // we get the disconnection of the user from the Iteratee.mapDone
   }
@@ -219,7 +221,7 @@ object Gaming extends Controller {
   // send something to all players connected to a room
   def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
     var msg = makeJsonMessage(messageType, messageArgs)
-
+    logMessage(roomName, "ALL", "OUT-MSG:" + msg)
     WsManager.room(roomName).map{r=>
       r.sendAll(msg)
     }

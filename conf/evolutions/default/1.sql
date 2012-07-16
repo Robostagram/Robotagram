@@ -60,8 +60,28 @@ create table games (
   FOREIGN KEY (board_id) REFERENCES boards (id)
 );
 
+-- SCORES : validated solutions for a player in a game
+-- ======
+create table scores (
+    id                      bigint not null primary key,
+    submitted_on            timestamp not null,
+    solution                text not null, --the json of the submitted solution,
+    score                   int,
+    -- FK
+    game_id                 varchar(127) not null,
+    user_id                 bigint not null,
+    FOREIGN KEY (game_id) REFERENCES games (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+create sequence scores_seq start with 1000;
+
+
+
 
 # --- !Downs
+drop sequence if exists scores_seq;
+drop table if exists scores;
+
 drop table if exists games;
 
 drop sequence if exists rooms_seq;
