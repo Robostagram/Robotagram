@@ -17,7 +17,7 @@ object Rooms extends Controller{
   def previewGame(roomName: String, gameId : String) = Action {implicit request =>
     DbRoom.findByName(roomName).map {dbRoom =>
       Game.load(dbRoom.name, gameId).map{g =>
-        Ok(views.html.rooms.previewGame(dbRoom, g, User.fromRequest))
+        Ok(views.html.rooms.previewGame(dbRoom, g, User.fromRequest, DbScore.findByGame(gameId)))
       }
       .getOrElse(NotFound)
     }

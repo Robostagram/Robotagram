@@ -1,4 +1,4 @@
-@(room: DbRoom, game:Game, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(room: DbRoom, game:Game, user: Option[User], scores:Seq[DbScore])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 @import scala.collection.immutable.HashMap
 
 @_layout("Game preview #" + game.id, user)(null) {
@@ -9,7 +9,29 @@
     <div class="span4 well">
         <h3>Preview</h3>
         <p>This is a preview of the game <strong>#@game.id</strong></p>
+
+        <h3>scores</h3>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for(s:DbScore <- scores) {
+                <tr >
+                    <th>@s.playerName</th>
+                    <td><span>@s.score</span></td>
+                    <td>@s.dateSubmitted</td>
+                </tr>
+            }
+            </tbody>
+        </table>
         <a href="@controllers.routes.Rooms.gamesByRoom(room.name)" style="float:right;">&larr;Back to the list of games in the room</a>
+
+
     </div>
 </div>
 
