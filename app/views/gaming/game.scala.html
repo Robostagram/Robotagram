@@ -1,4 +1,4 @@
-@(room: DbRoom, game:Game, user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
+@(room: DbRoom, game:Game, scores: Seq[(String, Option[Int])], user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
 
 @renderColor(color: Color.Value) = {@color.toString}
 
@@ -42,7 +42,7 @@
     <div class="span4" id="gameZone">
         <h3>@Messages("game.leaderboard")</h3>
         <div id="scores">
-        @shared.scores(room)
+        @shared.scores(scores)
         </div>
         <h3>@Messages("game.howtoplay")</h3>
         <div id="howToPlay">

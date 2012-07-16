@@ -8,7 +8,7 @@ class WsRoom(val name: String ) {
   private val lock: Lock = new Lock()
 
   // playerName -> channel
-  private var players : HashMap[String, WsPlayer] = new HashMap[String, WsPlayer]()
+  val players : HashMap[String, WsPlayer] = new HashMap[String, WsPlayer]()
 
   def hasPlayer(playerName: String) : Boolean = {
     players.get(playerName).isDefined

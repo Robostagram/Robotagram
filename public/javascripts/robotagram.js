@@ -611,7 +611,25 @@ function hideLoading(){
             gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
             alert("You have been kicked on in this window : " + d.args[0]);
             // redirect home ??
+        }else{
+            // whenever we get a message, refresh the scores ...
+            refreshScores();
+
         }
+    }
+
+    function refreshScores(){
+        jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
+            cache:false,
+            success: function(data, textStatus, jqXHR){
+                //refill the leaderboard table
+                var $tbody = $("tbody#leaderBoard");
+                $tbody.empty();
+                $.each(data.scores, function(index, playerScore){
+                    $tbody.append("<tr><th>" + playerScore.player +  "</th><td><span>"+ playerScore.score + "</span></td></tr>");
+                });
+            }
+        });
     }
 
     var receiveSummary = function(event) {

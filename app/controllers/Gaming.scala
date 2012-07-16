@@ -11,6 +11,8 @@ import play.api.libs.json._
 import play.api.libs.json.JsUndefined
 import play.api.libs.json.JsString
 import play.api.libs.json.JsObject
+import play.api.Logger
+import collection.mutable
 
 object Gaming extends Controller {
 
@@ -24,7 +26,11 @@ object Gaming extends Controller {
       val user = User.fromRequest(request).get
       DbRoom.findByName(roomName).map { room =>
         val g = Game.getActiveInRoomOrCreate(room.id.get)
-        Ok(views.html.gaming.game(room, g, user))
+
+        var scores = playersAndScores(roomName, g.id)
+
+
+        Ok(views.html.gaming.game(room, g, scores, user))
         //initializeGameIfNecessary(room, user.name)
       }.getOrElse(Results.NotFound) //no room with that id
     }
@@ -99,6 +105,39 @@ object Gaming extends Controller {
     }
   }
 
+  private def playersAndScores(roomName:String, gameId:String) : Seq[(String, Option[Int])] = {
+    val wsRoom = WsManager.room(roomName).get
+    var scores: mutable.HashMap[String, Option[Int]] = new mutable.HashMap[String, Option[Int]]()
+
+    DbScore.findByGame(gameId).foreach{s=>
+      scores += ((s.playerName, Some(s.score)))
+    }
+    wsRoom.players.keys.foreach(p =>
+      if (scores.get(p).isEmpty){
+        scores += ((p, None))
+      }
+    )
+    scores.toList
+  }
+
+  //
+  // GET /rooms/n/games/xx-xx-x-x-x-xxx/scores
+  // scores and participants in a game ...
+  //
+  def gameScores(roomName: String, gameId: String) = Secured.Authenticated {
+    Action { implicit request =>
+      DbRoom.findByName(roomName).map{ dbRoom =>
+        DbGame.findByRoomAndId(roomName, gameId).map { game =>
+          var scoresList:List[JsValue] = Nil
+          playersAndScores(roomName, gameId).foreach(score => scoresList = JsObject(Seq(
+            "player" -> JsString(score._1),
+            "score" -> JsNumber(score._2.getOrElse(0).asInstanceOf[Int])))::scoresList)
+          Ok(toJson(JsObject(Seq("scores" -> JsArray(scoresList.toSeq)))))
+        }.getOrElse(Gone("Game " + gameId + " does not exist for room " + roomName))
+      }.getOrElse(NotFound("room " + roomName + " does not exist"))
+    }
+  }
+
   //
   // POST /rooms/:roomId/games/:gameId/solution
   //
@@ -165,7 +204,7 @@ object Gaming extends Controller {
   }
 
   def logMessage(roomName:String, playerName:String, message:String){
-    System.out.println("[" + roomName + "]" + playerName + ">" + message)
+    Logger.debug("[" + roomName + "]" + playerName + ">" + message)
   }
   
   def getString(jsValue: JsValue, id: String): String = {

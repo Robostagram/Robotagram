@@ -21,6 +21,7 @@ GET     /account/activate                   controllers.Account.activateAccount(
 GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String)
 GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomId : String, gameId : String)
 GET     /rooms/:roomId/games/:gameId/status     controllers.Gaming.gameStatus(roomId : String, gameId : String)
+GET     /rooms/:roomId/games/:gameId/scores     controllers.Gaming.gameScores(roomId : String, gameId : String)
 POST    /rooms/:roomId/games/:gameId/solution   controllers.Gaming.submitSolution(roomId : String, gameId : String)
 
 POST    /rooms/:roomId/eject                            controllers.Gaming.eject(roomId, redirectTo: Option[String] ?= None)

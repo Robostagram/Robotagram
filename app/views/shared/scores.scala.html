@@ -1,4 +1,4 @@
-@(room: DbRoom)
+@(scores: Seq[(String, Option[Int])])
 
 @import models._
 
@@ -10,6 +10,8 @@
         </tr>
     </thead>
     <tbody id="leaderBoard">
-        <tr ><th>XX</th><td><span>TODO - players of room async</span></td></tr>
+        @for(s:(String, Option[Int]) <- scores) {
+            <tr ><th>@s._1</th><td><span>@s._2.getOrElse("-")</span></td></tr>
+        }
     </tbody>
 </table>
