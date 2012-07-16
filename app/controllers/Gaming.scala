@@ -240,12 +240,6 @@ object Gaming extends Controller {
     // we get the disconnection of the user from the Iteratee.mapDone
   }
 
-  def notifySummary(room: Room, fromPlayer: String = null) {
-    val summary: JsValue = GameSummary.fromRoom(room).toJson;
-    val message: String = Json.stringify(summary)
-    room.players.filter(player => player.name != fromPlayer).foreach(player => player.sendJSon(message))
-  }
-
 
   def makeJsonMessage(messageType:String, messageArgs:Seq[String] = null) : String = {
     var jsonArgs:JsArray = new JsArray()

@@ -568,7 +568,42 @@ function hideLoading(){
             var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
             gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
             gameSocket.onmessage = messageReceived;
+            // TODO : handle socket closing gracefully
+            //gameSocket.onclose = ...
+            // TODO: ws error managemenr
+            //gameSocket.onerror = ...
         }
+    }
+
+
+
+    var messageReceived = function(event){
+        console.debug("SERVER>" + event.data);
+        var d = JSON.parse(event.data); // parse it
+
+        if(d.type === "player.kickout"){
+            gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
+            alert("You have been kicked on in this window : " + d.args[0]);
+            // redirect home ??
+        }else{
+            // whenever we get a message, refresh the scores ...
+            refreshScores();
+
+        }
+    }
+
+    function refreshScores(){
+        jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
+            cache:false,
+            success: function(data, textStatus, jqXHR){
+                //refill the leaderboard table
+                var $tbody = $("tbody#leaderBoard");
+                $tbody.empty();
+                $.each(data.scores, function(index, playerScore){
+                    $tbody.append("<tr><th>" + playerScore.player +  "</th><td><span>"+ playerScore.score + "</span></td></tr>");
+                });
+            }
+        });
     }
 
     // submit the current score ...
@@ -602,54 +637,3 @@ function hideLoading(){
             }
         });
     }
-
-    var messageReceived = function(event){
-        console.debug("SERVER>" + event.data);
-        var d = JSON.parse(event.data); // parse it
-
-        if(d.type === "player.kickout"){
-            gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
-            alert("You have been kicked on in this window : " + d.args[0]);
-            // redirect home ??
-        }else{
-            // whenever we get a message, refresh the scores ...
-            refreshScores();
-
-        }
-    }
-
-    function refreshScores(){
-        jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
-            cache:false,
-            success: function(data, textStatus, jqXHR){
-                //refill the leaderboard table
-                var $tbody = $("tbody#leaderBoard");
-                $tbody.empty();
-                $.each(data.scores, function(index, playerScore){
-                    $tbody.append("<tr><th>" + playerScore.player +  "</th><td><span>"+ playerScore.score + "</span></td></tr>");
-                });
-            }
-        });
-    }
-
-    var receiveSummary = function(event) {
-        var summary = JSON.parse(event.data);
-        // Handle scores
-        var scores = summary.scores;
-        $('#leaderBoard').empty(); // empty lines to ensure remove of players that left
-        for (var i = 0; i < scores.length; i++) {
-            var playerName = scores[i].player;
-            var score = scores[i].score;
-            if (score < 1) {
-                score = '-';
-            }
-
-            var id = "score_" + playerName;
-            if ($("#" + id).length > 0) {
-                $("#best_" + id).text(score);
-            } else {
-                $('#leaderBoard').append('<tr id="' + id + '"><th>' + playerName + '</th><td><span id="best_score_' + playerName + '">' + score
-                    + '</span></td></tr>');
-            }
-        }
-    };
