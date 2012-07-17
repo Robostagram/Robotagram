@@ -26,7 +26,7 @@ object Application extends Controller {
   //        });
   // (the parameters to pass to the ajax() call are the same as jQuery.ajax)
 
-  def javascriptRoutes = Action {
+  def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
