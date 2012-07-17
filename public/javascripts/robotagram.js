@@ -567,6 +567,7 @@ function hideLoading(){
             // relativeUrl for connection for player
             var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
             gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
+            gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
             gameSocket.onmessage = messageReceived;
             // TODO : handle socket closing gracefully
             //gameSocket.onclose = ...
