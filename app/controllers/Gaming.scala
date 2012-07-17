@@ -25,13 +25,16 @@ object Gaming extends Controller {
     Action { implicit request =>
       val user = User.fromRequest(request).get
       DbRoom.findByName(roomName).map { room =>
-        val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
-
-        var scores = playersAndScores(roomName, g.id)
-
-
-        Ok(views.html.gaming.game(room, g, scores, user))
-        //initializeGameIfNecessary(room, user.name)
+        var wsRoom = WsManager.room(roomName).get
+        // user is already in a game in this room ? warn him and let him kickout the other
+        wsRoom.players.get(user.name).map{ wsPlayer =>
+          Ok(views.html.gaming.alreadyIn(roomName, user))
+        }
+        .getOrElse{
+          val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
+          var scores = playersAndScores(roomName, g.id)
+          Ok(views.html.gaming.game(room, g, scores, user))
+        }
       }.getOrElse(Results.NotFound) //no room with that id
     }
   }
@@ -227,7 +230,7 @@ object Gaming extends Controller {
       } catch {
         case e: Exception =>
           //log exception
-          println(e)
+          Logger.error("Error while parsing the solution", e)
           null
       }
     } else {
