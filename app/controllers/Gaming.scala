@@ -25,7 +25,7 @@ object Gaming extends Controller {
     Action { implicit request =>
       val user = User.fromRequest(request).get
       DbRoom.findByName(roomName).map { room =>
-        val g = Game.getActiveInRoomOrCreate(room.id.get)
+        val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
 
         var scores = playersAndScores(roomName, g.id)
 
@@ -105,6 +105,7 @@ object Gaming extends Controller {
     }
   }
 
+  // list of players and scores (persisted + players in the room)
   private def playersAndScores(roomName:String, gameId:String) : Seq[(String, Option[Int])] = {
     val wsRoom = WsManager.room(roomName).get
     var scores: mutable.HashMap[String, Option[Int]] = new mutable.HashMap[String, Option[Int]]()

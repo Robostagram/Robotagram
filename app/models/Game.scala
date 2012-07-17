@@ -7,8 +7,7 @@ import scala._
 import java.util.{Date,Random}
 
 class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, val endDate:Date, val robots:HashMap[Color, Robot]){
-  val uuid:String = id;
-  val endTime:Long = endDate.getTime;
+  private val endTime:Long = endDate.getTime;
   val durationInSeconds = ((endDate.getTime - startDate.getTime)/1000.0).toInt
 
   def isDone:Boolean = System.currentTimeMillis() > endTime
@@ -16,8 +15,6 @@ class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, va
   def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
 
   def percentageDone():Int = 100 - ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt
-
-  def remainingMilliseconds():Long = endTime - System.currentTimeMillis()
 
   // returns a robot if there's one at the specified coordinates
   def getRobot(x: Int, y: Int): Robot = {
@@ -31,7 +28,7 @@ class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, va
 
   // create an updated set of robots matching the specified movement and this game and the previous state of the set
   // detects walls and other robots
-  def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
+  private def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
     var robot = mutatingRobots.getOrElse(movement.color, null)
     if(robot == null) {
       return robots
@@ -82,19 +79,6 @@ class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, va
 }
 
 object Game {
-  val DEFAULT_GAME_DURATION = 120
-  val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
-  def randomGame():Game = {
-    var idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
-    var board = Board.loadById(idOfBoardToLoad).get
-    var robots = Board.randomRobots(board)
-
-    val originalTimeStamp = System.currentTimeMillis()
-    val startDate = new Date(originalTimeStamp)
-    val endDate = new Date (originalTimeStamp + 1000 * DEFAULT_GAME_DURATION)
-
-    new Game(UUID.randomUUID().toString, board, Goal.randomGoal(), startDate, endDate, robots)
-  }
 
   def load(roomName:String, gameId:String):Option[Game] = {
     DbGame.findByRoomAndId(roomName, gameId).map{ dbGame =>
@@ -116,13 +100,17 @@ object Game {
     new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
   }
 
-  def getActiveInRoomOrCreate(roomId:Long) : Game = {
-    var gameFromDb = DbGame.getActiveInRoomOrCreate(roomId, () => {
-      var idOfBoardToLoad = new Random().nextInt(6) + 1
-      var b = Board.loadById(idOfBoardToLoad).get
-      var g = Goal.randomGoal()
-      var robots = Board.randomRobots(b)
-      DbGame.prepareGameToStore(roomId, Game.DEFAULT_GAME_DURATION,b, g, robots)
+  val DEFAULT_GAME_DURATION = 120
+  val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
+
+  // get the active game in the room or create a random one
+  def getActiveInRoomOrCreateRandom(roomId:Long) : Game = {
+    val gameFromDb = DbGame.getActiveInRoomOrCreate(roomId, () => {
+      val idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
+      val theBoard = Board.loadById(idOfBoardToLoad).get
+      val theGoal = Goal.randomGoal()
+      val theRobots = Board.randomRobots(theBoard)
+      DbGame.prepareGameToStore(roomId, Game.DEFAULT_GAME_DURATION, theBoard, theGoal, theRobots)
     })
     fromDb(gameFromDb)
   }

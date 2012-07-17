@@ -24,7 +24,11 @@
             <a id="timeLeft">@game.secondsLeft</a>
         </li>
         <li id="timeProgress">
-            <a>@shared.timer(game)</a>
+            <a>
+                <div id="progressBarContainer" class="progress progress-striped">
+                    <div id="progressBar" class="bar" width="(@game.percentageDone()) %;"></div>
+                </div>
+            </a>
         </li>
 
     </ul>
@@ -32,7 +36,7 @@
 
 @_layout(Messages("game.title"), Some(user))(headerContent){
 <input type="hidden" id="roomId" name="roomId" value="@room.name">
-<input type="hidden" id="gameId" name="gameId" value="@game.uuid">
+<input type="hidden" id="gameId" name="gameId" value="@game.id">
 <input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
 <input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@game.secondsLeft">
 <div class="row-fluid">

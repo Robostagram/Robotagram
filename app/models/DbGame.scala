@@ -27,7 +27,7 @@ case class DbGame(id: String,
 
 object DbGame{
 
-  //prepare
+  //prepare a game for persistence
   def prepareGameToStore(roomId:Long, durationInSeconds:Long, board:Board, goal:Goal, robots:HashMap[Color, Robot]):DbGame = {
     val uuid = UUID.randomUUID()
     val originalTimeStamp = System.currentTimeMillis()

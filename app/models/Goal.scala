@@ -4,7 +4,7 @@ import models.Color._
 import models.Symbol._
 import util.Random
 
-class Goal(val color: Color, val symbol: Symbol)
+case class Goal(val color: Color, val symbol: Symbol)
 
 object Goal {
   def randomGoal(): Goal = {
