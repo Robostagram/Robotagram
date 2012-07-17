@@ -51,7 +51,7 @@ object DbGame{
     val robot_yellow_x = robots.get(Color.Yellow).get.posX
     val robot_yellow_y = robots.get(Color.Yellow).get.posY
 
-    return new DbGame( uuid.toString, startDate, endDate,goal_symbol, goal_color, robot_blue_x, robot_blue_y, robot_red_x, robot_red_y, robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,roomId, board_id)
+    new DbGame( uuid.toString, startDate, endDate,goal_symbol, goal_color, robot_blue_x, robot_blue_y, robot_red_x, robot_red_y, robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,roomId, board_id)
   }
 
   // -- Parsers
@@ -87,7 +87,7 @@ object DbGame{
         robotBlueX, robotBlueY,
         robotRedX, robotRedY,
         robotGreenX, robotGreenY,
-        robotYellowX, robotYellowX,
+        robotYellowX, robotYellowY,
         roomId, boardId
       )
     }
@@ -148,7 +148,7 @@ object DbGame{
       ).as(DbGame.fullRow.singleOpt)
         .getOrElse{
         // what we should insert
-        var game = creationCallBack.apply()
+        val game = creationCallBack.apply()
         //create(game)
         SQL(
           """
@@ -175,7 +175,7 @@ object DbGame{
           'robot_blue_y -> game.robot_blue_y,
           'robot_red_x -> game.robot_red_x,
           'robot_red_y -> game.robot_red_y,
-          'robot_green_x -> game.robot_green_y,
+          'robot_green_x -> game.robot_green_x,
           'robot_green_y -> game.robot_green_y,
           'robot_yellow_x -> game.robot_yellow_x,
           'robot_yellow_y -> game.robot_yellow_y,
@@ -187,51 +187,6 @@ object DbGame{
       }
     }
   }
-
-  /**
-   * Create a Game.
-   */
-  def create(game: DbGame): DbGame = {
-    DB.withConnection { implicit connection =>
-      SQL(
-        """
-          insert into games (
-            id, created_on, valid_until, goal_symbol, goal_color,
-            robot_blue_x, robot_blue_y, robot_red_x, robot_red_y,
-            robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,
-            room_id, board_id
-          )
-          values (
-            {id}, {created_on}, {valid_until}, {goal_symbol}, {goal_color},
-            {robot_blue_x}, {robot_blue_y}, {robot_red_x}, {robot_red_y},
-            {robot_green_x}, {robot_green_y}, {robot_yellow_x}, {robot_yellow_y},
-            {room_id}, {board_id}
-          )
-        """
-      ).on(
-        'id -> game.id ,
-        'created_on -> game.created_on,
-        'valid_until -> game.valid_until,
-        'goal_symbol -> game.goal_symbol,
-        'goal_color -> game.goal_color,
-        'robot_blue_x -> game.robot_blue_x,
-        'robot_blue_y -> game.robot_blue_y,
-        'robot_red_x -> game.robot_red_x,
-        'robot_red_y -> game.robot_red_y,
-        'robot_green_x -> game.robot_green_y,
-        'robot_green_y -> game.robot_green_y,
-        'robot_yellow_x -> game.robot_yellow_x,
-        'robot_yellow_y -> game.robot_yellow_y,
-        'room_id -> game.room_id,
-        'board_id -> game.board_id
-      ).executeUpdate()
-
-      game
-
-    }
-  }
-
-
 
 
   /**
