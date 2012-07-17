@@ -9,7 +9,10 @@ object Home extends Controller {
   def index = Action {
     implicit request => {
       val user = User.fromRequest(request)
-      Ok(views.html.home.index(user, DbRoom.findAll))
+
+      var roomsAndParticipants = WsManager.rooms.map(t => (t._1, t._2.size)).toSeq
+
+      Ok(views.html.home.index(user, roomsAndParticipants))
     }
   }
 

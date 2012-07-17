@@ -1,4 +1,4 @@
-@(user: Option[User], rooms: Seq[DbRoom])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[User], roomsAndParticipants: Seq[(String, Int)])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @_layout(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
@@ -15,7 +15,7 @@
     <div class="span6" id="roomList">
         <h3>@Messages("home.join")</h3>
         <div id="join">
-            @Messages("home.rooms", rooms.size) :
+            @Messages("home.rooms", roomsAndParticipants.size) :
             <table class="table table-condensed">
                 <thead>
                     <tr>
@@ -25,11 +25,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for(r:DbRoom <- rooms) {
+                    @for(r:(String, Int) <- roomsAndParticipants) {
                     <tr>
-                        <th>@r.name</th>
-                        <td><blink>TODO : XXXXX</blink></td>
-                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(r.name)">@Messages("common.actions.join")</a></td>
+                        <th>@r._1</th>
+                        <td>@r._2</td>
+                        <td><a class="btn btn-primary btn-small" href="@controllers.routes.Gaming.currentGame(r._1)">@Messages("common.actions.join")</a></td>
                     </tr>
                     }
                 </tbody>
