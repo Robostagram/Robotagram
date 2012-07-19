@@ -563,13 +563,7 @@ function reSyncGameStatusWithServer() {
     });
 }
 
-// shitty loading indicator to show something is happening ... putting it on body so far
-function showLoading(){
-    $("body").addClass("loading");
-}
-function hideLoading(){
-    $("body").removeClass("loading");
-}
+
 ///////////////////// WEB SOCKETS ////////////////////
 
 var gameSocket = null;
@@ -663,9 +657,7 @@ function sendScore(successCallback, failureCallback, completedCallback) {
     "initListeners": initListeners,
     "closeWinModal": closeWinModal,
     "resetBoard": resetBoard,
-    "showLoading" : showLoading,
-    "sendScore" : sendScore,
-    "hideLoading" : hideLoading
+    "sendScore" : sendScore
   }
 })(jQuery);
 

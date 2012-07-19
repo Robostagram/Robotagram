@@ -71,7 +71,8 @@
         var $_ = jQuery.i18n.prop;
     </script>
     <script src="@routes.Application.javascriptRoutes" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/robotagram.js")" type = "text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/robotagram_game.js")" type = "text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/robotagram_ui.min.js")" type="text/javascript"></script>
     } else{
     @* = NOT IN PROD = load non-minified resources from local ...*@
 
@@ -102,7 +103,8 @@
         var $_ = jQuery.i18n.prop;
     </script>
     <script src="@routes.Application.javascriptRoutes" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/robotagram.min.js")" type = "text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/robotagram_game.min.js")" type = "text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/robotagram_ui.min.js")" type="text/javascript"></script>
     }
 </head>
 <body>
@@ -141,7 +143,6 @@
 </footer>
 <div id="loadingIndicator"></div>
 <span id="copyright">&copy; Hermione @java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)</span>
-<script src="@routes.Assets.at("javascripts/resizeHeader.js")" type="text/javascript"></script>
 <script type="text/javascript">
     /*throttling to avoid recomputing during resize
     * see : http://benalman.com/projects/jquery-throttle-debounce-plugin/

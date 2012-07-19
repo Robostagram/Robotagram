@@ -76,11 +76,22 @@ function resizeTopBarContents(){
 }
 
 
+// shitty loading indicator to show something is happening ... putting it on body so far
+function showLoading(){
+    $("body").addClass("loading");
+}
+function hideLoading(){
+    $("body").removeClass("loading");
+}
+
+
   // Exports
   // ==========================
 
   // makes public members public
   return {
-    "resizeTopBarContents": resizeTopBarContents
+    "resizeTopBarContents": resizeTopBarContents,
+    "showLoading" : showLoading,
+    "hideLoading" : hideLoading
   }
 })(jQuery);
