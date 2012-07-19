@@ -1,3 +1,17 @@
+//=======================
+// module robotagram.game
+// ======================
+//
+// contains the game logic on client side ...
+
+// creating root name space robotagram if not done already ...
+window["robotagram"] = window["robotagram"] || {} ; //initialize robotagram root name space if not done
+
+// creating name space robotagram.game
+// (using the patterns described in : http://www.codethinked.com/preparing-yourself-for-modern-javascript-development )
+window["robotagram"]["game"] = (function($, undefined){
+
+
 var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
 
 var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
@@ -558,83 +572,102 @@ function hideLoading(){
 }
 ///////////////////// WEB SOCKETS ////////////////////
 
-    var gameSocket = null;
+var gameSocket = null;
 
-    function connectPlayer() {
-        if (gameSocket === null) {
-            var urlBase = window.location.href.substr("http://".length);
-            urlBase = urlBase.substr(0, urlBase.indexOf('/'));
-            // relativeUrl for connection for player
-            var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
-            gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
-            gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
-            gameSocket.onmessage = messageReceived;
-            // TODO : handle socket closing gracefully
-            //gameSocket.onclose = ...
-            // TODO: ws error managemenr
-            //gameSocket.onerror = ...
+function connectPlayer() {
+    if (gameSocket === null) {
+        var urlBase = window.location.href.substr("http://".length);
+        urlBase = urlBase.substr(0, urlBase.indexOf('/'));
+        // relativeUrl for connection for player
+        var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
+        gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
+        gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
+        gameSocket.onmessage = messageReceived;
+        // TODO : handle socket closing gracefully
+        //gameSocket.onclose = ...
+        // TODO: ws error managemenr
+        //gameSocket.onerror = ...
+    }
+}
+
+
+
+var messageReceived = function(event){
+    console.debug("SERVER>" + event.data);
+    var d = JSON.parse(event.data); // parse it
+
+    if(d.type === "player.kickout"){
+        gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
+        alert("You have been kicked on in this window : " + d.args[0]);
+        // redirect home ??
+    }else{
+        // whenever we get a message, refresh the scores ...
+        refreshScores();
+
+    }
+}
+
+function refreshScores(){
+    jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
+        cache:false,
+        success: function(data, textStatus, jqXHR){
+            //refill the leaderboard table
+            var $tbody = $("tbody#leaderBoard");
+            $tbody.empty();
+            $.each(data.scores, function(index, playerScore){
+                $tbody.append("<tr><th>" + playerScore.player +  "</th><td><span>"+ playerScore.score + "</span></td></tr>");
+            });
         }
-    }
+    });
+}
 
-
-
-    var messageReceived = function(event){
-        console.debug("SERVER>" + event.data);
-        var d = JSON.parse(event.data); // parse it
-
-        if(d.type === "player.kickout"){
-            gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
-            alert("You have been kicked on in this window : " + d.args[0]);
-            // redirect home ??
-        }else{
-            // whenever we get a message, refresh the scores ...
-            refreshScores();
-
-        }
-    }
-
-    function refreshScores(){
-        jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
-            cache:false,
-            success: function(data, textStatus, jqXHR){
-                //refill the leaderboard table
-                var $tbody = $("tbody#leaderBoard");
-                $tbody.empty();
-                $.each(data.scores, function(index, playerScore){
-                    $tbody.append("<tr><th>" + playerScore.player +  "</th><td><span>"+ playerScore.score + "</span></td></tr>");
-                });
-            }
-        });
-    }
-
-    // submit the current score ...
-    // provide call back for what to do it :
-    // - submission succeeds
-    // - submission fails
-    // - done submitting and got the reply (after success and failure)
-    function sendScore(successCallback, failureCallback, completedCallback) {
-        // how to handle submission of a game that is finished ?
-        // the server expects moves to be a list of strings, instead of a list of proper objects ...
-        // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
-        var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
-        // hidden inputs somewhere in the page ... to improve
-        var roomId = $("#roomId").val();
-        var gameId = $("#gameId").val();
-        jsRoutes.controllers.Gaming.submitSolution(roomId, gameId).ajax({
-            data:{"solution":JSON.stringify({"moves":movesToSend})},
-            statusCode: {
-                202: function() { // Accepted (202)
-                  successCallback();
-                },
-                406: function(){  // NotAcceptable (406)
-                  failureCallback("Solution not accepted - did you cheat ?");
-                },
-                410: function(){ // Gone (410)
-                  failureCallback("Too late, the game is over");
-                }
+// submit the current score ...
+// provide call back for what to do it :
+// - submission succeeds
+// - submission fails
+// - done submitting and got the reply (after success and failure)
+function sendScore(successCallback, failureCallback, completedCallback) {
+    // how to handle submission of a game that is finished ?
+    // the server expects moves to be a list of strings, instead of a list of proper objects ...
+    // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
+    var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
+    // hidden inputs somewhere in the page ... to improve
+    var roomId = $("#roomId").val();
+    var gameId = $("#gameId").val();
+    jsRoutes.controllers.Gaming.submitSolution(roomId, gameId).ajax({
+        data:{"solution":JSON.stringify({"moves":movesToSend})},
+        statusCode: {
+            202: function() { // Accepted (202)
+              successCallback();
             },
-            complete: function(){
-              completedCallback();
+            406: function(){  // NotAcceptable (406)
+              failureCallback("Solution not accepted - did you cheat ?");
+            },
+            410: function(){ // Gone (410)
+              failureCallback("Too late, the game is over");
             }
-        });
-    }
+        },
+        complete: function(){
+          completedCallback();
+        }
+    });
+}
+
+
+
+  // Exports
+  // ==========================
+
+  // makes public members public
+  return {
+    "initListeners": initListeners,
+    "closeWinModal": closeWinModal,
+    "resetBoard": resetBoard,
+    "showLoading" : showLoading,
+    "sendScore" : sendScore,
+    "hideLoading" : hideLoading
+  }
+})(jQuery);
+
+
+
