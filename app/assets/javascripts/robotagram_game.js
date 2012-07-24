@@ -127,7 +127,9 @@ var undoIndex = 0;
 var moving = false;
 
 // move the robot of a given color in the requested direction
+// the direction is one of the strings from DIRECTIONS
 function moveRobot(color, direction, keepHistory) {
+    var directionCode = directionStringToCode(direction);
     var $robot = $("td .robot." + color), originCell, destinationCell = null, previousDestination, nextDestination;
     if ($robot.length == 0) {
         // pas de robot
@@ -152,7 +154,7 @@ function moveRobot(color, direction, keepHistory) {
         destinationCell = nextDestination;
         if (originCell !== destinationCell) { // = robot can move in that direction
             // notify people that we start moving - possibly add in the coordinates ...
-            $robot.trigger(EVENT_ROBOT_MOVING, [directionCodeToString(direction), color]);
+            $robot.trigger(EVENT_ROBOT_MOVING, [direction, color]);
             // current absolute position ?
             var originalPos = originCell.offset();
             var origTop = originalPos.top;
@@ -175,12 +177,12 @@ function moveRobot(color, direction, keepHistory) {
                            function() {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
-                               $(this).trigger(EVENT_ROBOT_MOVED, [directionCodeToString(direction), color]); //notify that we ae done moving ...
+                               $(this).trigger(EVENT_ROBOT_MOVED, [direction, color]); //notify that we are done moving ...
                            });
             while(!keepHistory && moves.length > undoIndex) {
                 moves.pop();
             }
-            moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": directionCodeToString(direction)}});
+            moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": direction}});
             undoIndex++;
             $("#currentScore").text(undoIndex + "");
             if (hasReachedObjective($robot, destinationCell)) {
@@ -210,7 +212,9 @@ function undo() {
                 $("#currentScore").text(undoIndex + "");
                 originCell = originCell.first();
                 var previousDestination = originCell;
-                var oppositeDirection = MAGIC_NUMBER + (DIRECTIONS.indexOf(move.direction) +2) % 4;
+
+                var indexOfOppositeDirection = (DIRECTIONS.indexOf(move.direction) +2) % 4;
+                var oppositeDirection = DIRECTIONS[indexOfOppositeDirection];
                 var nextDestination = nextCell(previousDestination, oppositeDirection);
                 while (nextDestination.data("row") != move.originRow || nextDestination.data("column") != move.originColumn) {
                     previousDestination = nextDestination;
@@ -244,11 +248,10 @@ function redo() {
                 $("#currentScore").text(++undoIndex + "");
                 originCell = originCell.first();
                 var previousDestination = originCell;
-                var direction = MAGIC_NUMBER + DIRECTIONS.indexOf(move.direction);
-                var nextDestination = nextCell(previousDestination, direction);
+                var nextDestination = nextCell(previousDestination, move.direction);
                 while (nextDestination !== previousDestination) {
                     previousDestination = nextDestination;
-                    nextDestination = nextCell(previousDestination, direction);
+                    nextDestination = nextCell(previousDestination, move.direction);
                 }
 
                 // destination finale du robot
@@ -274,9 +277,11 @@ function hasReachedObjective(robot, td) {
 
 // tells us where the robot will end up if we try moving it from cell "td" in direction "direction"
 // returns itself if the robot cannot move in that direction
+// direction is one of the strings from DIRECTIONS
 function nextCell(td, direction) {
+    var directionCode =  directionStringToCode(direction)
     var nextCell = null;
-    switch (direction) {
+    switch (directionCode) {
         case DIRECTION_UP:
             if (!td.is(".wall-top")) {
                 var $td = $(td);
@@ -503,7 +508,7 @@ function initListeners(){
     // events going on in the game ?
     $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
         //console.debug(e.type, e.namespace, direction, color);
-        moveRobot(color, directionStringToCode(direction));//keepHistory
+        moveRobot(color, direction);//keepHistory
     });
 
     /*$window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
