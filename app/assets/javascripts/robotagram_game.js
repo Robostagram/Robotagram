@@ -329,17 +329,10 @@ function resetBoard() {
 
 
 
+// User input events (keyboards + visual keys)
+// -----------------
 
-function requestSelectedRobotMovement(direction_keyboard_code){
-    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
-    var direction = directionCodeToString(direction_keyboard_code);
-    var $robotToMove = $("td .robot." + color);
-    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
-}
-
-
-
-// keyboard handler for robots moves
+// keyboard handler for robots moves /undo / redo / selection
 function keypressHandler(event) {
     if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
         requestSelectedRobotMovement(event.which);
@@ -357,7 +350,6 @@ function keypressHandler(event) {
         undo();
     }
 }
-
 
 // setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
@@ -399,6 +391,26 @@ function setUpGameControlHandlers(){
     });
 
 }
+
+
+
+
+
+
+
+// trigger the event that says "move the robot to ..."
+function requestSelectedRobotMovement(direction_keyboard_code){
+    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
+    var direction = directionCodeToString(direction_keyboard_code);
+    var $robotToMove = $("td .robot." + color);
+    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+}
+
+
+
+
+
+
 
 // set up the (useless) events that happen when clicking in the header
 function setUpHeaderShortcuts(){
@@ -453,6 +465,8 @@ function setUpHelpAndTooltips(){
     setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
     setTimeout(function(){$objective.tooltip('hide');}, 3000);
 }
+
+
 var gameIsOn = false; // is there a game currently being played ?
 function initListeners(){
     setUpGameControlHandlers();
@@ -509,12 +523,10 @@ function initListeners(){
 
     $window.on(EVENT_GAME_SOLVED, function(e, numberOfMoves){
         //console.debug(e.type, e.namespace, numberOfMoves);
-        //win modal shown does not imply redirection
-        //no need to deactivate leaveGame on unload
-        //window.onunload = null;// to prevent call to leaveGame() (see registration in javascript in initListeners())
         $("#winModal").modal('show');
     });
 }
+
 
 // store the actual time left (as double, with details and stuff )
 // resync'd with server on a regular basis (pollTimer)
