@@ -12,6 +12,9 @@ window["robotagram"] = window["robotagram"] || {} ; //initialize robotagram root
 window["robotagram"]["game"] = (function($, undefined){
 
 
+// ------
+// Events
+// ------
 var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
 
 var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
@@ -19,6 +22,34 @@ var EVENT_ROBOT_MOVED = "moved.robot.robotagram";
 
 var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
 var EVENT_GAME_SOLVED = "solved.game.robotagram";
+
+// ---------
+// Constants
+// ---------
+var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
+var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
+
+var MAGIC_NUMBER = 105; //substract this to a direction -> its index in DIRECTIONS
+
+var REFRESH_LOOP_REPEAT_TIME = 300; /* refresh time on client side . */
+var SERVER_POLLING_REPEAT_TIME = 3000; /*refresh loop to poll the server for status update*/
+
+// Keyboard
+// --------
+// movements
+var DIRECTION_UP = 105;     // 105: I : up
+var DIRECTION_LEFT = 106;   // 106: J : left
+var DIRECTION_DOWN = 107;   // 107: K : down
+var DIRECTION_RIGHT = 108;  // 108: L : right
+// undo/redo
+var UNDO = 120;             // 120: X : undo
+var REDO = 99;              // 99 : C : redo
+// select another robot
+var SELECT_PREVIOUS = 115;  // 115: S : previous
+var SELECT_NEXT = 100;      // 100: D : next
+
+
+
 
 function requestSelectedRobotMovement(direction_keyboard_code){
     var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
@@ -56,7 +87,7 @@ function keypressHandler(event) {
     }
 }
 
-var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
+
 
 // get the index of the selected robot in the ROBOT_COLORS array
 // returns 0 if no robot is selected
@@ -101,29 +132,7 @@ function selectByColor(colorName) {
     $("td .robot." + colorName).toggleClass("selected");
 }
 
-// direction:
-// 105: i : up
-// 106: j : left
-// 107: k : down
-// 108: l : right
-var DIRECTION_UP = 105;
-var DIRECTION_LEFT = 106;
-var DIRECTION_DOWN = 107;
-var DIRECTION_RIGHT = 108;
 
-var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
-var MAGIC_NUMBER = 105; //substract this to a direction -> its index in DIRECTIONS
-
-// 120: x : undo
-// 99: c : redo
-var UNDO = 120;
-var REDO = 99;
-
-// switch robot
-// 115 s : previous
-// 100 d : next
-var SELECT_PREVIOUS = 115;
-var SELECT_NEXT = 100;
 
 /* stack of moves for undo/redo ...*/
 var moves = new Array();
@@ -485,9 +494,6 @@ function initListeners(){
 // store the actual time left (as double, with details and stuff )
 // resync'd with server on a regular basis (pollTimer)
 var previousTimeLeft = -999;
-var REFRESH_LOOP_REPEAT_TIME = 300; /* refresh time on client side . */
-var SERVER_POLLING_REPEAT_TIME = 3000;
-
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doRefreshLoop(){
     var duration = parseInt($("#gameDuration").val(), 10);
