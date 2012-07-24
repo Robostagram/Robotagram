@@ -103,9 +103,9 @@
         </div>
         <div class="modal-footer">
 
-            <a id="improve" class="btn btn-small" onClick="robotagram.game.closeWinModal();" >@Messages("game.solutionFound.improve")</a>
-            <a id="retry" class="btn btn-small" onClick="robotagram.game.resetBoard(); robotagram.game.closeWinModal();">@Messages("game.solutionFound.retry")</a>
-            <a id="sendScore" class="btn btn-large btn-success loading" onClick="robotagram.ui.showLoading();robotagram.game.sendScore(robotagram.game.closeWinModal, alert, robotagram.ui.hideLoading);" >@Messages("game.solutionFound.announce")</a>
+            <a id="improve" class="btn btn-small" onClick="$('#winModal').modal('hide');" >@Messages("game.solutionFound.improve")</a>
+            <a id="retry" class="btn btn-small" onClick="robotagram.game.resetBoard(); $('#winModal').modal('hide');">@Messages("game.solutionFound.retry")</a>
+            <a id="sendScore" class="btn btn-large btn-success loading" onClick="robotagram.ui.showLoading();robotagram.game.sendScore(function(){$('#winModal').modal('hide');}, alert, robotagram.ui.hideLoading);" >@Messages("game.solutionFound.announce")</a>
         </div>
     </div>
 

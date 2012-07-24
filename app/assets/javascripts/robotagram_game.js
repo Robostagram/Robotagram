@@ -13,7 +13,7 @@ window["robotagram"]["game"] = (function($, undefined){
 
 
 // ------
-// Events
+// EVENTS
 // ------
 var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
 
@@ -24,7 +24,7 @@ var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
 var EVENT_GAME_SOLVED = "solved.game.robotagram";
 
 // ---------
-// Constants
+// CONSTANTS
 // ---------
 var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
 var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
@@ -51,12 +51,12 @@ var SELECT_NEXT = 100;      // 100: D : next
 
 
 
-function requestSelectedRobotMovement(direction_keyboard_code){
-    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
-    var direction = directionCodeToString(direction_keyboard_code);
-    var $robotToMove = $("td .robot." + color);
-    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
-}
+// ---------------
+// PRIVATE METHODS
+// ---------------
+
+// Conversion methods
+// ------------------
 
 //user friendly version of a direction (Up, Down etc ...)
 function directionCodeToString(direction_keyboard_code){
@@ -68,26 +68,10 @@ function directionStringToCode(directionName){
     return MAGIC_NUMBER + (DIRECTIONS.indexOf(directionName)) % 4;
 }
 
-// keyboard handler for robots moves
-function keypressHandler(event) {
-    if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
-        requestSelectedRobotMovement(event.which);
-    }
-    if (event.which === SELECT_NEXT) {
-        selectNextRobot();
-    }
-    if (event.which === SELECT_PREVIOUS) {
-        selectPreviousRobot();
-    }
-    if (event.which === REDO) {
-        redo();
-    }
-    if (event.which === UNDO) {
-        undo();
-    }
-}
 
 
+// Robot selection
+// ---------------
 
 // get the index of the selected robot in the ROBOT_COLORS array
 // returns 0 if no robot is selected
@@ -106,7 +90,7 @@ function getIndexOfCurrentlySelectedRobot() {
     return curColorIndex;
 }
 
-// select the next robot (order defined by ROBOT_COLORS
+// select the next robot (order defined by ROBOT_COLORS)
 function selectNextRobot() {
     var curColorIndex = getIndexOfCurrentlySelectedRobot();
     curColorIndex += 1;
@@ -116,7 +100,7 @@ function selectNextRobot() {
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
-// select the previous robot (order defined by ROBOT_COLORS
+// select the previous robot (order defined by ROBOT_COLORS)
 function selectPreviousRobot() {
     var curColorIndex = getIndexOfCurrentlySelectedRobot();
     curColorIndex -= 1;
@@ -134,10 +118,12 @@ function selectByColor(colorName) {
 
 
 
+// Robot moves
+// -----------
+
 /* stack of moves for undo/redo ...*/
 var moves = new Array();
 var undoIndex = 0;
-
 var moving = false;
 
 // move the robot of a given color in the requested direction
@@ -205,20 +191,7 @@ function moveRobot(color, direction, keepHistory) {
     }
 }
 
-function closeWinModal() {
-    $("#winModal").modal('hide');
-}
-
-function resetBoard() {
-    while(undoIndex > 0) {
-        undo();
-    }
-    moves = new Array();
-    $(".selected").removeClass("selected");
-    $("#robotForObjective").addClass("selected");
-    $("#currentScore").text(undoIndex + "");
-}
-
+// Robot moves undo
 function undo() {
     if (undoIndex > 0) {
         if (!moving) {
@@ -254,6 +227,7 @@ function undo() {
     }
 }
 
+// Robot moves redo
 function redo() {
     if(moves.length > undoIndex) {
         if (!moving) {
@@ -287,10 +261,6 @@ function redo() {
     }
 }
 
-function hasRobot(td) {
-    return $(td).find(".robot").length > 0;
-}
-
 function hasReachedObjective(robot, td) {
     // special id is put on the robot on server side
     var isRobotForObjective = $(robot).is("#robotForObjective");
@@ -298,6 +268,12 @@ function hasReachedObjective(robot, td) {
     return isRobotForObjective && $(td).find("#objective").length > 0;
 }
 
+
+// Board methods
+// -------------
+
+// tells us where the robot will end up if we try moving it from cell "td" in direction "direction"
+// returns itself if the robot cannot move in that direction
 function nextCell(td, direction) {
     var nextCell = null;
     switch (direction) {
@@ -333,6 +309,55 @@ function nextCell(td, direction) {
         return td;
     }
 }
+
+function hasRobot(td) {
+    return $(td).find(".robot").length > 0;
+}
+
+function resetBoard() {
+    while(undoIndex > 0) {
+        undo();
+    }
+    moves = new Array();
+    $(".selected").removeClass("selected");
+    $("#robotForObjective").addClass("selected");
+    $("#currentScore").text(undoIndex + "");
+}
+
+
+
+
+
+
+
+function requestSelectedRobotMovement(direction_keyboard_code){
+    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
+    var direction = directionCodeToString(direction_keyboard_code);
+    var $robotToMove = $("td .robot." + color);
+    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+}
+
+
+
+// keyboard handler for robots moves
+function keypressHandler(event) {
+    if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
+        requestSelectedRobotMovement(event.which);
+    }
+    if (event.which === SELECT_NEXT) {
+        selectNextRobot();
+    }
+    if (event.which === SELECT_PREVIOUS) {
+        selectPreviousRobot();
+    }
+    if (event.which === REDO) {
+        redo();
+    }
+    if (event.which === UNDO) {
+        undo();
+    }
+}
+
 
 // setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
@@ -661,7 +686,6 @@ function sendScore(successCallback, failureCallback, completedCallback) {
   // makes public members public
   return {
     "initListeners": initListeners,
-    "closeWinModal": closeWinModal,
     "resetBoard": resetBoard,
     "sendScore" : sendScore
   }
