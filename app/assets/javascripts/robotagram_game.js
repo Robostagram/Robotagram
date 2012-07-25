@@ -11,17 +11,23 @@ window["robotagram"] = window["robotagram"] || {} ; //initialize robotagram root
 // (using the patterns described in : http://www.codethinked.com/preparing-yourself-for-modern-javascript-development )
 window["robotagram"]["game"] = (function($, undefined){
 
+var $window = $(window); // we are going to use it quite a lot anyway
 
 // ------
 // EVENTS
 // ------
 var REQUEST_ROBOT_MOVE = "requestMove.robot.robotagram";
+function requestRobotMove(direction, color){$window.trigger(REQUEST_ROBOT_MOVE, [direction, color]);}
 
 var EVENT_ROBOT_MOVING = "moving.robot.robotagram";
+function notifyRobotMoving(direction, color){$window.trigger(EVENT_ROBOT_MOVING, [direction, color]);}
 var EVENT_ROBOT_MOVED = "moved.robot.robotagram";
+function notifyRobotMoved(direction, color){$window.trigger(EVENT_ROBOT_MOVED, [direction, color]);}
 
 var EVENT_GAME_TIMEUP = "timeUp.game.robotagram";
+function notifyGameTimeUp(){$window.trigger(EVENT_GAME_TIMEUP);}
 var EVENT_GAME_SOLVED = "solved.game.robotagram";
+function notifyGameSolved(numberOfMoves){$window.trigger(EVENT_GAME_SOLVED, [numberOfMoves]);}
 
 // ---------
 // CONSTANTS
@@ -32,8 +38,6 @@ var DIRECTION_UP = "Up",
     DIRECTION_DOWN = "Down",
     DIRECTION_RIGHT = "Right";
 var DIRECTIONS = [DIRECTION_UP, DIRECTION_LEFT, DIRECTION_DOWN, DIRECTION_RIGHT];
-
-var MAGIC_NUMBER = 105; //substract this to a KEY -> its index in DIRECTIONS
 
 var REFRESH_LOOP_REPEAT_TIME = 300; /* refresh time on client side . */
 var SERVER_POLLING_REPEAT_TIME = 3000; /*refresh loop to poll the server for status update*/
@@ -97,22 +101,13 @@ function init(){
 
 
 function bindGameEventHandlers(){
-    // game event listeners
-    var $window = $(window);
-
-    // events going on in the game ?
+    // INPUT from the user
     $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
         //console.debug(e.type, e.namespace, direction, color);
         moveRobot(color, direction);//keepHistory
     });
 
-    /*$window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
-        console.debug(e.type, e.namespace, direction, color);
-    });
-    $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
-        console.debug(e.type, e.namespace, direction, color);
-    });*/
-
+    // GAME events
     // do it only once
     $window.one(EVENT_GAME_TIMEUP, function(e){
         //console.debug(e.type, e.namespace);
@@ -127,7 +122,9 @@ function bindGameEventHandlers(){
     });
 }
 
-
+function displayMoveCounter(nbMoves){
+    $("#currentScore").text(nbMoves + "");
+}
 
 
 // Robot selection
@@ -189,8 +186,7 @@ function selectRobotOfObjective(){
 // trigger the event that says "move the robot to ..."
 function requestSelectedRobotMovement(direction){
     var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
-    var $robotToMove = $("td .robot." + color);
-    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+    requestRobotMove(direction, color);
 }
 
 /* stack of moves for undo/redo ...*/
@@ -225,7 +221,7 @@ function moveRobot(color, direction, keepHistory) {
         destinationCell = nextDestination;
         if (originCell !== destinationCell) { // = robot can move in that direction
             // notify people that we start moving - possibly add in the coordinates ...
-            $robot.trigger(EVENT_ROBOT_MOVING, [direction, color]);
+            notifyRobotMoving(direction, color);
             // current absolute position ?
             var originalPos = originCell.offset();
             var origTop = originalPos.top;
@@ -248,16 +244,16 @@ function moveRobot(color, direction, keepHistory) {
                            function() {
                                // Animation complete : remettre le robot dans la cellule de destination
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
-                               $(this).trigger(EVENT_ROBOT_MOVED, [direction, color]); //notify that we are done moving ...
+                               notifyRobotMoved(direction, color);//notify that we are done moving ...
                            });
             while(!keepHistory && moves.length > undoIndex) {
                 moves.pop();
             }
             moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": direction}});
             undoIndex++;
-            $("#currentScore").text(undoIndex + "");
+            displayMoveCounter(undoIndex);
             if (hasReachedObjective($robot, destinationCell)) {
-                $(window).trigger(EVENT_GAME_SOLVED, [undoIndex]); //undoIndex is the number of moves
+                notifyGameSolved(undoIndex); //undoIndex is the number of moves
             }
         }
         moving = false;
@@ -280,7 +276,7 @@ function undo() {
             if (originCell.length > 0) {
                 moving = true;
                 undoIndex = newIndex;
-                $("#currentScore").text(undoIndex + "");
+                displayMoveCounter(undoIndex);
                 originCell = originCell.first();
                 var previousDestination = originCell;
 
@@ -316,7 +312,7 @@ function redo() {
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
-                $("#currentScore").text(++undoIndex + "");
+                displayMoveCounter(++undoIndex);
                 originCell = originCell.first();
                 var previousDestination = originCell;
                 var nextDestination = nextCell(previousDestination, move.direction);
@@ -338,7 +334,6 @@ function redo() {
 function hasReachedObjective(robot, td) {
     // special id is put on the robot on server side
     var isRobotForObjective = $(robot).is("#robotForObjective");
-
     return isRobotForObjective && $(td).find("#objective").length > 0;
 }
 
@@ -400,7 +395,7 @@ function resetBoard() {
     }
     moves = new Array();
     selectRobotOfObjective();
-    $("#currentScore").text("0");
+    displayMoveCounter(0);
 }
 
 
@@ -422,7 +417,7 @@ KEY_ACTION_MAPPINGS[KEY_UNDO] =  undo;
 // setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
     // real keyboard
-    $(window).keypress(function(event){
+    $window.keypress(function(event){
         if(event.which in KEY_ACTION_MAPPINGS){
             KEY_ACTION_MAPPINGS[event.which].apply();
         }
@@ -490,12 +485,15 @@ function doClientRefreshLoop(){
     updateCountDown(timeLeft);
 
     if(timeLeft <= 0){
-        $(window).trigger(EVENT_GAME_TIMEUP);
+        notifyGameTimeUp();
     }
     else
     {
         // do it again
-        setTimeout(doClientRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
+        if(gameIsOn){
+            // no need to keep on refreshing when game is over ...
+            setTimeout(doClientRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
+        }
     }
 }
 
@@ -538,7 +536,7 @@ function doServerRefreshLoop() {
             // resync the time left
             previousTimeLeft = data.game.timeLeft;
             if (data.game.percentageDone <= 0) {
-                $(window).trigger(EVENT_GAME_TIMEUP);
+                notifyGameTimeUp();
             }
             else {
                 if(gameIsOn){
@@ -549,7 +547,7 @@ function doServerRefreshLoop() {
         statusCode:{
             410:function () {
                 //alert("The game you asked is finished .... ");
-                $(window).trigger(EVENT_GAME_TIMEUP);
+                notifyGameTimeUp();
             }
         }
     });
@@ -584,12 +582,12 @@ var messageReceived = function(event){
 
     if(d.type === "player.kickout"){
         gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
+        gameSocket.close();
         alert("You have been kicked on in this window : " + d.args[0]);
         // redirect home ??
     }else{
         // whenever we get a message, refresh the scores ...
         refreshScores();
-
     }
 }
 
