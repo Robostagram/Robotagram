@@ -27,9 +27,13 @@ var EVENT_GAME_SOLVED = "solved.game.robotagram";
 // CONSTANTS
 // ---------
 var ROBOT_COLORS = ['Blue', 'Red', 'Yellow', 'Green'];
-var DIRECTIONS = ['Up', 'Left', 'Down', 'Right'];
+var DIRECTION_UP = "Up",
+    DIRECTION_LEFT = "Left",
+    DIRECTION_DOWN = "Down",
+    DIRECTION_RIGHT = "Right";
+var DIRECTIONS = [DIRECTION_UP, DIRECTION_LEFT, DIRECTION_DOWN, DIRECTION_RIGHT];
 
-var MAGIC_NUMBER = 105; //substract this to a direction -> its index in DIRECTIONS
+var MAGIC_NUMBER = 105; //substract this to a KEY -> its index in DIRECTIONS
 
 var REFRESH_LOOP_REPEAT_TIME = 300; /* refresh time on client side . */
 var SERVER_POLLING_REPEAT_TIME = 3000; /*refresh loop to poll the server for status update*/
@@ -37,16 +41,16 @@ var SERVER_POLLING_REPEAT_TIME = 3000; /*refresh loop to poll the server for sta
 // Keyboard
 // --------
 // movements
-var DIRECTION_UP = 105;     // 105: I : up
-var DIRECTION_LEFT = 106;   // 106: J : left
-var DIRECTION_DOWN = 107;   // 107: K : down
-var DIRECTION_RIGHT = 108;  // 108: L : right
+var KEY_MOVE_UP = 105;     // 105: I : up
+var KEY_MOVE_LEFT = 106;   // 106: J : left
+var KEY_MOVE_DOWN = 107;   // 107: K : down
+var KEY_MOVE_RIGHT = 108;  // 108: L : right
 // undo/redo
-var UNDO = 120;             // 120: X : undo
-var REDO = 99;              // 99 : C : redo
+var KEY_UNDO = 120;             // 120: X : undo
+var KEY_REDO = 99;              // 99 : C : redo
 // select another robot
-var SELECT_PREVIOUS = 115;  // 115: S : previous
-var SELECT_NEXT = 100;      // 100: D : next
+var KEY_SELECT_PREVIOUS = 115;  // 115: S : previous
+var KEY_SELECT_NEXT = 100;      // 100: D : next
 
 
 
@@ -55,18 +59,74 @@ var SELECT_NEXT = 100;      // 100: D : next
 // PRIVATE METHODS
 // ---------------
 
-// Conversion methods
-// ------------------
+// Game dynamics
+// -------------
 
-//user friendly version of a direction (Up, Down etc ...)
-function directionCodeToString(direction_keyboard_code){
-    return DIRECTIONS[direction_keyboard_code - MAGIC_NUMBER];
+var gameIsOn = false; // is there a game currently being played ?
+
+// the entry point for the game loop
+function init(){
+    // prepare the board
+    initializeBoard();
+
+    // init the websocket stuff ...
+    connectPlayer();
+    gameIsOn = true;
+
+    // when leaving the window, disconnect the user
+    window.onbeforeunload = function() {
+        // the game is finished ... just disconnect
+        if(!gameIsOn){ // no game is playing ... no need to ask confirmation before leaving
+            return
+        }
+        // should probably ask confirmation to user ??
+        return $_("game.leave.gameIsActive.confirm");
+    };
+
+    // launch the client-site countdown (frequent updates)
+    doClientRefreshLoop();
+    // launch the server polling to resync timer and game status (less frequent)
+    doServerRefreshLoop();
+
+    // set up actions on game events (time up, solution found, move robot etc)
+    bindGameEventHandlers();
+
+    // make keyboard and mouse trigger the events ...
+    setUpGameControlHandlers();
 }
 
-// the key code coming from a user friendly name of direction
-function directionStringToCode(directionName){
-    return MAGIC_NUMBER + (DIRECTIONS.indexOf(directionName)) % 4;
+
+function bindGameEventHandlers(){
+    // game event listeners
+    var $window = $(window);
+
+    // events going on in the game ?
+    $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
+        //console.debug(e.type, e.namespace, direction, color);
+        moveRobot(color, direction);//keepHistory
+    });
+
+    /*$window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+    });
+    $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
+        console.debug(e.type, e.namespace, direction, color);
+    });*/
+
+    // do it only once
+    $window.one(EVENT_GAME_TIMEUP, function(e){
+        //console.debug(e.type, e.namespace);
+        gameIsOn = false; // it's ok to leave the page, now
+        $("#endOfGameModal").modal('show');
+        $("#winModal").modal('hide');
+    });
+
+    $window.on(EVENT_GAME_SOLVED, function(e, numberOfMoves){
+        //console.debug(e.type, e.namespace, numberOfMoves);
+        $("#winModal").modal('show');
+    });
 }
+
 
 
 
@@ -116,10 +176,22 @@ function selectByColor(colorName) {
     $("td .robot." + colorName).toggleClass("selected");
 }
 
+function selectRobotOfObjective(){
+    $(".selected").removeClass("selected");
+    $("#robotForObjective").addClass("selected");
+}
+
 
 
 // Robot moves
 // -----------
+
+// trigger the event that says "move the robot to ..."
+function requestSelectedRobotMovement(direction){
+    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
+    var $robotToMove = $("td .robot." + color);
+    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
+}
 
 /* stack of moves for undo/redo ...*/
 var moves = new Array();
@@ -129,7 +201,6 @@ var moving = false;
 // move the robot of a given color in the requested direction
 // the direction is one of the strings from DIRECTIONS
 function moveRobot(color, direction, keepHistory) {
-    var directionCode = directionStringToCode(direction);
     var $robot = $("td .robot." + color), originCell, destinationCell = null, previousDestination, nextDestination;
     if ($robot.length == 0) {
         // pas de robot
@@ -279,9 +350,8 @@ function hasReachedObjective(robot, td) {
 // returns itself if the robot cannot move in that direction
 // direction is one of the strings from DIRECTIONS
 function nextCell(td, direction) {
-    var directionCode =  directionStringToCode(direction)
     var nextCell = null;
-    switch (directionCode) {
+    switch (direction) {
         case DIRECTION_UP:
             if (!td.is(".wall-top")) {
                 var $td = $(td);
@@ -319,48 +389,62 @@ function hasRobot(td) {
     return $(td).find(".robot").length > 0;
 }
 
+function initializeBoard(){
+    //select the robot corresponding to the objective on page load
+    selectRobotOfObjective();
+}
+
 function resetBoard() {
     while(undoIndex > 0) {
         undo();
     }
     moves = new Array();
-    $(".selected").removeClass("selected");
-    $("#robotForObjective").addClass("selected");
-    $("#currentScore").text(undoIndex + "");
+    selectRobotOfObjective();
+    $("#currentScore").text("0");
 }
-
-
-
-
 
 
 // User input events (keyboards + visual keys)
 // -----------------
 
-// keyboard handler for robots moves /undo / redo / selection
-function keypressHandler(event) {
-    if (DIRECTION_UP <= event.which && event.which <= DIRECTION_RIGHT) {
-        requestSelectedRobotMovement(event.which);
-    }
-    if (event.which === SELECT_NEXT) {
-        selectNextRobot();
-    }
-    if (event.which === SELECT_PREVIOUS) {
-        selectPreviousRobot();
-    }
-    if (event.which === REDO) {
-        redo();
-    }
-    if (event.which === UNDO) {
-        undo();
-    }
-}
+// mapping key Code => function to call
+var KEY_ACTION_MAPPINGS = {};
+KEY_ACTION_MAPPINGS[KEY_MOVE_UP] = function(){requestSelectedRobotMovement(DIRECTION_UP);};
+KEY_ACTION_MAPPINGS[KEY_MOVE_DOWN] = function(){requestSelectedRobotMovement(DIRECTION_DOWN);};
+KEY_ACTION_MAPPINGS[KEY_MOVE_LEFT] = function(){requestSelectedRobotMovement(DIRECTION_LEFT);};
+KEY_ACTION_MAPPINGS[KEY_MOVE_RIGHT] = function(){requestSelectedRobotMovement(DIRECTION_RIGHT);};
+KEY_ACTION_MAPPINGS[KEY_SELECT_NEXT] =  selectNextRobot;
+KEY_ACTION_MAPPINGS[KEY_SELECT_PREVIOUS] =  selectPreviousRobot;
+KEY_ACTION_MAPPINGS[KEY_REDO] =  redo;
+KEY_ACTION_MAPPINGS[KEY_UNDO] =  undo;
+
 
 // setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
+    // real keyboard
+    $(window).keypress(function(event){
+        if(event.which in KEY_ACTION_MAPPINGS){
+            KEY_ACTION_MAPPINGS[event.which].apply();
+        }
+    });
 
-    $(window).keypress(keypressHandler);
+    // on-screen keyboard
+    // mapping the id of the key on screen to the function to call
+    var virtualKeyboardActions = {
+        "#key-up"  : function(){requestSelectedRobotMovement(DIRECTION_UP);},
+        "#key-left": function(){requestSelectedRobotMovement(DIRECTION_LEFT);},
+        "#key-down": function(){requestSelectedRobotMovement(DIRECTION_DOWN);},
+        "#key-right": function(){requestSelectedRobotMovement(DIRECTION_RIGHT);},
+        "#key-next":selectNextRobot,
+        "#key-prev":selectPreviousRobot,
+        "#key-undo":undo,
+        "#key-redo":redo
+    };
+    $.each(virtualKeyboardActions, function (keyboardKeyId, functionToCall){
+        $(keyboardKeyId).click(functionToCall);
+    });
 
+    // select a robot by clicking it (unselects the other selected robot)
     $("td .robot").click(function(){
         var $this = $(this);
         if (!$this.is(".selected")) {
@@ -369,166 +453,15 @@ function setUpGameControlHandlers(){
         $(this).toggleClass("selected");
     });
 
-    //on triche, et les touches affichées marchent comme un clavier
-    $("#key-up").click(function() {
-        requestSelectedRobotMovement(DIRECTION_UP);
-    });
-    $("#key-down").click(function() {
-        requestSelectedRobotMovement(DIRECTION_DOWN);
-    });
-    $("#key-left").click(function() {
-        requestSelectedRobotMovement(DIRECTION_LEFT);
-    });
-    $("#key-right").click(function() {
-        requestSelectedRobotMovement(DIRECTION_RIGHT);
-    });
-    $("#key-next").click(function() {
-        selectNextRobot();
-    });
-    $("#key-prev").click(function() {
-        selectPreviousRobot();
-    });
-    $("#key-undo").click(function() {
-        undo();
-    });
-    $("#key-redo").click(function() {
-        redo();
-    });
-
-}
-
-
-
-
-
-
-
-// trigger the event that says "move the robot to ..."
-function requestSelectedRobotMovement(direction_keyboard_code){
-    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
-    var direction = directionCodeToString(direction_keyboard_code);
-    var $robotToMove = $("td .robot." + color);
-    $robotToMove.trigger(REQUEST_ROBOT_MOVE, [direction, color]);
-}
-
-
-
-
-
-
-
-// set up the (useless) events that happen when clicking in the header
-function setUpHeaderShortcuts(){
     // robot from header selects the robot on the board
     $("a#headerRobot").click(function (e) {
-        $(".selected").removeClass("selected");
-        $("#robotForObjective").addClass("selected");
+        selectRobotOfObjective();
         e.preventDefault();
     });
 
-    // make the objective more obvious when hovering in the header
+    // make the objective more obvious when clicking in the header
     $("a#headerGoal span.symbol").click(function(){
         $("div.symbol:not(#objective)").toggleClass("transparent");
-    });
-}
-
-// set up the tooltip on current robot and target objective ... should be less intrusive
-function setUpHelpAndTooltips(){
-    var $robotOfObjective = $("#robotForObjective");
-
-    $robotOfObjective.tooltip({
-        title:$_("game.tooltip.bringThisRobot"),
-        trigger:'manual',
-        placement:function(){
-            // are we on the first row ? then display the tooltip at the bottom ...
-            var $cell = this.$element.closest("td.cell");
-            if($cell.data('row')== "0"){
-                return 'bottom';
-            }
-            return 'top';
-        }
-    });
-    var $objective = $('#objective');
-    $objective.tooltip({
-        title:$_("game.tooltip.toThisObjective"),
-        trigger:'manual',
-        placement:function(){
-            // are we on the first row ? then display the tooltip at the bottom ...
-            var $cell = this.$element.closest("td.cell");
-            if($cell.data('row')== "0"){
-                return 'bottom';
-            }
-            return 'top';
-        }
-    });
-
-    // tooltip on robot on page load
-    $robotOfObjective.tooltip('show').effect('shake', { times:3, distance:5, direction: 'up' } , 200);
-    // but not for too long
-    setTimeout(function(){$robotOfObjective.tooltip('hide');}, 3000);
-    // tooltip on the objective a bit after the robot
-    setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
-    setTimeout(function(){$objective.tooltip('hide');}, 3000);
-}
-
-
-var gameIsOn = false; // is there a game currently being played ?
-function initListeners(){
-    setUpGameControlHandlers();
-
-    setUpHeaderShortcuts();
-
-    setUpHelpAndTooltips();
-
-    var $robotOfObjective = $("#robotForObjective");
-    //select the robot correspounding to the objective on page load
-    $robotOfObjective.addClass("selected");
-
-    connectPlayer();
-
-    gameIsOn = true;
-
-    // when leaving the window, disconnect the user
-    window.onbeforeunload = function() {
-        // the game is finished ... just disconnect
-        if(!gameIsOn){ // no game is playing ... no need to ask confirmation before leaving
-            return
-        }
-        return $_("game.leave.gameIsActive.confirm")
-        // should probably ask confirmation to user ??
-    };
-
-    // launch the client-site countdown (frequent updates)
-    // launch the server polling to resync timer and game status (less frequent)
-    doRefreshLoop();
-    reSyncGameStatusWithServer();
-
-    // game event listeners
-    var $window = $(window);
-    // events going on in the game ?
-    $window.on(REQUEST_ROBOT_MOVE, function(e, direction, color){
-        //console.debug(e.type, e.namespace, direction, color);
-        moveRobot(color, direction);//keepHistory
-    });
-
-    /*$window.on(EVENT_ROBOT_MOVING, function(e, direction, color){
-        console.debug(e.type, e.namespace, direction, color);
-    });
-    $window.on(EVENT_ROBOT_MOVED, function(e, direction, color){
-        console.debug(e.type, e.namespace, direction, color);
-    });*/
-
-    // do it only once
-    $window.one(EVENT_GAME_TIMEUP, function(e){
-        //console.debug(e.type, e.namespace);
-        gameIsOn = false; // it's ok to leave the page, now
-        $("#endOfGameModal").modal('show');
-        $("#winModal").modal('hide');
-    });
-
-    $window.on(EVENT_GAME_SOLVED, function(e, numberOfMoves){
-        //console.debug(e.type, e.namespace, numberOfMoves);
-        $("#winModal").modal('show');
     });
 }
 
@@ -537,10 +470,11 @@ function initListeners(){
 // resync'd with server on a regular basis (pollTimer)
 var previousTimeLeft = -999;
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
-function doRefreshLoop(){
-    var duration = parseInt($("#gameDuration").val(), 10);
-    var timeLeftWhenPageWasLoaded = parseInt($("#secondsLeftOnPageLoad").val(), 10);
+function doClientRefreshLoop(){
+    var duration = parseInt($("#gameDuration").val(), 10); //10 to parse as number in base 10 ...
+
     if(previousTimeLeft === -999){ // first time we display the progress bar, fill with full duration (hidden field in game)
+        var timeLeftWhenPageWasLoaded = parseInt($("#secondsLeftOnPageLoad").val(), 10); //10 to parse as number in base 10 ...
         previousTimeLeft = timeLeftWhenPageWasLoaded;
     }
     // decrease the "time left" stuff ...
@@ -550,7 +484,23 @@ function doRefreshLoop(){
 
     // and compute percentage left
     var percentLeft = 100 * ( timeLeft / duration);
-    //console.log(percentLeft);
+
+    // update the progress bar : width and color.
+    updateProgressBar(percentLeft);
+    updateCountDown(timeLeft);
+
+    if(timeLeft <= 0){
+        $(window).trigger(EVENT_GAME_TIMEUP);
+    }
+    else
+    {
+        // do it again
+        setTimeout(doClientRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
+    }
+}
+
+// update the size and color of the progress bar depending on how much time is left
+function updateProgressBar(percentLeft){
     var $progressBarContainer = $("#progressBarContainer");
 
     // remove color classes from container, if any
@@ -574,20 +524,14 @@ function doRefreshLoop(){
 
     var $progressBar = $('#progressBar') ;
     $progressBar.css('width', percentLeft + '%');
-    var $timeLeft = $("a#timeLeft");
-    $timeLeft.text(Math.ceil(timeLeft));
-
-    if(timeLeft <= 0){
-        $(window).trigger(EVENT_GAME_TIMEUP);
-    }
-    else
-    {
-        // do it again
-        setTimeout(doRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
-    }
 }
 
-function reSyncGameStatusWithServer() {
+function updateCountDown(timeLeft){
+    var $timeLeft = $("a#timeLeft");
+    $timeLeft.text(Math.ceil(timeLeft));
+}
+
+function doServerRefreshLoop() {
     $.ajax({
         url: jsRoutes.controllers.Gaming.gameStatus($("#roomId").val(), $("#gameId").val()).url,
         success:function (data) {
@@ -598,7 +542,7 @@ function reSyncGameStatusWithServer() {
             }
             else {
                 if(gameIsOn){
-                    setTimeout(reSyncGameStatusWithServer, SERVER_POLLING_REPEAT_TIME);
+                    setTimeout(doServerRefreshLoop, SERVER_POLLING_REPEAT_TIME);
                 }
             }
         },
@@ -702,7 +646,7 @@ function sendScore(successCallback, failureCallback, completedCallback) {
 
   // makes public members public
   return {
-    "initListeners": initListeners,
+    "init": init,
     "resetBoard": resetBoard,
     "sendScore" : sendScore
   }

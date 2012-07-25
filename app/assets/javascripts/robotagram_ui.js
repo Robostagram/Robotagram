@@ -84,6 +84,45 @@ function hideLoading(){
     $("body").removeClass("loading");
 }
 
+// set up the tooltip on current robot and target objective ... should be less intrusive
+function highlightRobotAndObjective(){
+    var $robotOfObjective = $("#robotForObjective");
+
+    $robotOfObjective.tooltip({
+        title:$_("game.tooltip.bringThisRobot"),
+        trigger:'manual',
+        placement:function(){
+            // are we on the first row ? then display the tooltip at the bottom ...
+            var $cell = this.$element.closest("td.cell");
+            if($cell.data('row')== "0"){
+                return 'bottom';
+            }
+            return 'top';
+        }
+    });
+    var $objective = $('#objective');
+    $objective.tooltip({
+        title:$_("game.tooltip.toThisObjective"),
+        trigger:'manual',
+        placement:function(){
+            // are we on the first row ? then display the tooltip at the bottom ...
+            var $cell = this.$element.closest("td.cell");
+            if($cell.data('row')== "0"){
+                return 'bottom';
+            }
+            return 'top';
+        }
+    });
+
+    // tooltip on robot on page load
+    $robotOfObjective.tooltip('show').effect('shake', { times:3, distance:5, direction: 'up' } , 200);
+    // but not for too long
+    setTimeout(function(){$robotOfObjective.tooltip('hide');}, 3000);
+    // tooltip on the objective a bit after the robot
+    setTimeout(function(){$objective.tooltip('show').effect('pulsate', { times:3 } , 400);}, 1500);
+    setTimeout(function(){$objective.tooltip('hide');}, 3000);
+}
+
 
   // Exports
   // ==========================
@@ -92,6 +131,7 @@ function hideLoading(){
   return {
     "resizeTopBarContents": resizeTopBarContents,
     "showLoading" : showLoading,
-    "hideLoading" : hideLoading
+    "hideLoading" : hideLoading,
+    "highlightRobotAndObjective" : highlightRobotAndObjective
   }
 })(jQuery);
