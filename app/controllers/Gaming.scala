@@ -97,7 +97,6 @@ object Gaming extends Controller {
               Map(
                 "duration" -> toJson(game.durationInSeconds),
                 "timeLeft" -> toJson(game.secondsLeft),
-                "percentageDone" -> toJson(game.percentageDone()),
                 "status" -> toJson(state)
               )
             ))))

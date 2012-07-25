@@ -26,19 +26,14 @@
         <li id="timeProgress">
             <a>
                 <div id="progressBarContainer" class="progress progress-striped">
-                    <div id="progressBar" class="bar" width="(@game.percentageDone()) %;"></div>
+                    <div id="progressBar" class="bar" width="@game.percentageLeft()%;"></div>
                 </div>
             </a>
         </li>
-
     </ul>
 }
 
 @_layout(Messages("game.title"), Some(user))(headerContent){
-<input type="hidden" id="roomId" name="roomId" value="@room.name">
-<input type="hidden" id="gameId" name="gameId" value="@game.id">
-<input type="hidden" id="gameDuration" name="gameDuration" value="@game.durationInSeconds">
-<input type="hidden" id="secondsLeftOnPageLoad" name ="secondsLeft" value="@game.secondsLeft">
 <div class="row-fluid">
     <div class="span8" id="boardZone">
         @shared.renderBoard(game.board, Some(game.goal), game.robots)
@@ -126,7 +121,16 @@
 
 <script type="text/javascript">
   $(document).ready(function () {
-    robotagram.game.init();
+
+    var gameParameters = {
+        roomId: "@room.name",
+        gameId: "@game.id",
+        playerName: "@user.name",
+        duration: @game.durationInSeconds,
+        secondsLeft: @game.secondsLeft
+    };
+
+    robotagram.game.init(gameParameters);
     robotagram.ui.highlightRobotAndObjective();
   })
 </script>

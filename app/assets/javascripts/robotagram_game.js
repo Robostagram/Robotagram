@@ -66,21 +66,36 @@ var KEY_SELECT_NEXT = 100;      // 100: D : next
 // Game dynamics
 // -------------
 
-var gameIsOn = false; // is there a game currently being played ?
+var currentGame = {
+    gameId: undefined,
+    roomId: undefined,
+    playerName: undefined,
+    duration: undefined,
+    secondsLeft: undefined,
+    moves : new Array(),
+    undoIndex : 0,
+    gameIsOn: false   // is there a game currently being played ?
+};
 
 // the entry point for the game loop
-function init(){
+function init(gameParameters){
+    currentGame.roomId = gameParameters.roomId;
+    currentGame.gameId = gameParameters.gameId;
+    currentGame.playerName = gameParameters.playerName;
+    currentGame.duration = gameParameters.duration;
+    currentGame.secondsLeft = gameParameters.secondsLeft;
+
     // prepare the board
     initializeBoard();
 
     // init the websocket stuff ...
     connectPlayer();
-    gameIsOn = true;
+    currentGame.gameIsOn = true;
 
     // when leaving the window, disconnect the user
     window.onbeforeunload = function() {
         // the game is finished ... just disconnect
-        if(!gameIsOn){ // no game is playing ... no need to ask confirmation before leaving
+        if(!currentGame.gameIsOn){ // no game is playing ... no need to ask confirmation before leaving
             return
         }
         // should probably ask confirmation to user ??
@@ -111,7 +126,7 @@ function bindGameEventHandlers(){
     // do it only once
     $window.one(EVENT_GAME_TIMEUP, function(e){
         //console.debug(e.type, e.namespace);
-        gameIsOn = false; // it's ok to leave the page, now
+        currentGame.gameIsOn = false; // it's ok to leave the page, now
         $("#endOfGameModal").modal('show');
         $("#winModal").modal('hide');
     });
@@ -124,6 +139,10 @@ function bindGameEventHandlers(){
 
 function displayMoveCounter(nbMoves){
     $("#currentScore").text(nbMoves + "");
+}
+
+function currentState(){
+    return currentGame;
 }
 
 
@@ -190,8 +209,6 @@ function requestSelectedRobotMovement(direction){
 }
 
 /* stack of moves for undo/redo ...*/
-var moves = new Array();
-var undoIndex = 0;
 var moving = false;
 
 // move the robot of a given color in the requested direction
@@ -246,14 +263,14 @@ function moveRobot(color, direction, keepHistory) {
                                $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
                                notifyRobotMoved(direction, color);//notify that we are done moving ...
                            });
-            while(!keepHistory && moves.length > undoIndex) {
-                moves.pop();
+            while(!keepHistory && currentGame.moves.length > currentGame.undoIndex) {
+                currentGame.moves.pop();
             }
-            moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": direction}});
-            undoIndex++;
-            displayMoveCounter(undoIndex);
+            currentGame.moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": direction}});
+            currentGame.undoIndex++;
+            displayMoveCounter(currentGame.undoIndex);
             if (hasReachedObjective($robot, destinationCell)) {
-                notifyGameSolved(undoIndex); //undoIndex is the number of moves
+                notifyGameSolved(currentGame.undoIndex); //undoIndex is the number of moves
             }
         }
         moving = false;
@@ -262,10 +279,10 @@ function moveRobot(color, direction, keepHistory) {
 
 // Robot moves undo
 function undo() {
-    if (undoIndex > 0) {
+    if (currentGame.undoIndex > 0) {
         if (!moving) {
-            var newIndex = undoIndex - 1;
-            var move = moves[newIndex].movement;
+            var newIndex = currentGame.undoIndex - 1;
+            var move = currentGame.moves[newIndex].movement;
             var $robot = $("td .robot." + move.robot);
             selectByColor(move.robot); // make it visibly selected
             if ($robot.length == 0) {
@@ -275,8 +292,8 @@ function undo() {
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
-                undoIndex = newIndex;
-                displayMoveCounter(undoIndex);
+                currentGame.undoIndex = newIndex;
+                displayMoveCounter(currentGame.undoIndex);
                 originCell = originCell.first();
                 var previousDestination = originCell;
 
@@ -300,9 +317,9 @@ function undo() {
 
 // Robot moves redo
 function redo() {
-    if(moves.length > undoIndex) {
+    if(currentGame.moves.length > currentGame.undoIndex) {
         if (!moving) {
-            var move = moves[undoIndex].movement;
+            var move = currentGame.moves[currentGame.undoIndex].movement;
             var $robot = $("td .robot." + move.robot);
             selectByColor(move.robot); // make it visibly selected
             if ($robot.length == 0) {
@@ -312,7 +329,7 @@ function redo() {
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
-                displayMoveCounter(++undoIndex);
+                displayMoveCounter(++currentGame.undoIndex);
                 originCell = originCell.first();
                 var previousDestination = originCell;
                 var nextDestination = nextCell(previousDestination, move.direction);
@@ -390,10 +407,10 @@ function initializeBoard(){
 }
 
 function resetBoard() {
-    while(undoIndex > 0) {
+    while(currentGame.undoIndex > 0) {
         undo();
     }
-    moves = new Array();
+    currentGame.moves = new Array();
     selectRobotOfObjective();
     displayMoveCounter(0);
 }
@@ -461,21 +478,15 @@ function setUpGameControlHandlers(){
 }
 
 
-// store the actual time left (as double, with details and stuff )
-// resync'd with server on a regular basis (pollTimer)
-var previousTimeLeft = -999;
+
 // the loop in charge of updating the time left and the progress bar (disconnected from server polling loop)
 function doClientRefreshLoop(){
-    var duration = parseInt($("#gameDuration").val(), 10); //10 to parse as number in base 10 ...
+    var duration = currentGame.duration;
 
-    if(previousTimeLeft === -999){ // first time we display the progress bar, fill with full duration (hidden field in game)
-        var timeLeftWhenPageWasLoaded = parseInt($("#secondsLeftOnPageLoad").val(), 10); //10 to parse as number in base 10 ...
-        previousTimeLeft = timeLeftWhenPageWasLoaded;
-    }
     // decrease the "time left" stuff ...
-    var timeLeft = previousTimeLeft;
+    var timeLeft = currentGame.secondsLeft;
     timeLeft = timeLeft - (REFRESH_LOOP_REPEAT_TIME / 1000);
-    previousTimeLeft = timeLeft;
+    currentGame.secondsLeft = timeLeft;
 
     // and compute percentage left
     var percentLeft = 100 * ( timeLeft / duration);
@@ -490,7 +501,7 @@ function doClientRefreshLoop(){
     else
     {
         // do it again
-        if(gameIsOn){
+        if(currentGame.gameIsOn){
             // no need to keep on refreshing when game is over ...
             setTimeout(doClientRefreshLoop, REFRESH_LOOP_REPEAT_TIME);
         }
@@ -531,15 +542,15 @@ function updateCountDown(timeLeft){
 
 function doServerRefreshLoop() {
     $.ajax({
-        url: jsRoutes.controllers.Gaming.gameStatus($("#roomId").val(), $("#gameId").val()).url,
+        url: jsRoutes.controllers.Gaming.gameStatus(currentGame.roomId, currentGame.gameId).url,
         success:function (data) {
             // resync the time left
-            previousTimeLeft = data.game.timeLeft;
-            if (data.game.percentageDone <= 0) {
+            currentGame.secondsLeft = data.game.timeLeft;
+            if (data.game.timeLeft <= 0) {
                 notifyGameTimeUp();
             }
             else {
-                if(gameIsOn){
+                if(currentGame.gameIsOn){
                     setTimeout(doServerRefreshLoop, SERVER_POLLING_REPEAT_TIME);
                 }
             }
@@ -563,7 +574,7 @@ function connectPlayer() {
         var urlBase = window.location.href.substr("http://".length);
         urlBase = urlBase.substr(0, urlBase.indexOf('/'));
         // relativeUrl for connection for player
-        var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer($("#roomId").val(), $("#userName").text()).url; // starts with /)
+        var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer(currentGame.roomId, currentGame.playerName).url; // starts with /)
         gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
         gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
         gameSocket.onmessage = messageReceived;
@@ -581,7 +592,7 @@ var messageReceived = function(event){
     var d = JSON.parse(event.data); // parse it
 
     if(d.type === "player.kickout"){
-        gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
+        currentGame.gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
         gameSocket.close();
         alert("You have been kicked on in this window : " + d.args[0]);
         // redirect home ??
@@ -592,7 +603,7 @@ var messageReceived = function(event){
 }
 
 function refreshScores(){
-    jsRoutes.controllers.Gaming.gameScores($("#roomId").val(), $("#gameId").val()).ajax({
+    jsRoutes.controllers.Gaming.gameScores(currentGame.roomId, currentGame.gameId).ajax({
         cache:false,
         success: function(data, textStatus, jqXHR){
             //refill the leaderboard table
@@ -614,10 +625,10 @@ function sendScore(successCallback, failureCallback, completedCallback) {
     // how to handle submission of a game that is finished ?
     // the server expects moves to be a list of strings, instead of a list of proper objects ...
     // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
-    var movesToSend = $.map( moves.slice(0, undoIndex), function(val, i){return JSON.stringify(val);});
+    var movesToSend = $.map( currentGame.moves.slice(0, currentGame.undoIndex), function(val, i){return JSON.stringify(val);});
     // hidden inputs somewhere in the page ... to improve
-    var roomId = $("#roomId").val();
-    var gameId = $("#gameId").val();
+    var roomId = currentGame.roomId;
+    var gameId = currentGame.gameId;
     jsRoutes.controllers.Gaming.submitSolution(roomId, gameId).ajax({
         data:{"solution":JSON.stringify({"moves":movesToSend})},
         statusCode: {
@@ -646,9 +657,7 @@ function sendScore(successCallback, failureCallback, completedCallback) {
   return {
     "init": init,
     "resetBoard": resetBoard,
-    "sendScore" : sendScore
+    "sendScore" : sendScore,
+    "currentState" : currentState //convenient to debug ... in console : JSON.stringify( robotagram.game.currentState())
   }
 })(jQuery);
-
-
-
