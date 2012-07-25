@@ -488,12 +488,10 @@ function doClientRefreshLoop(){
     timeLeft = timeLeft - (REFRESH_LOOP_REPEAT_TIME / 1000);
     currentGame.secondsLeft = timeLeft;
 
-    // and compute percentage left
-    var percentLeft = 100 * ( timeLeft / duration);
-
     // update the progress bar : width and color.
-    updateProgressBar(percentLeft);
-    updateCountDown(timeLeft);
+    refreshProgressBar();
+    // refresh the timer
+    refreshTimer();
 
     if(timeLeft <= 0){
         notifyGameTimeUp();
@@ -509,7 +507,8 @@ function doClientRefreshLoop(){
 }
 
 // update the size and color of the progress bar depending on how much time is left
-function updateProgressBar(percentLeft){
+function refreshProgressBar(){
+    var percentLeft = 100 * ( currentGame.secondsLeft / currentGame.duration);
     var $progressBarContainer = $("#progressBarContainer");
 
     // remove color classes from container, if any
@@ -535,9 +534,9 @@ function updateProgressBar(percentLeft){
     $progressBar.css('width', percentLeft + '%');
 }
 
-function updateCountDown(timeLeft){
+function refreshTimer(){
     var $timeLeft = $("a#timeLeft");
-    $timeLeft.text(Math.ceil(timeLeft));
+    $timeLeft.text(Math.ceil(currentGame.secondsLeft));
 }
 
 function doServerRefreshLoop() {
