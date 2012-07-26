@@ -91,7 +91,8 @@ function init(gameParameters){
     currentGame.secondsLeft = gameParameters.secondsLeft;
 
     // prepare the board
-    initializeBoard();
+    //select the robot corresponding to the objective on page load
+    selectRobotOfObjective();
 
     // init the websocket stuff ...
     connectPlayer();
@@ -174,20 +175,14 @@ function getIndexOfCurrentlySelectedRobot() {
 // select the next robot (order defined by ROBOT_COLORS)
 function selectNextRobot() {
     var curColorIndex = getIndexOfCurrentlySelectedRobot();
-    curColorIndex += 1;
-    if (curColorIndex >= ROBOT_COLORS.length) {
-        curColorIndex = 0;
-    }
+    curColorIndex = (curColorIndex + 1) % ROBOT_COLORS.length;
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
 // select the previous robot (order defined by ROBOT_COLORS)
 function selectPreviousRobot() {
     var curColorIndex = getIndexOfCurrentlySelectedRobot();
-    curColorIndex -= 1;
-    if (curColorIndex < 0) {
-        curColorIndex = ROBOT_COLORS.length - 1;
-    }
+    curColorIndex = (curColorIndex + ROBOT_COLORS.length - 1) % ROBOT_COLORS.length;
     selectByColor(ROBOT_COLORS[curColorIndex]);
 }
 
@@ -244,30 +239,10 @@ function moveRobot(color, direction, keepHistory) {
         if (originCell !== destinationCell) { // = robot can move in that direction
             // notify people that we start moving - possibly add in the coordinates ...
             notifyRobotMoving(direction, color);
-            // current absolute position ?
-            var originalPos = originCell.offset();
-            var origTop = originalPos.top;
-            var origLeft = originalPos.left;
+            animateRobotMove($robot, originCell, destinationCell, function(){
+                notifyRobotMoved(direction, color);//notify that we are done moving ...
+            });
 
-            // destination absolute position
-            var finalPos = destinationCell.offset();
-            var finalTop = finalPos.top;
-            var finalLeft = finalPos.left;
-
-            // on le sort de la cellule
-            $robot.appendTo("body");
-            // mais on l'affiche au même endroit dans la page (absolute avec même offsets)
-            $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});
-            // transition de l'un à l'autre
-            $robot.animate({
-                               left:finalLeft,
-                               top:finalTop
-                           }, 100, /* 'fast' = 200 ms, 'slow' = 600ms */
-                           function() {
-                               // Animation complete : remettre le robot dans la cellule de destination
-                               $(this).css({left:'0px', top:'0px'}).appendTo(destinationCell.children().first()).offset(0, 0);
-                               notifyRobotMoved(direction, color);//notify that we are done moving ...
-                           });
             while(!keepHistory && currentGame.moves.length > currentGame.undoIndex) {
                 currentGame.moves.pop();
             }
@@ -280,6 +255,34 @@ function moveRobot(color, direction, keepHistory) {
         }
         moving = false;
     }
+}
+
+function animateRobotMove($robot, fromCell, toCell, doneMovingCallback){
+
+    // current absolute position ?
+    var originalPos = fromCell.offset();
+    var origTop = originalPos.top;
+    var origLeft = originalPos.left;
+
+    // destination absolute position
+    var finalPos = toCell.offset();
+    var finalTop = finalPos.top;
+    var finalLeft = finalPos.left;
+
+    // on le sort de la cellule et on le met dans un coin du DOM
+    $robot.appendTo("body");
+    // mais on l'affiche au même endroit dans la page (absolute avec même offsets)
+    $robot.css({'left':origLeft + 'px', 'top':origTop + 'px', position:'absolute'});
+    // transition de l'un à l'autre
+    $robot.animate({
+                       left:finalLeft,
+                       top:finalTop
+                   }, 100, /* 'fast' = 200 ms, 'slow' = 600ms */
+                   function() {
+                       // Animation complete : remettre le robot dans la cellule de destination
+                       $(this).css({left:'0px', top:'0px'}).appendTo(toCell.children().first()).offset(0, 0);
+                       doneMovingCallback(); // call back : we are done moving
+                   });
 }
 
 // Robot moves undo
@@ -405,11 +408,6 @@ function nextCell(td, direction) {
 
 function hasRobot(td) {
     return $(td).find(".robot").length > 0;
-}
-
-function initializeBoard(){
-    //select the robot corresponding to the objective on page load
-    selectRobotOfObjective();
 }
 
 function resetBoard() {
@@ -586,7 +584,7 @@ function connectPlayer() {
         currentGame.gameSocket.onmessage = messageReceived;
         // TODO : handle socket closing gracefully
         //currentGame.gameSocket.onclose = ...
-        // TODO: ws error managemenr
+        // TODO: ws error management
         //currentGame.gameSocket.onerror = ...
     }
 }
