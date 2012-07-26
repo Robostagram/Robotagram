@@ -83,6 +83,7 @@ var currentGame = {
 
 // the entry point for the game loop
 function init(gameParameters){
+    // store the game information
     currentGame.roomId = gameParameters.roomId;
     currentGame.gameId = gameParameters.gameId;
     currentGame.playerName = gameParameters.playerName;

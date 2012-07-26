@@ -129,7 +129,9 @@
         duration: @game.durationInSeconds,
         secondsLeft: @game.secondsLeft
     };
-
+    // just for the fun ... jQUery animations can be disabled
+    // might be useful for not powerful devices ... it still works but looks less nice ...
+    //jQuery.fx.off = true;
     robotagram.game.init(gameParameters);
     robotagram.ui.highlightRobotAndObjective();
   })
