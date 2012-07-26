@@ -48,16 +48,21 @@ var SERVER_POLLING_REPEAT_TIME_MIN = 2000; // never refresh more often than that
 // Keyboard
 // --------
 // movements
-var KEY_MOVE_UP = 105;     // 105: I : up
-var KEY_MOVE_LEFT = 106;   // 106: J : left
-var KEY_MOVE_DOWN = 107;   // 107: K : down
-var KEY_MOVE_RIGHT = 108;  // 108: L : right
+var KEY_LETTER_I = 73; // I : up
+var KEY_LETTER_J = 74; // J : left
+var KEY_LETTER_K = 75; // K : down
+var KEY_LETTER_L = 76; // L : right
+// arrows
+var KEY_ARROW_UP    = 38;
+var KEY_ARROW_LEFT  = 37;
+var KEY_ARROW_DOWN  = 40;
+var KEY_ARROW_RIGHT = 39;
 // undo/redo
-var KEY_UNDO = 120;             // 120: X : undo
-var KEY_REDO = 99;              // 99 : C : redo
+var KEY_LETTER_X = 88; // X : undo
+var KEY_LETTER_C = 67; // C : redo
 // select another robot
-var KEY_SELECT_PREVIOUS = 115;  // 115: S : previous
-var KEY_SELECT_NEXT = 100;      // 100: D : next
+var KEY_LETTER_S = 83; // S : previous
+var KEY_LETTER_D = 68; // D : next
 
 
 
@@ -425,22 +430,33 @@ function resetBoard() {
 
 // mapping key Code => function to call
 var KEY_ACTION_MAPPINGS = {};
-KEY_ACTION_MAPPINGS[KEY_MOVE_UP] = function(){requestSelectedRobotMovement(DIRECTION_UP);};
-KEY_ACTION_MAPPINGS[KEY_MOVE_DOWN] = function(){requestSelectedRobotMovement(DIRECTION_DOWN);};
-KEY_ACTION_MAPPINGS[KEY_MOVE_LEFT] = function(){requestSelectedRobotMovement(DIRECTION_LEFT);};
-KEY_ACTION_MAPPINGS[KEY_MOVE_RIGHT] = function(){requestSelectedRobotMovement(DIRECTION_RIGHT);};
-KEY_ACTION_MAPPINGS[KEY_SELECT_NEXT] =  selectNextRobot;
-KEY_ACTION_MAPPINGS[KEY_SELECT_PREVIOUS] =  selectPreviousRobot;
-KEY_ACTION_MAPPINGS[KEY_REDO] =  redo;
-KEY_ACTION_MAPPINGS[KEY_UNDO] =  undo;
+// up
+KEY_ACTION_MAPPINGS[KEY_ARROW_UP] = function(){requestSelectedRobotMovement(DIRECTION_UP);};
+KEY_ACTION_MAPPINGS[KEY_LETTER_I] = function(){requestSelectedRobotMovement(DIRECTION_UP);};
+// down
+KEY_ACTION_MAPPINGS[KEY_ARROW_DOWN] = function(){requestSelectedRobotMovement(DIRECTION_DOWN);};
+KEY_ACTION_MAPPINGS[KEY_LETTER_K] = function(){requestSelectedRobotMovement(DIRECTION_DOWN);};
+// left
+KEY_ACTION_MAPPINGS[KEY_ARROW_LEFT] = function(){requestSelectedRobotMovement(DIRECTION_LEFT);};
+KEY_ACTION_MAPPINGS[KEY_LETTER_J] = function(){requestSelectedRobotMovement(DIRECTION_LEFT);};
+// right
+KEY_ACTION_MAPPINGS[KEY_ARROW_RIGHT] = function(){requestSelectedRobotMovement(DIRECTION_RIGHT);};
+KEY_ACTION_MAPPINGS[KEY_LETTER_L] = function(){requestSelectedRobotMovement(DIRECTION_RIGHT);};
+// next / previous
+KEY_ACTION_MAPPINGS[KEY_LETTER_D] =  selectNextRobot;
+KEY_ACTION_MAPPINGS[KEY_LETTER_S] =  selectPreviousRobot;
+// undo / redo
+KEY_ACTION_MAPPINGS[KEY_LETTER_C] =  redo;
+KEY_ACTION_MAPPINGS[KEY_LETTER_X] =  undo;
 
 
 // setup key handlers and click handlers related to the game (moving robots etc)
 function setUpGameControlHandlers(){
     // real keyboard
-    $window.keypress(function(event){
-        if(event.which in KEY_ACTION_MAPPINGS){
-            KEY_ACTION_MAPPINGS[event.which].apply();
+    $window.keydown(function(event){
+        //console.debug(event.keyCode);
+        if(event.keyCode in KEY_ACTION_MAPPINGS){
+            KEY_ACTION_MAPPINGS[event.keyCode].apply();
         }
     });
 
