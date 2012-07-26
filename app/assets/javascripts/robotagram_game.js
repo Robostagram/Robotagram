@@ -40,7 +40,9 @@ var DIRECTION_UP = "Up",
 var DIRECTIONS = [DIRECTION_UP, DIRECTION_LEFT, DIRECTION_DOWN, DIRECTION_RIGHT];
 
 var REFRESH_LOOP_REPEAT_TIME = 300; /* refresh time on client side . */
-var SERVER_POLLING_REPEAT_TIME = 3000; /*refresh loop to poll the server for status update*/
+// for polling, we refresh not too often when there is lots of time left ...
+// we poll a bit more often as we get closer to the deadline
+var SERVER_POLLING_REPEAT_TIME_MIN = 2000; // never refresh more often than that.
 
 // Keyboard
 // --------
@@ -551,7 +553,10 @@ function doServerRefreshLoop() {
             }
             else {
                 if(currentGame.gameIsOn){
-                    setTimeout(doServerRefreshLoop, SERVER_POLLING_REPEAT_TIME);
+                    // refresh at the end of the time left
+                    // close refresh near the end ... but not more often than SERVER_POLLING_REPEAT_TIME_MIN
+                    var refreshTime = Math.max( (currentGame.secondsLeft * 1000) / 2, SERVER_POLLING_REPEAT_TIME_MIN);
+                    setTimeout(doServerRefreshLoop, refreshTime);
                 }
             }
         },
