@@ -11,6 +11,7 @@ window["robotagram"] = window["robotagram"] || {} ; //initialize robotagram root
 // (using the patterns described in : http://www.codethinked.com/preparing-yourself-for-modern-javascript-development )
 window["robotagram"]["game"] = (function($, undefined){
 
+// global window object
 var $window = $(window); // we are going to use it quite a lot anyway
 
 // ------
@@ -140,8 +141,8 @@ function bindGameEventHandlers(){
     });
 }
 
-function displayMoveCounter(nbMoves){
-    $("#currentScore").text(nbMoves + "");
+function refreshMovementCounter(){
+    $("#currentScore").text(currentGame.undoIndex + "");
 }
 
 function currentState(){
@@ -271,7 +272,7 @@ function moveRobot(color, direction, keepHistory) {
             }
             currentGame.moves.push({"movement":{"robot":color, "originRow":originCell.data("row"), "originColumn":originCell.data("column"), "direction": direction}});
             currentGame.undoIndex++;
-            displayMoveCounter(currentGame.undoIndex);
+            refreshMovementCounter();
             if (hasReachedObjective($robot, destinationCell)) {
                 notifyGameSolved(currentGame.undoIndex); //undoIndex is the number of moves
             }
@@ -296,7 +297,7 @@ function undo() {
             if (originCell.length > 0) {
                 moving = true;
                 currentGame.undoIndex = newIndex;
-                displayMoveCounter(currentGame.undoIndex);
+                refreshMovementCounter();
                 originCell = originCell.first();
                 var previousDestination = originCell;
 
@@ -332,7 +333,8 @@ function redo() {
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
-                displayMoveCounter(++currentGame.undoIndex);
+                currentGame.undoIndex++;
+                refreshMovementCounter();
                 originCell = originCell.first();
                 var previousDestination = originCell;
                 var nextDestination = nextCell(previousDestination, move.direction);
@@ -413,9 +415,9 @@ function resetBoard() {
     while(currentGame.undoIndex > 0) {
         undo();
     }
+    refreshMovementCounter();
     currentGame.moves = new Array();
     selectRobotOfObjective();
-    displayMoveCounter(0);
 }
 
 
