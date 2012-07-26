@@ -74,6 +74,7 @@ var currentGame = {
     secondsLeft: undefined,
     moves : new Array(),
     undoIndex : 0,
+    gameSocket: null,
     gameIsOn: false   // is there a game currently being played ?
 };
 
@@ -566,21 +567,19 @@ function doServerRefreshLoop() {
 
 ///////////////////// WEB SOCKETS ////////////////////
 
-var gameSocket = null;
-
 function connectPlayer() {
-    if (gameSocket === null) {
+    if (currentGame.gameSocket === null) {
         var urlBase = window.location.href.substr("http://".length);
         urlBase = urlBase.substr(0, urlBase.indexOf('/'));
         // relativeUrl for connection for player
         var relativeUrl = jsRoutes.controllers.Gaming.connectPlayer(currentGame.roomId, currentGame.playerName).url; // starts with /)
-        gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
-        gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
-        gameSocket.onmessage = messageReceived;
+        currentGame.gameSocket = new WebSocket("ws://" + urlBase + relativeUrl);
+        currentGame.gameSocket.onopen = function(e) {refreshScores();}; // refresh the scores when we have opened the connection
+        currentGame.gameSocket.onmessage = messageReceived;
         // TODO : handle socket closing gracefully
-        //gameSocket.onclose = ...
+        //currentGame.gameSocket.onclose = ...
         // TODO: ws error managemenr
-        //gameSocket.onerror = ...
+        //currentGame.gameSocket.onerror = ...
     }
 }
 
@@ -592,7 +591,7 @@ var messageReceived = function(event){
 
     if(d.type === "player.kickout"){
         currentGame.gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
-        gameSocket.close();
+        currentGame.gameSocket.close();
         alert("You have been kicked on in this window : " + d.args[0]);
         // redirect home ??
     }else{
