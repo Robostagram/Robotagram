@@ -7,7 +7,7 @@
 // creating root name space robotagram if not done already ...
 window["robotagram"] = window["robotagram"] || {} ; //initialize robotagram root name space if not done
 
-// creating name space robotagram.game
+// creating name space robotagram.ui
 // (using the patterns described in : http://www.codethinked.com/preparing-yourself-for-modern-javascript-development )
 window["robotagram"]["ui"] = (function($, undefined){
 
