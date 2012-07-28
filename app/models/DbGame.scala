@@ -206,10 +206,11 @@ object DbGame{
   def getLatestGamesByRoom(roomId : Long, limit:Int) = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select TOP {limit} *
+          select *
           from games
           where room_id = {roomId}
           order by created_on DESC
+          limit {limit}
           """
       )
         .on(
