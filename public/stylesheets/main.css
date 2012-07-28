@@ -114,11 +114,6 @@ td#keyboard-mapping {
     padding: 5px;
 }
 
-table#arrow-keys {
-    display: none;
-    visibility: hidden;
-}
-
 kbd {
     padding: 6px;
     margin: 2px 1px;
