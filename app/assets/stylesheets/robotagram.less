@@ -1,7 +1,11 @@
 
+// share the same constants as bootstrap
+@import "bootstrap/variables";
+// reuse some mixins from bootstrap (box-shadow, border-radius ...)
+@import "bootstrap/mixins";
+
 @base-image-url:"../images";
 
-@backgroundColor:#DBDBDB;
 
 
 // board
@@ -9,9 +13,12 @@
 @board-cell-border-color:#FFFFFF;
 @board-cell-wall-color:#a0a0a0;
 
+@robot-background-color:#C4C4C4;
+@robot-background-color-selected:#ACACAC;
+@robot-halo-color-selected:rgba(82, 168, 236, 0.8);
+
 body {
     padding-top: 40px; /*pour ne pas etre sous la nav*/
-    background-color: @backgroundColor;
 }
 
 h2 {
@@ -22,12 +29,11 @@ h2 {
 /* loading indicator - shows up only when body has class loading */
 div#loadingIndicator{
     position:absolute;
-    /* top left corner */
+    /* top right corner */
     right:0px;
     top:0px;
     display:none;
-    height:32px;
-    width:32px;
+    .square(32px);
     background:url('@{base-image-url}/ajax-loader.gif');
     z-index:2000;
     margin:5px;
@@ -43,7 +49,7 @@ body.loading div#loadingIndicator{
 */
 
 section#content {
-    background-color: white;
+    background-color: @white;
     height: 100%;
     padding-top: 1em;
     min-height: 400px;
@@ -51,8 +57,8 @@ section#content {
 
 footer {
     margin-top: 3em;
-    background-color: @backgroundColor;/*must be same color as body*/
-    color: #999999;
+    background-color: @bodyBackground;/*must be same color as body*/
+    color: @grayLight;
     text-align: center;
     min-height: 40px;
     padding-top: 60px;
@@ -62,9 +68,9 @@ footer {
 }
 
 footer a{
-    color:#636363;
+    color:@gray;
     &:hover{
-        color:#0088CC;
+        color:@linkColorHover;
     }
 }
 
@@ -81,9 +87,7 @@ span#copyright {
 
 /* picture on home page */
 img#homePicture{
-            box-shadow: 4px 4px 12px #555;
-       -moz-box-shadow: 4px 4px 12px #aaa;
-    -webkit-box-shadow: 4px 4px 12px #aaa;
+    .box-shadow(4px 4px 12px @gray);
     margin:0px auto;
 }
 
@@ -91,20 +95,16 @@ span#homePictureLegend{
     display:block;
     text-align:left;
     font-size:10px;
-    color: #999999;
+    color: @grayLight;
 
     a{
-        color:#636363;
+        color:@gray;
         &:hover{
-            color:#0088CC;
+            color:@linkColorHover;
         }
     }
 }
 
-
-div#gameZone {
-    background-color: white;
-}
 
 div#currentGameZone {
     text-align: center;
@@ -136,18 +136,11 @@ kbd {
 }
 
 
-
-
-
 /* board cells */
 
 table#boardGame {
-    background-color: white;
-            box-shadow: 4px 4px 12px #555;
-       -moz-box-shadow: 4px 4px 12px #aaa;
-    -webkit-box-shadow: 4px 4px 12px #aaa;
-
-    margin: 0px auto;
+    .box-shadow(4px 4px 12px @gray);
+    margin: 0px auto; /* center horizontally */
 }
 
 td.cell {
@@ -163,8 +156,7 @@ td.cell {
 
 // div.cell is actually inside the td.cell ... and forces the size of the cell
 div.cell {
-    height: 30px;
-    width: 30px;
+    .square(30px);
     position: relative;
     padding: 1px;
 }
@@ -176,19 +168,14 @@ div.cell {
 }
 
 div.robot {
-
     display: block;
-    width: 26px;
-    height: 26px;
+    .square(26px);
     vertical-align: text-top;
     background-position: center center;
     background-repeat: no-repeat;
-    background-color: #C4C4C4;
+    background-color: @robot-background-color;
 
-            border-radius: 2px;
-       -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-
+    .border-radius(2px);
 
     border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -197,22 +184,15 @@ div.robot {
 
     &:hover{
         /* survol du robot */
-        border-color: rgba(82, 168, 236, 0.8);
-                box-shadow: 0 1px 1px #555, 0 0 1px #555;
-           -moz-box-shadow: 0 1px 1px #555, 0 0 1px #555;
-        -webkit-box-shadow: 0 1px 1px #555, 0 0 1px #555;
-
-        background-color: #cbcbcb;
+        border-color: @robot-halo-color-selected;
+        .box-shadow(~"0 1px 1px @{gray}, 0 0 1px @{gray}");
     }
 
     &.selected {
         /* robot selectionné*/
-        border-color: rgba(82, 168, 236, 0.8);
-                box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
-           -moz-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
-        -webkit-box-shadow: 0 1px 1px #555 inset, 0 0 1px #555;
-
-        background-color: #ACACAC;
+        border-color: @robot-halo-color-selected;
+        .box-shadow(~"0 1px 1px @{gray} inset, 0 0 1px @{gray}");
+        background-color: @robot-background-color-selected;
     }
 
     &.Blue   {.robot-icon('blue');}
@@ -229,14 +209,13 @@ div.robot {
 /* symbols for goals */
 div.symbol, span.symbol {
     display: block;
-    width: 29px;
-    height: 29px;
+    .square(29px);
     vertical-align: text-top;
     background-position: center center;
     background-repeat: no-repeat;
 
     &.transparent{ // class transparent is added when clicking on the goal in the header bar
-        opacity: 0.2;
+        .opacity(20);
     }
     
     &.Gear.Blue     {.goal-icon('blue', 'gear')}    
