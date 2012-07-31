@@ -4,9 +4,11 @@
 // reuse some mixins from bootstrap (box-shadow, border-radius ...)
 @import "bootstrap/mixins";
 
+/***************************
+    Variables
+***************************/
+
 @base-image-url:"../images";
-
-
 
 // board
 @board-cell-color:whiteSmoke;
@@ -17,6 +19,11 @@
 @robot-background-color-selected:#ACACAC;
 @robot-halo-color-selected:rgba(82, 168, 236, 0.8);
 
+
+/************************************
+    General look
+************************************/
+
 body {
     padding-top: 40px; /*pour ne pas etre sous la nav*/
 }
@@ -25,28 +32,9 @@ h2 {
     margin-bottom: 1em;
 }
 
-
-/* loading indicator - shows up only when body has class loading */
-div#loadingIndicator{
-    position:absolute;
-    /* top right corner */
-    right:0px;
-    top:0px;
-    display:none;
-    .square(32px);
-    background:url('@{base-image-url}/ajax-loader.gif');
-    z-index:2000;
-    margin:5px;
-
-}
-
-body.loading div#loadingIndicator{
-    display:block;
-}
-
-/*
-    structure de la page
-*/
+/***********************************
+    page structure (all pages)
+************************************/
 
 section#content {
     background-color: @white;
@@ -85,6 +73,31 @@ span#copyright {
     text-shadow: 1px 1px 3px black;
 }
 
+/*************************************************
+        loading indicator
+    shows up only when body has class loading
+**************************************************/
+div#loadingIndicator{
+    position:absolute;
+    /* top right corner */
+    right:0px;
+    top:0px;
+    display:none;
+    .square(32px);
+    background:url('@{base-image-url}/ajax-loader.gif');
+    z-index:2000;
+    margin:5px;
+
+}
+
+body.loading div#loadingIndicator{
+    display:block;
+}
+
+
+/**************************************
+    Home page
+**************************************/
 /* picture on home page */
 img#homePicture{
     .box-shadow(4px 4px 12px @gray);
@@ -106,43 +119,45 @@ span#homePictureLegend{
 }
 
 
+/************************************
+    Game page
+************************************/
+
 div#currentGameZone {
     text-align: center;
 }
 
-/*
-how to play / visual keyboard
-*/
+/* how to play / visual keyboard */
 
 div#howToPlay {
     font-size: 1.5em;
-}
 
-div#howToPlay table {
-    margin: 0.2em
+    table {margin: 0.2em}
 }
-
 
 td#keyboard-mapping {
     vertical-align: middle;
     padding: 5px;
 }
 
+/* virtual keys */
 kbd {
     padding: 6px;
     margin: 2px 1px;
-    /*make them look clickable*/
-    cursor:pointer;
+    cursor:pointer; /*make them look clickable*/
 }
 
 
-/* board cells */
+/*******************************************
+    Board
+ ******************************************/
 
 table#boardGame {
     .box-shadow(4px 4px 12px @gray);
     margin: 0px auto; /* center horizontally */
 }
 
+/* cells */
 td.cell {
     border: 1px solid @board-cell-border-color;
     background-color: @board-cell-color;
@@ -161,7 +176,7 @@ div.cell {
     padding: 1px;
 }
 
-/*robots */
+/* robots */
 
 .robot-icon (@colorName) {
     background-image: url("@{base-image-url}/symbols/@{colorName}_skull.png");
@@ -179,7 +194,7 @@ div.robot {
 
     border: 1px solid rgba(0, 0, 0, 0.05);
 
-    cursor: pointer;
+    cursor: pointer; /* make it look clickable */
     margin: 1px;
 
     &:hover{
@@ -202,11 +217,11 @@ div.robot {
 
 }
 
+/* goals */
 .goal-icon (@colorName, @symbol) {
     background-image: url("@{base-image-url}/symbols/@{colorName}_@{symbol}.png");
 }
 
-/* symbols for goals */
 div.symbol, span.symbol {
     display: block;
     .square(29px);
@@ -241,11 +256,9 @@ div.symbol, span.symbol {
 }
 
 
-/*
-
+/*******************************
   NAV BAR
-
-*/
+*******************************/
 
 a#logoutLink, a#loginLink {
     text-align: right;
