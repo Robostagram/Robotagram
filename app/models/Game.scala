@@ -100,7 +100,7 @@ object Game {
     new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots)
   }
 
-  val DEFAULT_GAME_DURATION = 120
+  val DEFAULT_GAME_DURATION = 180
   val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
 
   // get the active game in the room or create a random one

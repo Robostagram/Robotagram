@@ -13,11 +13,18 @@
 // board
 @board-cell-color:whiteSmoke;
 @board-cell-border-color:#FFFFFF;
+@board-cell-border-thickness:1px;
 @board-cell-wall-color:#a0a0a0;
+@board-cell-wall-thickness:3px;
+@board-cell-size:30px;
 
 @robot-background-color:#C4C4C4;
 @robot-background-color-selected:#ACACAC;
 @robot-halo-color-selected:rgba(82, 168, 236, 0.8);
+@robot-size:26px;
+@robot-margin:(@board-cell-size - @robot-size)/2; //complete to center the robot in the cell
+
+@symbol-size: 29px;
 
 
 /************************************
@@ -228,21 +235,22 @@ table#boardGame {
 
 /* cells */
 td.cell {
-    border: 1px solid @board-cell-border-color;
+    border: @board-cell-border-thickness solid @board-cell-border-color;
     background-color: @board-cell-color;
+    padding:0px;
 
     // walls around the cell
-    &.wall-top   {border-top:    3px solid @board-cell-wall-color;}
-    &.wall-bottom{border-bottom: 3px solid @board-cell-wall-color;}
-    &.wall-left  {border-left:   3px solid @board-cell-wall-color;}
-    &.wall-right {border-right:  3px solid @board-cell-wall-color;}
+    &.wall-top   {border-top:    @board-cell-wall-thickness solid @board-cell-wall-color;}
+    &.wall-bottom{border-bottom: @board-cell-wall-thickness solid @board-cell-wall-color;}
+    &.wall-left  {border-left:   @board-cell-wall-thickness solid @board-cell-wall-color;}
+    &.wall-right {border-right:  @board-cell-wall-thickness solid @board-cell-wall-color;}
 }
 
 // div.cell is actually inside the td.cell ... and forces the size of the cell
 div.cell {
-    .square(30px);
+    .square(@board-cell-size);
     position: relative;
-    padding: 1px;
+    padding: 0px;
 }
 
 /* robots */
@@ -253,8 +261,7 @@ div.cell {
 
 div.robot {
     display: block;
-    .square(26px);
-    vertical-align: text-top;
+    .square(@robot-size);
     background-position: center center;
     background-repeat: no-repeat;
     background-color: @robot-background-color;
@@ -264,7 +271,7 @@ div.robot {
     border: 1px solid rgba(0, 0, 0, 0.05);
 
     cursor: pointer; /* make it look clickable */
-    margin: 1px;
+    margin: @robot-margin;
 
     &:hover{
         /* survol du robot */
@@ -293,8 +300,7 @@ div.robot {
 
 div.symbol, span.symbol {
     display: block;
-    .square(29px);
-    vertical-align: text-top;
+    .square(@symbol-size);
     background-position: center center;
     background-repeat: no-repeat;
 
