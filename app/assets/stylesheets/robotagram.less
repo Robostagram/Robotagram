@@ -28,40 +28,30 @@ body {
     padding-top: 40px; /*pour ne pas etre sous la nav*/
 }
 
-h2 {
-    margin-bottom: 1em;
-}
-
 /***********************************
     page structure (all pages)
 ************************************/
 
 section#content {
     background-color: @white;
-    height: 100%;
     padding-top: 1em;
     min-height: 400px;
 }
 
 footer {
-    margin-top: 3em;
     background-color: @bodyBackground;/*must be same color as body*/
     color: @grayLight;
     text-align: center;
     min-height: 40px;
     padding-top: 60px;
-    margin: -50px auto 0 auto;
-    margin-bottom: 0px;
-    font-size: 12px;
-}
+    margin: -50px auto 0px auto;
+    font-size: @baseFontSize - 1;
 
-footer a{
-    color:@gray;
-    &:hover{
-        color:@linkColorHover;
+    a{
+        color:@gray;
+        &:hover{ color:@linkColorHover;}
     }
 }
-
 
 span#copyright {
     bottom: 0;
@@ -73,21 +63,95 @@ span#copyright {
     text-shadow: 1px 1px 3px black;
 }
 
+/*******************************
+  NAV BAR
+*******************************/
+
+header {
+    a#userName {
+        font-weight: bold;
+    }
+
+    /* special container
+    resized via js to always take as much space as possible */
+    div#headerExtraContent {
+        display: inline-block;
+
+        ul#headerInfo {
+            width: 100%;
+
+            a#currentScore {
+                width: 1.7em;/*fix the width of the score to make the calculation of width easier*/
+                font-size:@baseFontSize * 2;
+                color:white;
+                text-align: center;
+                padding-right: 0px;
+                padding-left: 0px;
+                overflow: hidden; /* if the score is bigger than the container, don't break the layout !*/
+            }
+
+            a#headerRobot {
+                padding: 4px 0 0 0;
+                margin-right: 0px;
+
+                div.robot{
+                    background-color: transparent; // not the same background as on the board ...
+                }
+            }
+
+            a#headerArrow {
+                    margin: 0px;
+                    padding-right: 3px;
+                    padding-left: 3px;
+            }
+
+            /*symbol is 29px high and navbar is 40px high ... center vertically manually*/
+            a#headerGoal {
+                padding: 4px 0 0 0;
+                margin-right: 0px;
+
+                span.symbol {
+                    float: right; /*put it out of the flow to avoid destroying the nav*/
+                    cursor:pointer;
+                }
+            }
+
+            #timeProgress {
+                a{
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                }
+
+                .progress {
+                    margin-bottom: 0px;
+                    margin-top: 0px;
+                    width: 100%;
+                    height: 19px;
+
+                    .bar {height: 19px;}
+                }
+            }
+        }
+    }
+}
+
+
 /*************************************************
         loading indicator
     shows up only when body has class loading
 **************************************************/
 div#loadingIndicator{
-    position:absolute;
     /* top right corner */
+    position:absolute;
     right:0px;
     top:0px;
-    display:none;
-    .square(32px);
-    background:url('@{base-image-url}/ajax-loader.gif');
     z-index:2000;
     margin:5px;
 
+    .square(32px);
+    background:url('@{base-image-url}/ajax-loader.gif');
+
+    display:none; //ot visible by default. only visible when body has class "loading"
 }
 
 body.loading div#loadingIndicator{
@@ -98,6 +162,11 @@ body.loading div#loadingIndicator{
 /**************************************
     Home page
 **************************************/
+
+h2.homeTitle {
+    margin-bottom: 1em;
+}
+
 /* picture on home page */
 img#homePicture{
     .box-shadow(4px 4px 12px @gray);
@@ -107,7 +176,7 @@ img#homePicture{
 span#homePictureLegend{
     display:block;
     text-align:left;
-    font-size:10px;
+    font-size:@baseFontSize - 3;
     color: @grayLight;
 
     a{
@@ -130,7 +199,7 @@ div#currentGameZone {
 /* how to play / visual keyboard */
 
 div#howToPlay {
-    font-size: 1.5em;
+    font-size: @baseFontSize * 1.5;
 
     table {margin: 0.2em}
 }
@@ -254,87 +323,5 @@ div.symbol, span.symbol {
     &.Moon.Yellow   {.goal-icon('yellow', 'moon')}
     
 }
-
-
-/*******************************
-  NAV BAR
-*******************************/
-
-a#logoutLink, a#loginLink {
-    text-align: right;
-}
-
-a#userName {
-    font-weight: bold;
-    text-align: center;
-}
-
-/* special container
-resized via js to always take as much space as possible */
-div#headerExtraContent {
-    display: inline-block;
-}
-
-ul#headerInfo {
-    width: 100%;
-}
-
-a#currentScore {
-    width: 1.7em;/*fix the width of the score to make the calculation of width easier*/
-    font-size:2em;
-    color:white;
-    text-align: center;
-    padding-right: 0px;
-    padding-left: 0px;
-    overflow: hidden; /* if the score is bigger than the container, don't break the layout !*/
-}
-
-/*symbol is 29px high and navbar is 40px high ... center vertically manually*/
-a#headerGoal {
-    padding: 0px;
-    padding-top: 4px;
-    margin-right: 0px;
-}
-
-a#headerGoal span.symbol {
-    float: right; /*put it out of the float to avoid destroying the nav*/
-    cursor:pointer;
-}
-
-a#headerRobot {
-    padding: 0px;
-    padding-top: 4px;
-    margin-right: 0px;
-
-    div.robot{
-        // not the same background as on the board ...
-        background-color: transparent;
-    }
-}
-
-
-a#headerArrow {
-    margin: 0px;
-    padding-right: 3px;
-    padding-left: 3px;
-}
-
-#timeProgress {
-    a{
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-
-    .progress {
-        margin-bottom: 0px;
-        margin-top: 0px;
-        width: 100%;
-        height: 19px;
-
-        .bar {height: 19px;}
-    }
-}
-
-
 
 
