@@ -1,12 +1,13 @@
 package models
 
 import models.Color._
+import collection.immutable.Map
 import collection.immutable.HashMap
 import java.util.UUID
 import scala._
 import java.util.{Date,Random}
 
-class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, val endDate:Date, val robots:HashMap[Color, Robot]){
+class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, val endDate:Date, val robots:Map[Color, Robot]){
   private val endTime:Long = endDate.getTime;
   val durationInSeconds = ((endDate.getTime - startDate.getTime)/1000.0).toInt
 
@@ -28,7 +29,7 @@ class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, va
 
   // create an updated set of robots matching the specified movement and this game and the previous state of the set
   // detects walls and other robots
-  private def move(mutatingRobots: HashMap[Color, Robot], movement: Movement): HashMap[Color, Robot] = {
+  private def move(mutatingRobots: Map[Color, Robot], movement: Movement): Map[Color, Robot] = {
     var robot = mutatingRobots.getOrElse(movement.color, null)
     if(robot == null) {
       return robots
@@ -63,7 +64,7 @@ class Game(val id:String, val board:Board, val goal: Goal,val startDate:Date, va
 
   // apply a list of movements to this game + specified robots set
   // when all movements are applied, check the expected robot is on the matching goal
-  private def validate(robotss: HashMap[Color, Robot], solution: List[Movement]): Boolean = solution match {
+  private def validate(robotss: Map[Color, Robot], solution: List[Movement]): Boolean = solution match {
     case Nil => val goalPosition = board.findGoalPosition(goal)
                 val robot = robotss.get(goal.color) match {
                   case Some(r) => r

@@ -1,5 +1,5 @@
 @(room: DbRoom, game:Game, user: Option[User], scores:Seq[DbScore])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
-@import scala.collection.immutable.HashMap
+@import scala.collection.immutable.Map
 
 @_layout("Game preview #" + game.id, user)(null) {
 <div class="row-fluid">

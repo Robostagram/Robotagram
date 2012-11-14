@@ -2,7 +2,7 @@ package models
 
 import scala._
 import collection.mutable.ListBuffer
-import collection.immutable.{HashSet, HashMap}
+import collection.immutable.{HashSet, HashMap, Map}
 import models.Color._
 import scala.util.Random
 
@@ -172,7 +172,7 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 object Board {
 
   // get random robots positions for each color for a given board
-  def randomRobots(board:Board): HashMap[Color, Robot] = {
+  def randomRobots(board:Board): Map[Color, Robot] = {
     var robots = new HashMap[Color, Robot]()
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
     for(c <- Color.values){

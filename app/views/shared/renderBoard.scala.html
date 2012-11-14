@@ -1,6 +1,6 @@
-@(board: Board, goal: Option[Goal], robots: scala.collection.immutable.HashMap[Color.Color, Robot])
+@(board: Board, goal: Option[Goal], robots: scala.collection.immutable.Map[Color.Color, Robot])
     @import models._
-    @import scala.collection.immutable.HashMap
+    @import scala.collection.immutable.Map
 
 
     @getRobot(x: Int, y: Int) = @{

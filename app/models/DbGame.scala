@@ -4,7 +4,7 @@ import play.api.Play.current
 import anorm.SqlParser._
 import anorm._
 import anorm.~
-import collection.immutable.HashMap
+import collection.immutable.Map
 import java.util.{UUID, Date}
 import models.Color.Color
 import play.api.db.DB
@@ -28,7 +28,7 @@ case class DbGame(id: String,
 object DbGame{
 
   //prepare a game for persistence
-  def prepareGameToStore(roomId:Long, durationInSeconds:Long, board:Board, goal:Goal, robots:HashMap[Color, Robot]):DbGame = {
+  def prepareGameToStore(roomId:Long, durationInSeconds:Long, board:Board, goal:Goal, robots:Map[Color, Robot]):DbGame = {
     val uuid = UUID.randomUUID()
     val originalTimeStamp = System.currentTimeMillis()
     val startDate = new Date(originalTimeStamp)
