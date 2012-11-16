@@ -1,4 +1,4 @@
-package tests
+package views
 
 import org.specs2.mutable.Specification
 import play.api.test.Helpers._

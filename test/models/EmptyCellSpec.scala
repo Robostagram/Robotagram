@@ -1,6 +1,6 @@
-import models.EmptyCell
-import org.specs2.mutable._
+package models
 
+import org.specs2.mutable._
 import org.specs2.specification.Scope
 
 class EmptyCellSpec extends Specification {

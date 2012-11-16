@@ -1,9 +1,6 @@
-package tests
+package models
 
 import org.specs2.mutable.Specification
-import java.io.File
-import models.Color
-import models.Symbol
 
 class TestBoardLoading extends Specification {
   "check empty board only borders" in {
@@ -30,21 +27,21 @@ class TestBoardLoading extends Specification {
       }
     }
 
-//    5,5,Yellow,Sun
-//    6,7,Blue,Moon
-//    16,4,Green,Gear
-//    9,14,Red,Planet
-//    10,10,Blue,Star
+//    5,5,Yellow,FIVE
+//    6,7,Blue,FOUR
+//    16,4,Green,THREE
+//    9,14,Red,TWO
+//    10,10,Blue,ONE
     board.getCell(5,5).goal.color must be_==(Color.Yellow)
-    board.getCell(5,5).goal.symbol must be_==(Symbol.Sun)
+    board.getCell(5,5).goal.symbol must be_==(Symbol.FIVE)
     board.getCell(7,6).goal.color must be_==(Color.Blue)
-    board.getCell(7,6).goal.symbol must be_==(Symbol.Moon)
+    board.getCell(7,6).goal.symbol must be_==(Symbol.FOUR)
     board.getCell(4,16).goal.color must be_==(Color.Green)
-    board.getCell(4,16).goal.symbol must be_==(Symbol.Gear)
+    board.getCell(4,16).goal.symbol must be_==(Symbol.THREE)
     board.getCell(14,9).goal.color must be_==(Color.Red)
-    board.getCell(14,9).goal.symbol must be_==(Symbol.Planet)
+    board.getCell(14,9).goal.symbol must be_==(Symbol.TWO)
     board.getCell(10,10).goal.color must be_==(Color.Blue)
-    board.getCell(10,10).goal.symbol must be_==(Symbol.Star)
+    board.getCell(10,10).goal.symbol must be_==(Symbol.ONE)
 
   }
 

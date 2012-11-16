@@ -1,4 +1,4 @@
-package tests
+package views
 
 import org.specs2.mutable.Specification
 import play.api.test.Helpers._
@@ -13,7 +13,7 @@ class TestBoardTemplate extends Specification{
     var robots = new HashMap[Color.Color, Robot]
     robots += ((robot.color, robot))
 
-    val html = views.html.shared.renderBoard(Board.boardFromFile("app/resources/Standard.board", 0, "name"), Some(new Goal(Color.Blue, Symbol.Moon)), robots);
+    val html = views.html.shared.renderBoard(Board.boardFromFile("app/resources/Standard.board", 0, "name"), Some(new Goal(Color.Blue, Symbol.FOUR)), robots);
 
     contentType(html) must equalTo("text/html")
     contentAsString(html) must contain("robot")

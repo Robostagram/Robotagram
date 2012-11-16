@@ -1,4 +1,4 @@
-package tests
+package controllers
 
 import org.specs2.mutable._
 
@@ -6,13 +6,13 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.api.mvc.{Session, Cookies}
 
-
 class TestBoard extends Specification {
   "redirect to current game" in running(FakeApplication()) {
     {
       // FIXME : only works because we have that user in DB ...
+      // maybe not fixme, tibal is in the default user inserted into an empty DB, seems acceptable for unit tests.
       var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "tibal")
-      val result = controllers.Gaming.currentGame("default").apply(req)
+      val result = Gaming.currentGame("default").apply(req)
 
       status(result) mustEqual SEE_OTHER
       header("Location", result).get must startWith("/rooms/default/games/")
@@ -21,7 +21,7 @@ class TestBoard extends Specification {
 
 
   "redirect to login page if not logged on" in {
-    val result = controllers.Gaming.currentGame("default").apply(FakeRequest())
+    val result = Gaming.currentGame("default").apply(FakeRequest())
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER

@@ -1,4 +1,5 @@
-import models.{Goal, Color, Board, EmptyCell, Symbol}
+package models
+
 import org.specs2.mutable._
 import org.specs2.specification.Scope
 
@@ -226,7 +227,7 @@ class EmptyBoardSpec extends Specification {
     "put a goal at (x, y)" in new EmptyBoard {
       val x = 3
       val y = 4
-      val goal = new Goal(Color.Red, Symbol.Star)
+      val goal = new Goal(Color.Red, Symbol.ONE)
       board.setGoal(x, y, goal)
       board.getCell(x, y).goal must be_==(goal)
     }
