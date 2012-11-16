@@ -17,23 +17,23 @@ object DefaultBoard extends Board(0, "DefaultBoard", 16, 16) {
 
   // mapping (coords) -> goal ... pour remplir la board après coup
   var goalsToAdd = Map(
-    (1, 5) -> new Goal(Color.Blue, Symbol.Moon),
-    (1, 11) -> new Goal(Color.Red, Symbol.Moon),
+    (1, 5) -> new Goal(Color.Blue, Symbol.FOUR),
+    (1, 11) -> new Goal(Color.Red, Symbol.FOUR),
     //TODO : (2, 7) ->   Tourbillon de la mort ....
-    (3, 14) -> new Goal(Color.Green, Symbol.Gear),
-    (4, 3) -> new Goal(Color.Red, Symbol.Star),
-    (4, 9) -> new Goal(Color.Blue, Symbol.Planet),
-    (5, 6) -> new Goal(Color.Green, Symbol.Planet),
-    (6, 1) -> new Goal(Color.Yellow, Symbol.Gear),
-    (6, 12) -> new Goal(Color.Yellow, Symbol.Star),
-    (9, 12) -> new Goal(Color.Blue, Symbol.Star),
-    (10, 3) -> new Goal(Color.Blue, Symbol.Gear),
-    (10, 10) -> new Goal(Color.Yellow, Symbol.Planet),
-    (11, 5) -> new Goal(Color.Green, Symbol.Star),
-    (12, 2) -> new Goal(Color.Yellow, Symbol.Moon),
-    (12, 14) -> new Goal(Color.Red, Symbol.Gear),
-    (13, 4) -> new Goal(Color.Red, Symbol.Planet),
-    (14, 11) -> new Goal(Color.Green, Symbol.Moon)
+    (3, 14) -> new Goal(Color.Green, Symbol.THREE),
+    (4, 3) -> new Goal(Color.Red, Symbol.ONE),
+    (4, 9) -> new Goal(Color.Blue, Symbol.TWO),
+    (5, 6) -> new Goal(Color.Green, Symbol.TWO),
+    (6, 1) -> new Goal(Color.Yellow, Symbol.THREE),
+    (6, 12) -> new Goal(Color.Yellow, Symbol.ONE),
+    (9, 12) -> new Goal(Color.Blue, Symbol.ONE),
+    (10, 3) -> new Goal(Color.Blue, Symbol.THREE),
+    (10, 10) -> new Goal(Color.Yellow, Symbol.TWO),
+    (11, 5) -> new Goal(Color.Green, Symbol.ONE),
+    (12, 2) -> new Goal(Color.Yellow, Symbol.FOUR),
+    (12, 14) -> new Goal(Color.Red, Symbol.THREE),
+    (13, 4) -> new Goal(Color.Red, Symbol.TWO),
+    (14, 11) -> new Goal(Color.Green, Symbol.FOUR)
   )
 
   for (((x, y), v) <- goalsToAdd) {

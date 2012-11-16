@@ -16,8 +16,8 @@ d               b
 d               b
 jccccccccccccccch
 #
-5,5,Yellow,Sun
-6,7,Blue,Moon
-9,14,Red,Planet
-10,10,Blue,Star
-16,4,Green,Gear
+5,5,Yellow,FIVE
+6,7,Blue,FOUR
+9,14,Red,TWO
+10,10,Blue,ONE
+16,4,Green,THREE

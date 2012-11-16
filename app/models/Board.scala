@@ -288,7 +288,6 @@ object Board {
   val SERIALIZE_BOARD_GOALS_SEP = "#" + SERIALIZE_END_OF_LINE
   def boardToString(board: Board): String = {
     val result = new StringBuilder()
-    // 1,12,Yellow,Planet
     val goals = new ListBuffer[Tuple4[Int,Int,Color.Color ,Symbol.Symbol]]()
     for (i <- 0 to board.cells.length -1){
       val row = board.cells(i)
