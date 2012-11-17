@@ -11,19 +11,17 @@ import play.api.i18n.Messages
 object Authentication extends Controller {
 
   val loginForm = Form(
-                    tuple(
-                      "nickname" -> text.verifying(Constraints.nonEmpty)
-                                          .verifying(Constraints.maxLength(40))
-                                          .verifying(Constraints.minLength(2))
-                                          .verifying(Constraints.pattern("""^([A-Za-z]|[0-9]|_)*$""".r, "Letters, numbers and _", "Must contain only non-accentuated letters, numbers or underscores")),
-                      "password" -> text.verifying(Constraints.nonEmpty)
-                    )verifying("Invalid user name or password", fields => fields match {
-                      case (e, p) => DbUser.authenticate(e,p).isDefined
-                    }
-                    )
+    tuple(
+      "nickname" -> text.verifying(Constraints.nonEmpty)
+                          .verifying(Constraints.maxLength(40))
+                          .verifying(Constraints.minLength(2))
+                          .verifying(Constraints.pattern("""^([A-Za-z]|[0-9]|_)*$""".r, "Letters, numbers and _", "Must contain only non-accentuated letters, numbers or underscores")),
+      "password" -> text.verifying(Constraints.nonEmpty)
+    )verifying("Invalid user name or password", fields => fields match {
+        case (e, p) => DbUser.authenticate(e,p).isDefined
+      }
+    )
   )
-
-
 
   def authenticate(redirectTo: Option[String] = None) = Action {
     implicit request =>
@@ -74,6 +72,5 @@ object Authentication extends Controller {
         )
     }
   }
-
 }
 
