@@ -25,17 +25,23 @@ object Gaming extends Controller {
     Action { implicit request =>
       val user = User.fromRequest(request).get
       DbRoom.findByName(roomName).map { room =>
-        var wsRoom = WsManager.room(roomName).get
-        // user is already in a game in this room ? warn him and let him kickout the other
+        val wsRoom = WsManager.room(roomName).get
+        // user is already in a game in this room? close his previous WS channel
         wsRoom.players.get(user.name).map{ wsPlayer =>
-          Ok(views.html.gaming.alreadyIn(roomName, user))
-        }
-        .getOrElse{
-          val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
-          var scores = playersAndScores(roomName, g.id)
-          Ok(views.html.gaming.game(room, g, scores, user))
-        }
+          wsPlayer.sayGoodBye()
+        }.getOrElse()
+        val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
+        val scores = playersAndScores(roomName, g.id)
+        Ok(views.html.gaming.game(room, g, scores, user))
       }.getOrElse(Results.NotFound) //no room with that id
+    }
+  }
+
+  // kick a player from all rooms he's connected to
+  private def kick(username: String): Option[Unit] = {
+    WsManager.roomForPlayer(username).map{r=>
+      r.player(username).map(p=> p.send(makeJsonMessage("player.kickout", Seq[String]("A connexion to the game was open from somewhere else and request this one to be closed."))))
+      r.kickPlayer(username)
     }
   }
 
@@ -44,11 +50,7 @@ object Gaming extends Controller {
   // force closing the existing connections to this room for the current player
   def eject(roomName: String, redirectTo: Option[String] = None) = Secured.Authenticated {
     Action { implicit request =>
-      val user = User.fromRequest(request).get
-      WsManager.roomForPlayer(user.name).map{r=>
-        r.player(user.name).map(p=> p.send(makeJsonMessage("player.kickout", Seq[String]("A connexion to the game was open from somewhere else and request this one to be closed."))))
-        r.kickPlayer(user.name)
-      }
+      kick(User.fromRequest(request).get.name)
       // redirect to targetUrl ... or to current game in the room
       redirectTo.map(url =>
         Redirect(url)
@@ -96,7 +98,7 @@ object Gaming extends Controller {
             "game" -> toJson(
               Map(
                 "duration" -> toJson(game.durationInSeconds),
-                "timeLeft" -> toJson(game.secondsLeft),
+                "timeLeft" -> toJson(game.secondsLeft()),
                 "status" -> toJson(state)
               )
             ))))
@@ -134,7 +136,7 @@ object Gaming extends Controller {
           var scoresList:List[JsValue] = Nil
           playersAndScores(roomName, gameId).foreach(score => scoresList = JsObject(Seq(
             "player" -> JsString(score._1),
-            "score" -> JsNumber(score._2.getOrElse(0).asInstanceOf[Int])))::scoresList)
+            "score" -> JsNumber(score._2.getOrElse(0))))::scoresList)
           Ok(toJson(JsObject(Seq("scores" -> JsArray(scoresList.toSeq)))))
         }.getOrElse(Gone("Game " + gameId + " does not exist for room " + roomName))
       }.getOrElse(NotFound("room " + roomName + " does not exist"))
@@ -146,7 +148,7 @@ object Gaming extends Controller {
   //
   def submitSolution(roomName: String, gameId: String) = Secured.Authenticated {
     Action { implicit request =>
-      var user = User.fromRequest.get
+      val user = User.fromRequest.get
       DbRoom.findByName(roomName).map{ dbRoom =>
         Game.load(roomName, gameId).map { game =>
           if(game.isDone){
@@ -216,9 +218,9 @@ object Gaming extends Controller {
   
   def parseMovement(s: String): Movement = {
     val jsonMovement = Json.parse(s) \ "movement"
-    var matches = jsonMovement match {
+    val matches = jsonMovement match {
       case JsUndefined(error) => false
-      case _ => true;
+      case _ => true
     }
     if (matches) {
       try {
@@ -256,7 +258,7 @@ object Gaming extends Controller {
 
   // send something to all players connected to a room
   def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
-    var msg = makeJsonMessage(messageType, messageArgs)
+    val msg = makeJsonMessage(messageType, messageArgs)
     logMessage(roomName, "ALL", "OUT-MSG:" + msg)
     WsManager.room(roomName).map{r=>
       r.sendAll(msg)
