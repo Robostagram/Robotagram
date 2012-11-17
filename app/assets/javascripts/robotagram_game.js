@@ -214,7 +214,7 @@ function requestSelectedRobotMovement(direction){
         var color = ROBOT_COLORS[selected];
         requestRobotMove(direction, color);
     } else {
-        alert("You must select a robot")
+        alert($_("game.noselection"))
     }
 }
 
@@ -614,8 +614,6 @@ function connectPlayer() {
     }
 }
 
-
-
 var messageReceived = function(event){
     console.debug("SERVER>" + event.data);
     var d = JSON.parse(event.data); // parse it
@@ -623,7 +621,7 @@ var messageReceived = function(event){
     if(d.type === "player.kickout"){
         currentGame.gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
         currentGame.gameSocket.close();
-        alert("You have been kicked on in this window : " + d.args[0]);
+        alert($_("game.kicked") + " " + d.args[0]);
         // redirect home ??
     }else{
         // whenever we get a message, refresh the scores ...
@@ -676,8 +674,6 @@ function sendScore(successCallback, failureCallback, completedCallback) {
         }
     });
 }
-
-
 
   // Exports
   // ==========================
