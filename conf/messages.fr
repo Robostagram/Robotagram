@@ -10,7 +10,7 @@ app.footer=Utilisation de <a href="http://glyphicons.com/">glyphicons</a> avec l
 # =================
 # taken from play samples computer-database
 common.players=participants
-common.actions=actions
+common.rooms=salles
 common.actions.join=Rejoindre
 
 common.user.logon=S''identifier
