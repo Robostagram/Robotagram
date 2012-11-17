@@ -164,7 +164,7 @@ function currentState(){
 // returns 0 if no robot is selected
 function getIndexOfCurrentlySelectedRobot() {
     var $currentSelected = $(".robot.selected");
-    var curColorIndex = 0; //blue by default
+    var curColorIndex = -1; //blue by default
     if ($currentSelected.length > 0) {
         $.each(ROBOT_COLORS, function(index, colorName) {
             if ($currentSelected.hasClass(colorName)) {
@@ -209,27 +209,33 @@ function selectRobotOfObjective(){
 
 // trigger the event that says "move the robot to ..."
 function requestSelectedRobotMovement(direction){
-    var color = ROBOT_COLORS[getIndexOfCurrentlySelectedRobot()];
-    requestRobotMove(direction, color);
+    var selected = getIndexOfCurrentlySelectedRobot()
+    if (selected >= 0 && selected < ROBOT_COLORS.length) {
+        var color = ROBOT_COLORS[selected];
+        requestRobotMove(direction, color);
+    } else {
+        alert("You must select a robot")
+    }
 }
 
-/* stack of moves for undo/redo ...*/
 var moving = false;
 
 // move the robot of a given color in the requested direction
 // the direction is one of the strings from DIRECTIONS
 function moveRobot(color, direction, keepHistory) {
+    if (moving) {
+        return;
+    }
     var $robot = $("td .robot." + color), originCell, destinationCell = null, previousDestination, nextDestination;
     if ($robot.length == 0) {
         // pas de robot
-        alert("You must select a robot");
+        console.log("a robot could not be found with color " + color);
         return;
     }
 
     originCell = $robot.closest("td.cell");
     // seulement si le robot est bien dans une cellule, pas en déplacement
-    if (!moving && originCell.length > 0) {
-        moving = true;
+    if (originCell.length > 0) {
         originCell = originCell.first();
 
         previousDestination = originCell;
@@ -242,10 +248,12 @@ function moveRobot(color, direction, keepHistory) {
         // destination finale du robot
         destinationCell = nextDestination;
         if (originCell !== destinationCell) { // = robot can move in that direction
+            moving = true;
             // notify people that we start moving - possibly add in the coordinates ...
             notifyRobotMoving(direction, color);
             animateRobotMove($robot, originCell, destinationCell, function(){
                 notifyRobotMoved(direction, color);//notify that we are done moving ...
+                moving = false;
             });
 
             while(!keepHistory && currentGame.moves.length > currentGame.undoIndex) {
@@ -258,7 +266,6 @@ function moveRobot(color, direction, keepHistory) {
                 notifyGameSolved(currentGame.undoIndex); //undoIndex is the number of moves
             }
         }
-        moving = false;
     }
 }
 
@@ -297,11 +304,12 @@ function undo() {
             var newIndex = currentGame.undoIndex - 1;
             var move = currentGame.moves[newIndex].movement;
             var $robot = $("td .robot." + move.robot);
-            selectByColor(move.robot); // make it visibly selected
             if ($robot.length == 0) {
                 // houston, guess what we got...
-                alert("kein robot!");
+                console.log("no robot found while undoing a move, expected to find and select " + move.robot);
+                return;
             }
+            selectByColor(move.robot); // make it visibly selected
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
@@ -334,11 +342,12 @@ function redo() {
         if (!moving) {
             var move = currentGame.moves[currentGame.undoIndex].movement;
             var $robot = $("td .robot." + move.robot);
-            selectByColor(move.robot); // make it visibly selected
             if ($robot.length == 0) {
                 // houston, guess what we got...
-                alert("kein robot!");
+                console.log("no robot found while undoing a move, expected to find and select " + move.robot);
+                return;
             }
+            selectByColor(move.robot); // make it visibly selected
             var originCell = $robot.closest("td.cell");
             if (originCell.length > 0) {
                 moving = true;
