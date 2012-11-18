@@ -1,6 +1,6 @@
 package models
 
-import collection.mutable.HashMap
+import collection.mutable.{Map, HashMap}
 import concurrent.Lock
 
 // in charge of handling the web sockets channels and rooms
@@ -8,7 +8,7 @@ object WsManager {
   private val lock: Lock = new Lock()
 
   // roomName -> Room
-  private val _rooms : HashMap[String, WsRoom] = new HashMap[String, WsRoom]()
+  private val _rooms : Map[String, WsRoom] = new HashMap[String, WsRoom]()
   // fill it from db names at the beginning
   DbRoom.findAll.foreach{dbRoom =>
     addRoom(dbRoom.name)
