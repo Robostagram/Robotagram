@@ -8,6 +8,8 @@
 
         <p>From here, you can go to : </p>
         <ul>
+            <li><a href="@controllers.routes.Admin.reset">Clean all the DB stored rooms, scores, users, boards then load the default rooms, users and boards</a></li>
+            <li><a href="@controllers.routes.Admin.listUser">List of registered users</a></li>
             <li><a href="@controllers.routes.Boards.index">list of board templates + preview&rarr;</a></li>
             <li><a href="@controllers.routes.Rooms.gamesByRoom("default")">latest games in room 'default'&rarr;</a></li>
             <li><a href="@controllers.routes.Rooms.gamesByRoom("default2")">latest games in room 'default2'&rarr;</a></li>

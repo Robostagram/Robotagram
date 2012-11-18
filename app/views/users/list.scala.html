@@ -1,0 +1,24 @@
+@(users: Seq[DbUser], user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+
+@_layout("List of users in database", user)(null) {
+<h1>Users in DB</h1>
+<div class="span4 well">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(u:DbUser <- users) {
+            <tr >
+                <td>@u.name</td>
+                <td>@u.email</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+}

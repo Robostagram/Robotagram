@@ -71,6 +71,17 @@ object Authentication extends Controller {
                   .flashing("info" -> Messages("login.authenticationRequired"))
         )
     }
+
+    def AdminAuthenticated[A](action: Action[A]): Action[A] = Action(action.parser) { implicit request =>
+      User.fromRequest.map { user =>
+        //TODO replace 'true' with admin rights check
+        if (true) action(request)
+        else Unauthorized
+      }.getOrElse(
+        Redirect(routes.Authentication.login(Some(request.uri)))
+          .flashing("info" -> Messages("login.authenticationRequired"))
+      )
+    }
   }
 }
 
