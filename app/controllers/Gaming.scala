@@ -136,7 +136,7 @@ object Gaming extends Controller {
           var scoresList:List[JsValue] = Nil
           playersAndScores(roomName, gameId).foreach(score => scoresList = JsObject(Seq(
             "player" -> JsString(score._1),
-            "score" -> JsNumber(score._2.getOrElse(0))))::scoresList)
+            "score" -> JsNumber(score._2.getOrElse[Int](0))))::scoresList)
           Ok(toJson(JsObject(Seq("scores" -> JsArray(scoresList.toSeq)))))
         }.getOrElse(Gone("Game " + gameId + " does not exist for room " + roomName))
       }.getOrElse(NotFound("room " + roomName + " does not exist"))
