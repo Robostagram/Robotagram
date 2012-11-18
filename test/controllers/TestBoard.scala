@@ -11,11 +11,10 @@ class TestBoard extends Specification {
     {
       // FIXME : only works because we have that user in DB ...
       // maybe not fixme, tibal is in the default user inserted into an empty DB, seems acceptable for unit tests.
-      var req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "tibal")
+      val req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "tibal")
       val result = Gaming.currentGame("default").apply(req)
 
-      status(result) mustEqual SEE_OTHER
-      header("Location", result).get must startWith("/rooms/default/games/")
+      status(result) mustEqual OK
     }
   }
 
