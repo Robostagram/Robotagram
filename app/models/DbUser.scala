@@ -8,7 +8,7 @@ import java.util.{UUID, Date}
 import play.api.db.DB
 import scala.Some
 
-case class DbUser(id: Pk[Long], name: String, email: String)
+case class DbUser(id: Pk[Long], name: String, email: String, isAdmin: Boolean)
 
 case class DbUserAccountActivation(id: Pk[Long], name: String, activationToken: String, activatedOn : Option[Date])
 
@@ -21,9 +21,10 @@ object DbUser {
    */
   val simple = {
     get[Pk[Long]]("users.id") ~
-      get[String]("users.name") ~
-      get[String]("users.email") map {
-      case id~name~email => DbUser(id, name, email)
+    get[String]("users.name") ~
+    get[String]("users.email") ~
+    get[Boolean]("users.isAdmin") map {
+      case id~name~email~isAdmin => DbUser(id, name, email, isAdmin)
     }
   }
 
@@ -32,9 +33,9 @@ object DbUser {
    */
   val activationInfo = {
     get[Pk[Long]]("users.id") ~
-      get[String]("users.name") ~
-      get[String]("users.activation_token") ~
-      get[Option[Date]]("users.activated_on") map {
+    get[String]("users.name") ~
+    get[String]("users.activation_token") ~
+    get[Option[Date]]("users.activated_on") map {
       case id~name~token~activationDate => DbUserAccountActivation(id, name, token,activationDate)
     }
   }
@@ -47,7 +48,7 @@ object DbUser {
   def findByName(name: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-        SELECT id, name, email
+        SELECT id, name, email, isAdmin
         FROM users
         WHERE upper(name) = upper({name})
           """
@@ -80,7 +81,7 @@ object DbUser {
   def findByEmail(email: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          SELECT id, name, email
+          SELECT id, name, email, isAdmin
           FROM users
           WHERE upper(email) = upper({email})
           """
@@ -96,7 +97,7 @@ object DbUser {
   def findAll: Seq[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select id, name, email
+          select id, name, email, isAdmin
           from users
           """
       ).as(DbUser.simple *)
@@ -110,7 +111,7 @@ object DbUser {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         SELECT id, name, email
+         SELECT id, name, email, isAdmin
          FROM users
          WHERE upper(name) = upper({name})
           and password = {password}
@@ -153,7 +154,7 @@ object DbUser {
    *
    * the activated_on should be passed only to create accounts that are already validated
    */
-  def create(id:Option[Long], name:String, email:String, password:String, activated_on : Option[Date] = None): Option[Long] = {
+  def create(id:Option[Long], name:String, email:String, password:String, isAdmin: Boolean = false, activated_on : Option[Date] = None): Option[Long] = {
     findByName(name) match {
       // check if a user does not exist already ( with same name / case-insensitive)
       case Some(_) => None // a user exists with that name , stop here !
@@ -169,10 +170,10 @@ object DbUser {
           SQL(
             """
            insert into users (
-             id, name, email, password, created_on, activation_token, activated_on
+             id, name, email, password, isAdmin, created_on, activation_token, activated_on
            )
            values (
-             {id}, {name}, {email}, {password}, {created_on}, {activation_token}, {activated_on}
+             {id}, {name}, {email}, {password}, {isAdmin}, {created_on}, {activation_token}, {activated_on}
            )
             """
           ).on(
@@ -180,6 +181,7 @@ object DbUser {
             'name -> name,
             'email -> email,
             'password -> password,
+            'isAdmin -> isAdmin,
             'created_on -> new Date(),
             'activation_token -> UUID.randomUUID().toString,
             'activated_on -> activated_on

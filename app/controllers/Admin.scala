@@ -53,18 +53,21 @@ object Admin extends Controller {
     // populate users with some known names ;)
     if(DbUser.findAll.isEmpty) {
 
+      DbUser.create(Some(0.asInstanceOf[Long]), "admin", "admin@robotagr.am", "admin", isAdmin = true, activated_on = Some(new util.Date()))
+
       Seq(
-        (0, "hermione", "hermione@robotagram.com", "hermione"),
         (1, "kus", "kus@robotagram.com", "hermione"),
         (2, "rom1", "rom1@robotagram.com", "hermione"),
         (3, "bzn", "bzn@robotagram.com", "hermione"),
         (4, "mithfindel", "mithfindel@robotagram.com", "hermione"),
         (5, "tibal", "tibal@robotagram.com", "hermione"),
         (6, "nire", "nire@robotagram.com", "hermione"),
-        (7, "player", "player@noobcorp.com", "noob")
+        (7, "hermione", "hermione@robotagram.com", "hermione"),
+        (8, "player", "player@noobcorp.com", "noob")
       ).foreach( tup => tup match{
         case (anId, name, email, pwd) =>  DbUser.create(Some(anId.asInstanceOf[Long]), name, email, pwd, activated_on = Some(new util.Date()))
       })
+      
     }
 
     // populate the default boards (take the standard board and then make variations ...

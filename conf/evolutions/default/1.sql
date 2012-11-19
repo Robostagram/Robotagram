@@ -9,6 +9,7 @@ create table users (
   name                      varchar(255) not null unique,
   email                     varchar(255) not null unique,
   password                  varchar(255) not null,
+  isAdmin                   boolean not null default 'false',
   created_on                timestamp not null,
   activation_token          varchar(255) not null,
   activated_on              timestamp

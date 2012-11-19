@@ -74,12 +74,10 @@ object Authentication extends Controller {
 
     def AdminAuthenticated[A](action: Action[A]): Action[A] = Action(action.parser) { implicit request =>
       User.fromRequest.map { user =>
-        //TODO replace 'true' with admin rights check
-        if (true) action(request)
-        else Unauthorized
+        if (user.isAdmin) action(request)
+        else Unauthorized(views.html.authentication.E503(Some(user)))
       }.getOrElse(
-        Redirect(routes.Authentication.login(Some(request.uri)))
-          .flashing("info" -> Messages("login.authenticationRequired"))
+        Unauthorized(views.html.authentication.E503(None))
       )
     }
   }
