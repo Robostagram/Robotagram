@@ -14,7 +14,7 @@ import play.api.libs.json.JsObject
 import play.api.Logger
 import collection.mutable
 
-object Gaming extends Controller {
+object Gaming extends CookieLang {
 
   val lock: Lock = new Lock()
   

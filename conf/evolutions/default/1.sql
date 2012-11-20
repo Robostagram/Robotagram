@@ -12,7 +12,8 @@ create table users (
   isAdmin                   boolean not null default 'false',
   created_on                timestamp not null,
   activation_token          varchar(255) not null,
-  activated_on              timestamp
+  activated_on              timestamp,
+  locale                    varchar(5)
 );
 create sequence users_seq start with 1000;
 

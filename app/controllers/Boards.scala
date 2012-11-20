@@ -8,7 +8,7 @@ import controllers.Authentication.Secured
 
 
 // stupid controller just to test what we have in db ... and display it
-object Boards extends Controller{
+object Boards extends CookieLang{
 
   def index = Secured.AdminAuthenticated {
       Action { implicit request =>

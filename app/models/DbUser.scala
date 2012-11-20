@@ -8,7 +8,11 @@ import java.util.{UUID, Date}
 import play.api.db.DB
 import scala.Some
 
-case class DbUser(id: Pk[Long], name: String, email: String, isAdmin: Boolean)
+case class DbUser(id: Pk[Long], name: String, email: String, isAdmin: Boolean, locale: Option[String]) {
+  def updateLang(locale: String) {
+    DbUser.updateLocale(name, locale)
+  }
+}
 
 case class DbUserAccountActivation(id: Pk[Long], name: String, activationToken: String, activatedOn : Option[Date])
 
@@ -23,8 +27,9 @@ object DbUser {
     get[Pk[Long]]("users.id") ~
     get[String]("users.name") ~
     get[String]("users.email") ~
-    get[Boolean]("users.isAdmin") map {
-      case id~name~email~isAdmin => DbUser(id, name, email, isAdmin)
+    get[Boolean]("users.isAdmin") ~
+    get[Option[String]]("users.locale") map {
+      case id~name~email~isAdmin~locale => DbUser(id, name, email, isAdmin, locale)
     }
   }
 
@@ -48,7 +53,7 @@ object DbUser {
   def findByName(name: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-        SELECT id, name, email, isAdmin
+        SELECT id, name, email, isAdmin, locale
         FROM users
         WHERE upper(name) = upper({name})
           """
@@ -81,7 +86,7 @@ object DbUser {
   def findByEmail(email: String): Option[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          SELECT id, name, email, isAdmin
+          SELECT id, name, email, isAdmin, locale
           FROM users
           WHERE upper(email) = upper({email})
           """
@@ -97,7 +102,7 @@ object DbUser {
   def findAll: Seq[DbUser] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select id, name, email, isAdmin
+          select id, name, email, isAdmin, locale
           from users
           """
       ).as(DbUser.simple *)
@@ -111,7 +116,7 @@ object DbUser {
     DB.withConnection { implicit connection =>
       SQL(
         """
-         SELECT id, name, email, isAdmin
+         SELECT id, name, email, isAdmin, locale
          FROM users
          WHERE upper(name) = upper({name})
           and password = {password}
@@ -141,6 +146,24 @@ object DbUser {
         'now -> new Date(),
         'name -> userName,
         'token -> activationToken
+      ).executeUpdate()
+
+      res > 0 // true if modified something . false if not
+    }
+  }
+  
+  // store the preferred locale for the user with the given name 
+  def updateLocale(userName: String, locale: String): Boolean = {
+    DB.withConnection { implicit connection =>
+      val res = SQL(
+        """
+           UPDATE users
+           SET locale = {locale}
+           WHERE upper(name) = upper({name})
+        """
+      ).on(
+        'locale -> locale,
+        'name -> userName
       ).executeUpdate()
 
       res > 0 // true if modified something . false if not

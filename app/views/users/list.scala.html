@@ -9,6 +9,8 @@
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Permissions</th>
+                <th>Locale</th>
             </tr>
         </thead>
         <tbody>
@@ -17,6 +19,7 @@
                 <td>@u.name</td>
                 <td>@u.email</td>
                 <td>@if(u.isAdmin) {admin}</td>
+                <td>@u.locale.getOrElse("")</td>
             </tr>
         }
         </tbody>

@@ -1,0 +1,19 @@
+@()(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+
+<ul id="flags" class="nav">
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    <img id="flag" src="@routes.Assets.at("images/flags/" + lang.code + ".png")" alt="@lang.code" style="margin:0px 0px;">
+</a>
+<ul class="dropdown-menu">
+    @for(lang2 <- controllers.CookieLang.AVAILABLE_LANGS if lang2 != lang.code) {
+    <li>
+        @helper.form(routes.Localise.changeLocale) {
+            <input type="hidden" id="locale@lang2" name="locale" value="@lang2">
+            <input type="image" id="flag@lang2" src="@routes.Assets.at("images/flags/" + lang2 + ".png")" alt="@lang2">
+        }
+    </li>
+    }
+</ul>
+</li>
+</ul>

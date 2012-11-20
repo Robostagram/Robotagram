@@ -15,7 +15,7 @@ import scala.Some
  * Date: 18/11/12
  * Time: 19:33
  */
-object Admin extends Controller {
+object Admin extends CookieLang {
 
   def listUser = Secured.AdminAuthenticated {
     Action {

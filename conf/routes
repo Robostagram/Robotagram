@@ -17,6 +17,9 @@ POST    /account/register                   controllers.Account.createAccount
 GET     /account/created                    controllers.Account.accountCreated(username:String)
 GET     /account/activate                   controllers.Account.activateAccount(name : String, token : String)
 
+# Lang
+POST    /setLocale                          controllers.Localise.changeLocale
+
 # playing
 GET     /rooms/:roomId/games/current            controllers.Gaming.currentGame(roomId : String)
 GET     /rooms/:roomId/games/:gameId            controllers.Gaming.getGame(roomId : String, gameId : String)

@@ -5,7 +5,7 @@ import models._
 import controllers.Authentication.Secured
 
 // Room controller
-object Rooms extends Controller{
+object Rooms extends CookieLang{
 
   // list the last n games of a room
   def gamesByRoom(roomName:String) = Secured.AdminAuthenticated {

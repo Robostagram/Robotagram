@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints
 import play.api.i18n.Messages
 
 
-object Account extends Controller{
+object Account extends CookieLang{
 
   var accountCreationForm = Form(
     tuple(

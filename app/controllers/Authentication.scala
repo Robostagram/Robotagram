@@ -7,8 +7,9 @@ import play.api.data.Forms._
 import models._
 import play.api.data.validation.Constraints
 import play.api.i18n.Messages
+import play.api.i18n.Lang
 
-object Authentication extends Controller {
+object Authentication extends CookieLang {
 
   val loginForm = Form(
     tuple(
@@ -27,29 +28,41 @@ object Authentication extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         // forget the submitted password
-        failedPostedForm =>  Ok(views.html.authentication.login(failedPostedForm.fill(failedPostedForm("nickname").value.getOrElse(""), ""), redirectTo)),       // redisplay the page with posted form to show errors
-        successForm => successForm match {
-          case (user, password) => {
-            //should be a way of obtaining the tuple directly, right ?
-            var destinationUrl = ""
-            redirectTo match {
-              case Some(redirection) => destinationUrl = redirection
-              case _ => destinationUrl = routes.Home.index().absoluteURL()  // default to home
-            }
-            Redirect(destinationUrl)
-              .withSession("username" -> user) // store the current user name in the session (=encrypted cookie)
-              .flashing("success" -> Messages("login.result.success"))
+        failedPostedForm => Ok(views.html.authentication.login(failedPostedForm.fill(failedPostedForm("nickname").value.getOrElse(""), ""), redirectTo)),       // redisplay the page with posted form to show errors
+        successForm => {
+          var destinationUrl = ""
+          redirectTo match {
+            case Some(redirection) => destinationUrl = redirection
+            case _ => destinationUrl = routes.Home.index().absoluteURL()  // default to home
           }
-
+          val username = successForm._1
+          val dbUser = DbUser.findByName(username).get //cant get None here
+          
+          // apply redirection with user set
+          def redir = Redirect(destinationUrl)
+            .withSession(session + ("username" -> username)) // store the current user name in the session (=encrypted cookie)
+          
+          // if the user has a preferred locale, change the language cookie and use the new language for the flash message
+          def redirLang = dbUser.locale.map{ l =>
+            (redir.withCookies(Cookie(LANG, l)), Lang(l))
+          }.getOrElse{
+            (redir, lang)
+          }
+          redirLang._1.flashing("success" -> Messages("login.result.success")(redirLang._2))
         }
       )
   }
-
+  
   // login + redirect url after login (optional, defaults to home page)
   def login(redirectTo: Option[String] = None) = Action {
-    implicit request =>
-      Ok(views.html.authentication.login(loginForm, redirectTo))
-  }
+    implicit request => {
+      User.fromRequest.map { user =>
+          Redirect(routes.Home.index())
+        }.getOrElse(
+          Ok(views.html.authentication.login(loginForm, redirectTo))
+        )
+      }
+    }
 
   def logout = Action {
     implicit request =>

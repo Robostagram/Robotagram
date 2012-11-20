@@ -4,7 +4,7 @@ import play.api.mvc.{Action, Controller}
 import play.api.Routes
 
 
-object Application extends Controller {
+object Application extends CookieLang {
 
   //
   //  GET /assets/javascripts/routes.js
