@@ -63,11 +63,11 @@ function resizeTopBarContents(){
         $timer = $scoreZone.find("#timeProgress");
 
         $timer.prevAll().each(function(){
-            totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft")) + parseInt($(this).css("marginRight"));
+            totalWidthOnTheLeft = totalWidthOnTheLeft + $(this).outerWidth() + parseInt($(this).css("marginLeft"), 10) + parseInt($(this).css("marginRight"), 10);
         });
 
         $timer.nextAll().each(function(){
-            totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft")) + parseInt($(this).css("marginRight"));
+            totalWidthOnTheRight = totalWidthOnTheRight + $(this).outerWidth() + parseInt($(this).css("marginLeft"), 10) + parseInt($(this).css("marginRight"), 10);
         });
 
         // fix the width of the progress bar
