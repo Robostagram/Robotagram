@@ -15,6 +15,7 @@ common.actions.join=Join
 
 common.user.logon=Log on
 common.user.logout=Log out
+common.user.selectLanguage=Select your language
 
 
 # Home

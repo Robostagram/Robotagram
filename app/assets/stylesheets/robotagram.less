@@ -75,9 +75,19 @@ span#copyright {
 *******************************/
 
 header {
+    a#userLanguage{
+        /*flag width is not the same for all countries ... TO FIX some day
+         - EN : is currently 24px * 12px
+         - FR is currently 18px * 12px
+         */
+        width: 24px; /* fix the width of that part so calculations are easier */
+        text-align:center;
+    }
+
     a#userName {
         font-weight: bold;
     }
+
 
     /* special container
     resized via js to always take as much space as possible */
