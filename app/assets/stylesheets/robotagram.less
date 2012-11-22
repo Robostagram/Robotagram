@@ -84,6 +84,21 @@ header {
         text-align:center;
     }
 
+    ul#languageList{
+        min-width:0px; /*override defult min-width from bootstrap to make the dropdown as small as possible*/
+
+        li.languageFlag{
+            width: 24px;
+            text-align:center;
+            margin:5px; /*a bit of space around the flags*/
+
+            /*form inside the li should have no styling ... bootstrap applies margins by default !*/
+            form{
+                margin:0;
+            }
+        }
+    }
+
     a#userName {
         font-weight: bold;
     }

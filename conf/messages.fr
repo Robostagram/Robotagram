@@ -15,7 +15,8 @@ common.actions.join=Rejoindre
 
 common.user.logon=S''identifier
 common.user.logout=Se déconnecter
-common.user.selectLanguage=Choisir la langue
+common.user.language.select=Choisir la langue
+common.user.language.switchTo=Passer en {0}
 
 # Home
 # ====
