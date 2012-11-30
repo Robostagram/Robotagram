@@ -20,3 +20,5 @@ public/images/symbols/blue_*
 public/images/symbols/green_*
 public/images/symbols/red_*
 public/images/symbols/yellow_*
+*~
+*.class

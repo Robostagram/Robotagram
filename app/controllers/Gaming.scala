@@ -169,7 +169,7 @@ object Gaming extends CookieLang {
                   try {
                     //TODO: persist score !
                     DbScore.insert(game.id, user.id, score, solution)
-                    notifyRoom(roomName, "room.player.submittedSolution", Seq[String](user.name, score.toString))
+                    notifyRoom(roomName, SOLUTION_FOUND, Seq[String](user.name, score.toString))
                     Accepted("Solution accepted")
                   } finally {
                     lock.release()
@@ -201,10 +201,10 @@ object Gaming extends CookieLang {
           WsManager.room(roomName).map{r=>
             r.forgetPlayer(player)
           }
-          notifyRoom(roomName, "room.player.disconnected", Seq[String](player))
+          notifyRoom(roomName, USER_REFRESH, Seq[String](player))
           logMessage(roomName, player, "<DISCONNECTED>")
         }
-      notifyRoom(roomName, "room.player.connected", Seq[String](player))
+      notifyRoom(roomName, USER_REFRESH, Seq[String](player))
       // plug in the input and output ...
       (incomingPlayerChannel, wsPlayer.channel) //TODO: add user to the room and notify everybody in the room (new player)
   }
@@ -258,8 +258,8 @@ object Gaming extends CookieLang {
   }
 
   // send something to all players connected to a room
-  def notifyRoom(roomName:String, messageType:String, messageArgs:Seq[String] = null){
-    val msg = makeJsonMessage(messageType, messageArgs)
+  def notifyRoom(roomName:String, messageType:MessageID, messageArgs:Seq[String] = null){
+    val msg = makeJsonMessage(messageType.toString, messageArgs)
     logMessage(roomName, "ALL", "OUT-MSG:" + msg)
     WsManager.room(roomName).map{r=>
       r.sendAll(msg)

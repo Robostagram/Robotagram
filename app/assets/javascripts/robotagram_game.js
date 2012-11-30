@@ -635,6 +635,7 @@ var messageReceived = function(event){
     if (type === MSGID_USER_REFRESH){
         refreshScores();
     } else if(type === MSGID_SOLUTION_FOUND){
+        refreshScores();
     } else if(type === MSGID_TIME_UP){
     } else if(type === MSGID_NEW_ROUND){
     } else if(type === "player.kickout"){
