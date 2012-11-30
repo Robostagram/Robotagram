@@ -80,6 +80,7 @@ var currentGame = {
     playerName: undefined,
     duration: undefined,
     secondsLeft: undefined,
+    gamePhase: undefined,
     moves : new Array(),
     undoIndex : 0,
     gameSocket: null,
@@ -94,7 +95,8 @@ function init(gameParameters){
     currentGame.playerName = gameParameters.playerName;
     currentGame.duration = gameParameters.duration;
     currentGame.secondsLeft = gameParameters.secondsLeft;
-
+    currentGame.gamePhase = gameParameters.gamePhase;
+    
     // prepare the board
     //select the robot corresponding to the objective on page load
     selectRobotOfObjective();
@@ -598,6 +600,17 @@ function doServerRefreshLoop() {
 
 ///////////////////// WEB SOCKETS ////////////////////
 
+// WS CONSTANTS - MESSAGE IDs
+
+var PHASEID_GAME_1 = 1
+var PHASEID_GAME_2 = 2
+var PHASEID_SHOW_SOLUTION = 3
+
+var MSGID_USER_REFRESH = "USER_REFRESH" // used to notify joining and leaving players
+var MSGID_SOLUTION_FOUND = "SOLUTION_FOUND" // used to trigger game phase 2 or just update best move if already in phase 2
+var MSGID_TIME_UP = "TIME_UP" // time's up, round ends
+var MSGID_NEW_ROUND = "NEW_ROUND" // a new round starts with a new board
+
 function connectPlayer() {
     if (currentGame.gameSocket === null) {
         var urlBase = window.location.href.substr("http://".length);
@@ -617,15 +630,21 @@ function connectPlayer() {
 var messageReceived = function(event){
     console.debug("SERVER>" + event.data);
     var d = JSON.parse(event.data); // parse it
-
-    if(d.type === "player.kickout"){
+    
+    var type = d.type;
+    if (type === MSGID_USER_REFRESH){
+        refreshScores();
+    } else if(type === MSGID_SOLUTION_FOUND){
+    } else if(type === MSGID_TIME_UP){
+    } else if(type === MSGID_NEW_ROUND){
+    } else if(type === "player.kickout"){
         currentGame.gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
         currentGame.gameSocket.close();
         alert($_("game.kicked") + " " + d.args[0]);
         // redirect home ??
     }else{
-        // whenever we get a message, refresh the scores ...
-        refreshScores();
+        // unsupported message
+        console.log("unsupported message received with type " + type)
     }
 }
 
@@ -648,7 +667,7 @@ function refreshScores(){
 // - submission succeeds
 // - submission fails
 // - done submitting and got the reply (after success and failure)
-function sendScore(successCallback, failureCallback, completedCallback) {
+function submitSolution(successCallback, failureCallback, completedCallback) {
     // how to handle submission of a game that is finished ?
     // the server expects moves to be a list of strings, instead of a list of proper objects ...
     // jsonify it before, but this can be improved (do not handle as string on server side .. parse it via Json tools)
@@ -682,7 +701,7 @@ function sendScore(successCallback, failureCallback, completedCallback) {
   return {
     "init": init,
     "resetBoard": resetBoard,
-    "sendScore" : sendScore,
+    "submitSolution" : submitSolution,
     "currentState" : currentState //convenient to debug ... in console : JSON.stringify( robotagram.game.currentState())
   }
 })(jQuery);

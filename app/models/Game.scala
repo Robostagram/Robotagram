@@ -16,6 +16,8 @@ class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, v
   def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
 
   def percentageLeft():Int = ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt
+  
+  var gamePhase: Phase = GAME_1 // later init with 'lobby start' phase
 
   // returns a robot if there's one at the specified coordinates
   def getRobot(x: Int, y: Int): Robot = {

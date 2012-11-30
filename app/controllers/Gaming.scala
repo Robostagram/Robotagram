@@ -5,6 +5,7 @@ import models._
 import concurrent.Lock
 import play.api.libs.iteratee.Iteratee
 import controllers.Authentication.Secured
+import controllers.MessageID._
 import play.api.libs.json.Json.toJson
 import play.api.data.Form
 import play.api.libs.json._

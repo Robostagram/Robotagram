@@ -86,7 +86,7 @@
 
             <a id="improve" class="btn btn-small" onClick="$('#winModal').modal('hide');" >@Messages("game.solutionFound.improve")</a>
             <a id="retry" class="btn btn-small" onClick="robotagram.game.resetBoard(); $('#winModal').modal('hide');">@Messages("game.solutionFound.retry")</a>
-            <a id="sendScore" class="btn btn-large btn-success loading" onClick="robotagram.ui.showLoading();robotagram.game.sendScore(function(){$('#winModal').modal('hide');}, alert, robotagram.ui.hideLoading);" >@Messages("game.solutionFound.announce")</a>
+            <a id="submitSolution" class="btn btn-large btn-success loading" onClick="robotagram.ui.showLoading();robotagram.game.submitSolution(function(){$('#winModal').modal('hide');}, alert, robotagram.ui.hideLoading);" >@Messages("game.solutionFound.announce")</a>
         </div>
     </div>
 
@@ -107,13 +107,14 @@
 
 <script type="text/javascript">
   $(document).ready(function () {
-
+  
     var gameParameters = {
         roomId: "@room.name",
         gameId: "@game.id",
         playerName: "@user.name",
         duration: @game.durationInSeconds,
-        secondsLeft: @game.secondsLeft
+        secondsLeft: @game.secondsLeft,
+        gamePhase: @game.gamePhase.toString
     };
     // just for the fun ... jQUery animations can be disabled
     // might be useful for not powerful devices ... it still works but looks less nice ...
