@@ -58,6 +58,7 @@ create table games (
   -- FK
   room_id                   bigint not null,
   board_id                  bigint not null,
+  phase                     varchar(32) not null,
   FOREIGN KEY (room_id) REFERENCES rooms (id),
   FOREIGN KEY (board_id) REFERENCES boards (id)
 );

@@ -167,7 +167,6 @@ object Gaming extends CookieLang {
                 if (game.validate(moves.map(parseMovement))) {
                   lock.acquire()
                   try {
-                    //TODO: persist score !
                     DbScore.insert(game.id, user.id, score, solution)
                     notifyRoom(roomName, SOLUTION_FOUND, Seq[String](user.name, score.toString))
                     Accepted("Solution accepted")

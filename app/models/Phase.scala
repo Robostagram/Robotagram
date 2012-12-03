@@ -1,6 +1,8 @@
 package models
 
-sealed abstract class Phase(val intValue: Int)
-case object GAME_1 extends Phase(1)
-case object GAME_2 extends Phase(2)
-case object SHOW_SOLUTION extends Phase(3)
+object Phase extends Enumeration {
+  type Phase = Value
+  val GAME_1 = Value("GAME_1")
+  val GAME_2 = Value("GAME_2")
+  val SHOW_SOLUTION = Value("SHOW_SOLUTION")
+}
