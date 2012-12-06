@@ -3,11 +3,12 @@ package models
 import org.specs2.mutable.Specification
 import models._
 import models.Color._
+import models.Phase._
 import collection.immutable.HashSet
 import collection.immutable.HashMap
 import java.util.Date
 
-object MockGame extends Game("mockmiddle", DefaultBoard, Goal.randomGoal, new Date, new Date, new HashMap[Color, Robot]){}
+object MockGame extends Game("mockmiddle", DefaultBoard, Goal.randomGoal, new Date, new Date, new HashMap[Color, Robot], GAME_1){}
 
 class TestRobotPositionGeneration extends Specification{
 
