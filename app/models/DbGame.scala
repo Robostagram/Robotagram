@@ -36,26 +36,33 @@ object DbGame{
     val startDate = new Date(originalTimeStamp)
     val endDate = new Date (originalTimeStamp + 1000 * durationInSeconds)
 
-    val goal_color = goal.color.toString
-    val goal_symbol = goal.symbol.toString
-
     val board_id = board.id
 
-    val robot_blue_x = robots.get(Color.Blue).get.posX
-    val robot_blue_y = robots.get(Color.Blue).get.posY
-
-    val robot_red_x = robots.get(Color.Red).get.posX
-    val robot_red_y = robots.get(Color.Red).get.posY
-
-    val robot_green_x = robots.get(Color.Green).get.posX
-    val robot_green_y = robots.get(Color.Green).get.posY
-
-    val robot_yellow_x = robots.get(Color.Yellow).get.posX
-    val robot_yellow_y = robots.get(Color.Yellow).get.posY
-
-    new DbGame( uuid.toString, startDate, endDate,goal_symbol, goal_color, robot_blue_x, robot_blue_y, robot_red_x, robot_red_y, robot_green_x, robot_green_y, robot_yellow_x, robot_yellow_y,roomId, board_id, gamePhase.toString)
+    val (col, sym, blueX, blueY, redX, redY, greenX, greenY, yellowX, yellowY) = dbForm(goal, robots)
+    
+    new DbGame( uuid.toString, startDate, endDate, sym, col, blueX, blueY, redX, redY, greenX, greenY, yellowX, yellowY, roomId, board_id, gamePhase.toString)
   }
-
+  
+  def fromGame(roomId: Long, game: Game): DbGame = {
+    val (col, sym, blueX, blueY, redX, redY, greenX, greenY, yellowX, yellowY) = dbForm(game.goal, game.robots)
+    new DbGame(game.id, game.startDate, game.endDate, sym, col, blueX, blueY, redX, redY, greenX, greenY, yellowX, yellowY, roomId, game.board.id, game.gamePhase.toString)    
+  } 
+  
+  private def dbForm(goal: Goal, robots: Map[Color, Robot]): (String, String, Int, Int, Int, Int, Int, Int, Int, Int) = {
+    (
+        goal.color.toString,
+        goal.symbol.toString,
+        robots.get(Color.Blue).get.posX,
+        robots.get(Color.Blue).get.posY,
+        robots.get(Color.Red).get.posX,
+        robots.get(Color.Red).get.posY,
+        robots.get(Color.Green).get.posX,
+        robots.get(Color.Green).get.posY,
+        robots.get(Color.Yellow).get.posX,
+        robots.get(Color.Yellow).get.posY
+    )
+  }
+  
   // -- Parsers
 
   /**
@@ -134,8 +141,27 @@ object DbGame{
       ).as(DbGame.fullRow.singleOpt)
     }
   }
+  
+  def updatePhase(game: DbGame): Boolean = {
+    DB.withConnection { implicit connection =>
+      val res = SQL(
+        """
+           UPDATE games
+           SET phase = {phase}, created_on = {created_on}, valid_until = {valid_until}
+           WHERE id = {id}
+        """
+      ).on(
+        'phase -> game.phase,
+        'created_on -> game.created_on,
+        'valid_until -> game.valid_until,
+        'id -> game.id
+      ).executeUpdate()
 
-  def insertOrUpdateGame(game: DbGame) {
+      res > 0 // true if modified something . false if not
+    }
+  }
+
+  def insertGame(game: DbGame) {
     //create(game)
     DB.withConnection { implicit connection =>
     SQL(
@@ -191,7 +217,7 @@ object DbGame{
         .getOrElse{
         // what we should insert
         val game = creationCallBack.apply()
-        insertOrUpdateGame(game)
+        insertGame(game)
         game
       }
     }

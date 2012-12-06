@@ -79,7 +79,7 @@ class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, v
     case head :: tail => validate(move(robotss, head), tail)
   }
 
-  def withPhase(roomId: Long, gamePhase: Phase): Game = {
+  def withPhase(gamePhase: Phase): Game = {
     if (this.gamePhase == gamePhase) this
     else {
       val duration = gamePhase match {
@@ -87,12 +87,13 @@ class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, v
         case GAME_2 => Game.DEFAULT_GAME_2_DURATION
         case SHOW_SOLUTION => Game.DEFAULT_SHOW_SOL_DURATION
       }
-      val game = DbGame.prepareGameToStore(roomId, duration, this.board, this.goal, this.robots, gamePhase)
-      DbGame.insertOrUpdateGame(game)
-      Game.fromDb(game)
+      val originalTimeStamp = System.currentTimeMillis()
+      val startDate = new Date(originalTimeStamp)
+      val endDate = new Date (originalTimeStamp + 1000 * duration)
+      new Game(this.id, this.board, this.goal, startDate, endDate, this.robots, gamePhase)
     }
   }
-
+  
 }
 
 object Game {

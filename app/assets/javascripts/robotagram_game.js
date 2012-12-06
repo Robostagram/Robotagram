@@ -548,7 +548,7 @@ function refreshProgressBar(){
         .removeClass("progress-warning")
         .removeClass("progress-danger");
 
-    if(percentLeft < 10) {
+    if(percentLeft < 10 || currentGame.gamePhase == PHASEID_GAME_2) {
         $progressBarContainer.addClass("progress-danger"); // red
     }
     else if(percentLeft < 25){
@@ -570,21 +570,25 @@ function refreshTimer(){
     $timeLeft.text(Math.ceil(currentGame.secondsLeft));
 }
 
-function doServerRefreshLoop() {
+function triggerTimeAttack(){
+    var $mainContainer = $("#container");
+    $mainContainer.prepend('<div class="alert alert-danger" data-dismiss="alert"><a title="close" class="close">&times;</a>' + $_("game.solutionfound") + "</div>");
+}
+
+function serverRefresh(continuation) {
+    console.log("syncing time with server");
     $.ajax({
         url: jsRoutes.controllers.Gaming.gameStatus(currentGame.roomId, currentGame.gameId).url,
         success:function (data) {
             // resync the time left
             currentGame.secondsLeft = data.game.timeLeft;
+            currentGame.duration = data.game.duration;
             if (data.game.timeLeft <= 0) {
                 notifyGameTimeUp();
             }
             else {
-                if(currentGame.gameIsOn){
-                    // refresh at the end of the time left
-                    // close refresh near the end ... but not more often than SERVER_POLLING_REPEAT_TIME_MIN
-                    var refreshTime = Math.max( (currentGame.secondsLeft * 1000) / 2, SERVER_POLLING_REPEAT_TIME_MIN);
-                    setTimeout(doServerRefreshLoop, refreshTime);
+                if(continuation) {
+                    continuation();
                 }
             }
         },
@@ -595,6 +599,19 @@ function doServerRefreshLoop() {
             }
         }
     });
+
+}
+
+function doServerRefreshLoop() {
+    function continuation() {
+        if(currentGame.gameIsOn){
+            // refresh at the end of the time left
+            // close refresh near the end ... but not more often than SERVER_POLLING_REPEAT_TIME_MIN
+            var refreshTime = Math.max( (currentGame.secondsLeft * 1000) / 2, SERVER_POLLING_REPEAT_TIME_MIN);
+            setTimeout(doServerRefreshLoop, refreshTime);
+        }
+    }
+    serverRefresh(continuation)
 }
 
 
@@ -602,9 +619,9 @@ function doServerRefreshLoop() {
 
 // WS CONSTANTS - MESSAGE IDs
 
-var PHASEID_GAME_1 = 1
-var PHASEID_GAME_2 = 2
-var PHASEID_SHOW_SOLUTION = 3
+var PHASEID_GAME_1 = "GAME_1"
+var PHASEID_GAME_2 = "GAME_2"
+var PHASEID_SHOW_SOLUTION = "SHOW_SOLUTION"
 
 var MSGID_USER_REFRESH = "USER_REFRESH" // used to notify joining and leaving players
 var MSGID_SOLUTION_FOUND = "SOLUTION_FOUND" // used to trigger game phase 2 or just update best move if already in phase 2
@@ -633,11 +650,28 @@ var messageReceived = function(event){
     
     var type = d.type;
     if (type === MSGID_USER_REFRESH){
+        console.log("in phase " + currentGame.gamePhase + " users changed");
         refreshScores();
     } else if(type === MSGID_SOLUTION_FOUND){
+        if(currentGame.gamePhase == PHASEID_GAME_1){
+            currentGame.gamePhase = PHASEID_GAME_2;
+            triggerTimeAttack();
+            console.log("entered phase " + currentGame.gamePhase);
+        }
+        console.log("new best solution found");
+        serverRefresh();
         refreshScores();
     } else if(type === MSGID_TIME_UP){
+        // should switch to display solution screen, merge with refresh loop
+        if(currentGame.gamePhase != PHASEID_SHOW_SOLUTION){
+            currentGame.gamePhase = PHASEID_SHOW_SOLUTION
+            console.log("entered phase " + currentGame.gamePhase);
+        } else {
+            console.log("wait what?");
+        }
     } else if(type === MSGID_NEW_ROUND){
+        // should propose to join new game, merge with refresh loop
+        console.log("new game ready");
     } else if(type === "player.kickout"){
         currentGame.gameIsOn = false; // not playing .. stop the refreshing and all the bazar ...
         currentGame.gameSocket.close();
