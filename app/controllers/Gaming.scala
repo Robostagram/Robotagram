@@ -169,14 +169,10 @@ object Gaming extends CookieLang {
                   lock.acquire()
                   try {
                     DbScore.insert(game.id, user.id, score, solution)
-                    if (game.gamePhase != GAME_2) {
-                      // switch to next phase
-                      val updatedGame = game.withPhase(GAME_2)
-                      val dbGame = DbGame.fromGame(dbRoom.id.get, updatedGame)
-                      if (!DbGame.updatePhase(dbGame)) {
-                        Logger.error("unable to update game with id " + dbGame.id + " in persistence")
-                      }
-                    }
+                    // switch to next game phase
+                    val phase2Game = game.withPhase(GAME_2)
+                    // start the new timer for phase 2 
+                    phase2Game.timer.start()
                     notifyRoom(roomName, SOLUTION_FOUND, Seq[String](user.name, score.toString))
                     Accepted("Solution accepted")
                   } finally {

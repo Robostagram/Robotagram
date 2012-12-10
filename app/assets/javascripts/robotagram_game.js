@@ -103,7 +103,7 @@ function init(gameParameters){
 
     // init the websocket stuff ...
     connectPlayer();
-    currentGame.gameIsOn = true;
+    currentGame.gameIsOn = currentGame.gamePhase != PHASEID_SHOW_SOLUTION;
 
     // when leaving the window, disconnect the user
     window.onbeforeunload = function() {
@@ -114,17 +114,21 @@ function init(gameParameters){
         // should probably ask confirmation to user ??
         return $_("game.leave.gameIsActive.confirm");
     };
+    
+    if(!currentGame.gameIsOn) {
+      notifyGameTimeUp();
+    } else {
+      // launch the client-site countdown (frequent updates)
+      doClientRefreshLoop();
+      // launch the server polling to resync timer and game status (less frequent)
+      doServerRefreshLoop();
 
-    // launch the client-site countdown (frequent updates)
-    doClientRefreshLoop();
-    // launch the server polling to resync timer and game status (less frequent)
-    doServerRefreshLoop();
+      // set up actions on game events (time up, solution found, move robot etc)
+      bindGameEventHandlers();
 
-    // set up actions on game events (time up, solution found, move robot etc)
-    bindGameEventHandlers();
-
-    // make keyboard and mouse trigger the events ...
-    setUpGameControlHandlers();
+      // make keyboard and mouse trigger the events ...
+      setUpGameControlHandlers();
+    }
 }
 
 
@@ -575,6 +579,13 @@ function triggerTimeAttack(){
     $mainContainer.prepend('<div class="alert alert-danger" data-dismiss="alert"><a title="close" class="close">&times;</a>' + $_("game.solutionfound") + "</div>");
 }
 
+function activateNextGameLink() {
+    var $endOfGameModalFooter = $("#endOfGameModalFooter");
+    var $waitingForGame = $("#waitingForGame");
+    $endOfGameModalFooter.remove($waitingForGame);
+    $endOfGameModalFooter.append('<a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(room.name)" >@Messages("game.endOfGame.joinNext")</a>');
+}
+
 function serverRefresh(continuation) {
     console.log("syncing time with server");
     $.ajax({
@@ -583,10 +594,7 @@ function serverRefresh(continuation) {
             // resync the time left
             currentGame.secondsLeft = data.game.timeLeft;
             currentGame.duration = data.game.duration;
-            if (data.game.timeLeft <= 0) {
-                notifyGameTimeUp();
-            }
-            else {
+            if (data.game.timeLeft > 0) {
                 if(continuation) {
                     continuation();
                 }
@@ -666,8 +674,10 @@ var messageReceived = function(event){
         if(currentGame.gamePhase != PHASEID_SHOW_SOLUTION){
             currentGame.gamePhase = PHASEID_SHOW_SOLUTION
             console.log("entered phase " + currentGame.gamePhase);
+            notifyGameTimeUp();
         } else {
-            console.log("wait what?");
+            activateNextGameLink();
+            notifyGameTimeUp();
         }
     } else if(type === MSGID_NEW_ROUND){
         // should propose to join new game, merge with refresh loop

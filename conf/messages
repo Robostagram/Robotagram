@@ -109,6 +109,7 @@ game.endOfGame.title=Time is over !
 game.endOfGame.details=Another game is starting now ...
 game.endOfGame.giveup=Give up
 game.endOfGame.joinNext=Join the next game !
+game.endOfGame.waiting=Waiting for the next to start...
 
 # Already in the same room in another window
 alreadyIn.title=Already in this room

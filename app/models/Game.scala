@@ -7,16 +7,37 @@ import collection.immutable.HashMap
 import java.util.UUID
 import scala._
 import java.util.{Date,Random}
+import play.api.Logger
+import controllers.Gaming
+import controllers.MessageID.TIME_UP
 
-class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, val endDate:Date, val robots:Map[Color, Robot], val gamePhase: Phase){
+
+class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val startDate:Date, val endDate:Date, val robots:Map[Color, Robot], val gamePhase: Phase){
+  
   private val endTime:Long = endDate.getTime;
+  
   val durationInSeconds = ((endDate.getTime - startDate.getTime)/1000.0).toInt
 
   def isDone:Boolean = System.currentTimeMillis() > endTime
+  
+  var obsolete: Boolean = false
 
   def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
 
   def percentageLeft():Int = ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt
+  
+  private def done {
+    if (gamePhase != SHOW_SOLUTION) {
+      // switch to next game phase unless already at the end of the cycle
+      val endedGame = withPhase(SHOW_SOLUTION)
+      endedGame.timer.start()
+    }
+    // announce game dead to the rooms
+	Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, Seq())
+  }
+  
+  // game init
+  val timer = new Thread(new TimerThread(roomId + "_" + id + "_" + gamePhase, _ => !isDone, _ => obsolete, _ => done))
   
   // returns a robot if there's one at the specified coordinates
   def getRobot(x: Int, y: Int): Robot = {
@@ -90,7 +111,14 @@ class Game(val id:String, val board:Board, val goal: Goal, val startDate:Date, v
       val originalTimeStamp = System.currentTimeMillis()
       val startDate = new Date(originalTimeStamp)
       val endDate = new Date (originalTimeStamp + 1000 * duration)
-      new Game(this.id, this.board, this.goal, startDate, endDate, this.robots, gamePhase)
+      val updatedGame = new Game(this.id, this.roomId, this.board, this.goal, startDate, endDate, this.robots, gamePhase)
+      val dbGame = DbGame.fromGame(roomId, updatedGame)
+      if (!DbGame.updatePhase(dbGame)) {
+        Logger.error("unable to update game with id " + dbGame.id + " in persistence")
+      } else {
+        obsolete = true
+      }
+      updatedGame
     }
   }
   
@@ -115,25 +143,30 @@ object Game {
     robots += ((Color.Green, new Robot(Color.Green, dbGame.robot_green_x, dbGame.robot_green_y)))
     robots += ((Color.Yellow, new Robot(Color.Yellow, dbGame.robot_yellow_x, dbGame.robot_yellow_y)))
 
-    new Game(dbGame.id, board, goal, dbGame.created_on, dbGame.valid_until, robots, Phase.withName(dbGame.phase))
+    new Game(dbGame.id, dbGame.room_id, board, goal, dbGame.created_on, dbGame.valid_until, robots, Phase.withName(dbGame.phase))
   }
 
-  val DEFAULT_GAME_1_DURATION = 180
-  val DEFAULT_GAME_2_DURATION = 60
-  val DEFAULT_SHOW_SOL_DURATION = 60
+  val DEFAULT_GAME_1_DURATION = 30 //180
+  val DEFAULT_GAME_2_DURATION = 10 //60
+  val DEFAULT_SHOW_SOL_DURATION = 10 // as nothing to see yet
   val NB_BOARDS_IN_DB = 6 // booooh - make it dynamic when/if we allow to create boards
 
   // get the active game in the room or create a random one
   def getActiveInRoomOrCreateRandom(roomId:Long) : Game = {
-    val gameFromDb = DbGame.getActiveInRoomOrCreate(roomId, () => {
-      val idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
-      val theBoard = Board.loadById(idOfBoardToLoad).get
-      val theGoal = Goal.randomGoal()
-      val theRobots = Board.randomRobots(theBoard)
-      DbGame.prepareGameToStore(roomId, DEFAULT_GAME_1_DURATION, theBoard, theGoal, theRobots, GAME_1)
-    })
-    fromDb(gameFromDb)
+    DbGame.getActiveDbGame(roomId) match {
+      case Some(dbGame) => fromDb(dbGame)
+      case None => {
+        val idOfBoardToLoad = new Random().nextInt(NB_BOARDS_IN_DB) + 1
+        val theBoard = Board.loadById(idOfBoardToLoad).get
+        val theGoal = Goal.randomGoal()
+        val theRobots = Board.randomRobots(theBoard)
+        val dbGame = DbGame.prepareGameToStore(roomId, DEFAULT_GAME_1_DURATION, theBoard, theGoal, theRobots, GAME_1)
+        DbGame.insertGame(dbGame)
+        val game = fromDb(dbGame)
+        game.timer.start()
+        game
+      }
+    }
   }
 
 }
-

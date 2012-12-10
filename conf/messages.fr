@@ -106,6 +106,7 @@ game.endOfGame.title=Le temps est écoulé!
 game.endOfGame.details=Une autre partie commence...
 game.endOfGame.giveup=Abandonner
 game.endOfGame.joinNext=Rejoindre la partie suivante!
+game.endOfGame.waiting=En attente de démarrage de la partie suivante...
 
 # Already in the same room in another window
 alreadyIn.title=Déjà dans cette salle

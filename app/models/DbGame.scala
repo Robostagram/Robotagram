@@ -201,7 +201,7 @@ object DbGame{
   }
 
   // return the active game in a room or create it using the construction method provided
-  def getActiveInRoomOrCreate(roomId:Long, creationCallBack: () => DbGame) : DbGame = {
+  def getActiveDbGame(roomId:Long) : Option[DbGame] = {
     DB.withTransaction { implicit conn =>
     // if there is an active game
       SQL("""
@@ -214,12 +214,6 @@ object DbGame{
         'roomId -> roomId,
         'now -> new Date()
       ).as(DbGame.fullRow.singleOpt)
-        .getOrElse{
-        // what we should insert
-        val game = creationCallBack.apply()
-        insertGame(game)
-        game
-      }
     }
   }
 

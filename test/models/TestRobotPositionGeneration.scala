@@ -8,7 +8,7 @@ import collection.immutable.HashSet
 import collection.immutable.HashMap
 import java.util.Date
 
-object MockGame extends Game("mockmiddle", DefaultBoard, Goal.randomGoal, new Date, new Date, new HashMap[Color, Robot], GAME_1){}
+object MockGame extends Game("mockmiddle", 0l, DefaultBoard, Goal.randomGoal, new Date, new Date, new HashMap[Color, Robot], GAME_1){}
 
 class TestRobotPositionGeneration extends Specification{
 

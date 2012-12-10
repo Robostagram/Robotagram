@@ -97,10 +97,10 @@
         <div class="modal-body" align="center">
             <p>@Messages("game.endOfGame.details")</p>
         </div>
-        <div class="modal-footer">
+        <div id="endOfGameModalFooter" class="modal-footer">
             <a href="@routes.Home.index" class="btn">@Messages("game.endOfGame.giveup")</a>
             @* "current" is the url for the current game in this room *@
-            <a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(room.name)" >@Messages("game.endOfGame.joinNext")</a>
+            <p id="waitingForGame">@Messages("game.endOfGame.waiting")</p>
         </div>
     </div>
 </div>
