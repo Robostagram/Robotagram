@@ -96,6 +96,8 @@ function init(gameParameters){
     currentGame.duration = gameParameters.duration;
     currentGame.secondsLeft = gameParameters.secondsLeft;
     currentGame.gamePhase = gameParameters.gamePhase;
+
+    currentGame.gameIsOn = currentGame.gamePhase != PHASEID_SHOW_SOLUTION;
     
     // prepare the board
     //select the robot corresponding to the objective on page load
@@ -103,7 +105,6 @@ function init(gameParameters){
 
     // init the websocket stuff ...
     connectPlayer();
-    currentGame.gameIsOn = currentGame.gamePhase != PHASEID_SHOW_SOLUTION;
 
     // when leaving the window, disconnect the user
     window.onbeforeunload = function() {
@@ -115,19 +116,17 @@ function init(gameParameters){
         return $_("game.leave.gameIsActive.confirm");
     };
     
-    if(!currentGame.gameIsOn) {
-      notifyGameTimeUp();
-    } else {
-      // launch the client-site countdown (frequent updates)
-      doClientRefreshLoop();
-      // launch the server polling to resync timer and game status (less frequent)
-      doServerRefreshLoop();
+    if(currentGame.gameIsOn) {
+        // launch the client-site countdown (frequent updates)
+        doClientRefreshLoop();
+        // launch the server polling to resync timer and game status (less frequent)
+        doServerRefreshLoop();
 
-      // set up actions on game events (time up, solution found, move robot etc)
-      bindGameEventHandlers();
+        // set up actions on game events (time up, solution found, move robot etc)
+        bindGameEventHandlers();
 
-      // make keyboard and mouse trigger the events ...
-      setUpGameControlHandlers();
+        // make keyboard and mouse trigger the events ...
+        setUpGameControlHandlers();
     }
 }
 
