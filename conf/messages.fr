@@ -102,10 +102,9 @@ game.solutionFound.announce=Annoncer ma solution
 game.solutionFound.improve=Améliorer ma solution
 game.solutionFound.retry=Recommencer depuis le début
 
-game.endOfGame.title=Le temps est écoulé!
+game.endOfGame.title=Le temps est écoulé !
 game.endOfGame.details=Une autre partie commence...
 game.endOfGame.giveup=Abandonner
-game.endOfGame.joinNext=Rejoindre la partie suivante!
 game.endOfGame.waiting=En attente de démarrage de la partie suivante...
 
 # Already in the same room in another window

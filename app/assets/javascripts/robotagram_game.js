@@ -582,8 +582,8 @@ function triggerTimeAttack(){
 function activateNextGameLink() {
     var $endOfGameModalFooter = $("#endOfGameModalFooter");
     var $waitingForGame = $("#waitingForGame");
-    $endOfGameModalFooter.remove($waitingForGame);
-    $endOfGameModalFooter.append('<a id="joinNextGame" class="btn btn-success" href="@routes.Gaming.currentGame(room.name)" >@Messages("game.endOfGame.joinNext")</a>');
+    $waitingForGame.remove();
+    $endOfGameModalFooter.append('<a id="joinNextGame" class="btn btn-success" href="' + jsRoutes.controllers.Gaming.currentGame(currentGame.roomId).url + '" >' + $_("game.nextgame") + '</a>');
 }
 
 function serverRefresh(continuation) {
