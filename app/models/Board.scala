@@ -49,8 +49,8 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
   // look for a goal by attributs (color and symbol). returns its coordinates or (-1, -1) if none found
   def findGoalPosition(goal: Goal): (Int, Int) = {
     if(goal != null) {
-      for (i <- 0 until width) {
-        for (j <- 0 until height) {
+      for (i <- 0 until height) {
+        for (j <- 0 until width) {
           val cGoal = cells(i)(j).goal
           if(cGoal != null) {
             if(cGoal.color == goal.color && cGoal.symbol == goal.symbol) {
@@ -68,8 +68,8 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
   }
 
   private def debugDump() {
-    for (i <- 0 until width) {
-      for (j <- 0 until height) {
+    for (i <- 0 until height) {
+      for (j <- 0 until width) {
         val cell = cells(i)(j)
         print(if (cell.wallTop) "1" else "0")
         print(if (cell.wallRight) "1" else "0")
@@ -83,9 +83,9 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 
   def rotate90deg(): Board = {
     val newBoard = new Board(id, name, height, width)
-    for (i <- 0 until width) {
-      for (j <- 0 until height) {
-        newBoard.cells(j)(width - i - 1) = cells(i)(j).rotate90deg()
+    for (i <- 0 until height) {
+      for (j <- 0 until width) {
+        newBoard.cells(j)(height - i - 1) = cells(i)(j).rotate90deg()
       }
     }
     newBoard
