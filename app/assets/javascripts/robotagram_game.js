@@ -127,6 +127,10 @@ function init(gameParameters){
 
         // make keyboard and mouse trigger the events ...
         setUpGameControlHandlers();
+        
+        if(currentGame.gamePhase == PHASEID_GAME_2) {
+            triggerTimeAttack();
+        }
     } else {
         notifyGameTimeUp();
     }
