@@ -116,17 +116,19 @@ function init(gameParameters){
         return $_("game.leave.gameIsActive.confirm");
     };
     
+    // set up actions on game events (time up, solution found, move robot etc)
+    bindGameEventHandlers();
+    
     if(currentGame.gameIsOn) {
         // launch the client-site countdown (frequent updates)
         doClientRefreshLoop();
         // launch the server polling to resync timer and game status (less frequent)
         doServerRefreshLoop();
 
-        // set up actions on game events (time up, solution found, move robot etc)
-        bindGameEventHandlers();
-
         // make keyboard and mouse trigger the events ...
         setUpGameControlHandlers();
+    } else {
+        notifyGameTimeUp();
     }
 }
 
@@ -139,8 +141,7 @@ function bindGameEventHandlers(){
     });
 
     // GAME events
-    // do it only once
-    $window.one(EVENT_GAME_TIMEUP, function(e){
+    $window.on(EVENT_GAME_TIMEUP, function(e){
         //console.debug(e.type, e.namespace);
         currentGame.gameIsOn = false; // it's ok to leave the page, now
         $("#endOfGameModal").modal('show');
