@@ -22,29 +22,29 @@ class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val
   
   val durationInSeconds = ((endDate.getTime - startDate.getTime)/1000.0).toInt
 
-  def isDone:Boolean = System.currentTimeMillis() > endTime
+  def isDone(): Boolean = System.currentTimeMillis() > endTime
   
   def secondsLeft(): Int = ((endTime - System.currentTimeMillis())/1000.0).toInt
 
   def percentageLeft():Int = ((endTime - System.currentTimeMillis()).toDouble / (durationInSeconds*10).toDouble).round.toInt
   
-  private def done {
+  private def done() {
     if (gamePhase != SHOW_SOLUTION) {
       // switch to next game phase unless already at the end of the cycle
-      val endedGame = withPhase(SHOW_SOLUTION)
+      val endedGame = toPhase(SHOW_SOLUTION)
       endedGame.timer.start()
     }
     // announce game dead to the rooms
-	  Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, Seq())
+    Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, Seq())
   }
   
   // game init
   val timer = new Thread(new TimerThread(roomId + "_" + id + "_" + gamePhase, _ => !isDone, _ => !Game.activeGames.contains((id, roomId, gamePhase)), _ => done))
   
   // returns a robot if there's one at the specified coordinates
-  def getRobot(x: Int, y: Int): Robot = {
+  def getRobot(col: Int, row: Int): Robot = {
     for(r: Robot <- robots.values) {
-      if(r.posX == x && r.posY == y) {
+      if(r.col == col && r.row == row) {
         return r
       }
     }
@@ -56,26 +56,32 @@ class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val
   private def move(mutatingRobots: Map[Color, Robot], movement: Movement): Map[Color, Robot] = {
     var robot = mutatingRobots.getOrElse(movement.color, null)
     if(robot == null) {
+      Logger.info("invalid move attempted, expected color :"
+            + robot.color + " was :" + movement.color)
       return robots
     } else {
-      if(robot.posX != movement.x || robot.posY != movement.y) {
-        // TODO log invalid move?
+      //println("moving: " + movement.color)
+      if(robot.col != movement.col || robot.row != movement.row) {
+        Logger.info("invalid move attempted, expected :"
+            + robot.color + ", (" + robot.col + ", " + robot.row + "),"
+            + " was :" + movement.color + ", (" + movement.col + ", " + movement.row + ")")
         return robots
       }
       val diffs = movement.direction match {
-        case Direction.Up => (-1,0)
-        case Direction.Left => (0,-1)
-        case Direction.Down => (1,0)
-        case Direction.Right => (0,1)
+        case Direction.Up => (0,-1)
+        case Direction.Left => (-1,0)
+        case Direction.Down => (0,1)
+        case Direction.Right => (1,0)
       }
       val xDiff = diffs._1
       val yDiff = diffs._2
-      var newX = robot.posX+xDiff
-      var newY = robot.posY+yDiff
-      while(!(board.cells(robot.posX)(robot.posY).hasWall(movement.direction) || mutatingRobots.values.foldLeft(false)((res, rob) => res || (rob.posX == newX && rob.posY == newY)))) {
+      var newX = robot.col+xDiff
+      var newY = robot.row+yDiff
+      while(!(board.getCell(robot.col, robot.row).hasWall(movement.direction) || mutatingRobots.values.foldLeft(false)((res, rob) => res || (rob.col == newX && rob.row == newY)))) {
+        //println(newX + ", " + newY)
         robot = new Robot(movement.color, newX, newY)
-        newX = robot.posX+xDiff
-        newY = robot.posY+yDiff
+        newX = robot.col+xDiff
+        newY = robot.row+yDiff
       }
       mutatingRobots.updated(movement.color, robot)
     }
@@ -97,12 +103,18 @@ class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val
                 }
                 goalPosition != (-1, -1) &&
                   robot != null &&
-                  goalPosition._1 == robot.posX &&
-                  goalPosition._2 == robot.posY
+                  goalPosition._1 == robot.col &&
+                  goalPosition._2 == robot.row
     case head :: tail => validate(move(robotss, head), tail)
   }
 
-  def withPhase(gamePhase: Phase): Game = {
+  /**
+   * If the game phase parameter is the same as the current game phase, simply returns the same game.
+   * If the game phase is different, creates a new game, identical to this but for the start and
+   * end dates and the game phase. The new game is started immediately and persisted and activated.
+   * The old game is deactivated.
+   */
+  def toPhase(gamePhase: Phase): Game = {
     if (this.gamePhase == gamePhase) this
     else {
       val duration = gamePhase match {

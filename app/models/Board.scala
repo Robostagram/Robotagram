@@ -9,52 +9,51 @@ import scala.util.Random
 
 class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 
-  val cells: Array[Array[Cell]] = Array.fill(height, width) {
+  private val cells: Array[Array[Cell]] = Array.fill(height, width) {
     EmptyCell
   }
-
-  def setTop(x: Int, y: Int, wall: Boolean = true) {
-    applyChange(x, y, c => c.withTop(wall))
-    if (y > 0) applyChange(x, y - 1, c => c.withBottom(wall))
+  
+  def setTop(col: Int, row: Int, wall: Boolean = true) {
+    applyChange(col, row, c => c.withTop(wall))
+    if (row > 0) applyChange(col, row - 1, c => c.withBottom(wall))
   }
 
-  def setBottom(x: Int, y: Int, wall: Boolean = true) {
-    applyChange(x, y, c => c.withBottom(wall))
-    if (y < height - 1) applyChange(x, y + 1, c => c.withTop(wall))
+  def setBottom(col: Int, row: Int, wall: Boolean = true) {
+    applyChange(col, row, c => c.withBottom(wall))
+    if (row < height - 1) applyChange(col, row + 1, c => c.withTop(wall))
   }
 
-  def setRight(x: Int, y: Int, wall: Boolean = true) {
-    applyChange(x, y, c => c.withRight(wall))
-    if (x < width - 1) applyChange(x + 1, y, c => c.withLeft(wall))
+  def setRight(col: Int, row: Int, wall: Boolean = true) {
+    applyChange(col, row, c => c.withRight(wall))
+    if (col < width - 1) applyChange(col + 1, row, c => c.withLeft(wall))
   }
 
-  def setLeft(x: Int, y: Int, wall: Boolean = true) {
-    applyChange(x, y, c => c.withLeft(wall))
-    if (x > 0) applyChange(x - 1, y, c => c.withRight(wall))
+  def setLeft(col: Int, row: Int, wall: Boolean = true) {
+    applyChange(col, row, c => c.withLeft(wall))
+    if (col > 0) applyChange(col - 1, row, c => c.withRight(wall))
   }
 
-  def setGoal(x: Int, y: Int, goal: Goal) {
-    applyChange(x, y, c => c.withGoal(goal))
+  def setGoal(col: Int, row: Int, goal: Goal) {
+    applyChange(col, row, c => c.withGoal(goal))
   }
 
-  // pour pouvoir faire board(1,2)
-  def getCell(x: Int, y: Int): Cell = {
-    cells(y)(x)
+  def getCell(col: Int, row: Int): Cell = {
+    cells(row)(col)
   }
 
-  def setCell(x: Int, y: Int, cell: Cell) {
-    cells(y)(x) = cell
+  def setCell(col: Int, row: Int, cell: Cell) {
+    cells(row)(col) = cell
   }
   
-  // look for a goal by attributs (color and symbol). returns its coordinates or (-1, -1) if none found
+  // look for a goal by attributs (color and symbol). returns its coordinates (col, row) or (-1, -1) if none found
   def findGoalPosition(goal: Goal): (Int, Int) = {
     if(goal != null) {
-      for (i <- 0 until height) {
-        for (j <- 0 until width) {
-          val cGoal = cells(i)(j).goal
+      for (row <- 0 until height) {
+        for (col <- 0 until width) {
+          val cGoal = cells(row)(col).goal
           if(cGoal != null) {
             if(cGoal.color == goal.color && cGoal.symbol == goal.symbol) {
-              return (i, j)
+              return (col, row)
             }
           }
         }
@@ -63,14 +62,14 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
     (-1, -1)
   }
 
-  private def applyChange(x: Int, y: Int, map: Cell => Cell) {
-    setCell(x, y, map(getCell(x, y)))
+  private def applyChange(col: Int, row: Int, map: Cell => Cell) {
+    setCell(col, row, map(getCell(col, row)))
   }
 
   private def debugDump() {
-    for (i <- 0 until height) {
-      for (j <- 0 until width) {
-        val cell = cells(i)(j)
+    for (row <- 0 until height) {
+      for (col <- 0 until width) {
+        val cell = cells(row)(col)
         print(if (cell.wallTop) "1" else "0")
         print(if (cell.wallRight) "1" else "0")
         print(if (cell.wallBottom) "1" else "0")
@@ -83,9 +82,9 @@ class Board(val id : Long, val name : String, val width: Int, val height: Int) {
 
   def rotate90deg(): Board = {
     val newBoard = new Board(id, name, height, width)
-    for (i <- 0 until height) {
-      for (j <- 0 until width) {
-        newBoard.cells(j)(height - i - 1) = cells(i)(j).rotate90deg()
+    for (row <- 0 until height) {
+      for (col <- 0 until width) {
+        newBoard.cells(col)(height - row - 1) = cells(row)(col).rotate90deg()
       }
     }
     newBoard
@@ -232,31 +231,31 @@ object Board {
     val h = lines.length
     val w = lines(0).length
     val board = new Board(id, name, w, h)
-    var i = 0
+    var row = 0
     for (line <- lines) {
-      var j = 0
+      var col = 0
       for (char <- line.toCharArray) {
         char match {
-          case 'a' => board.cells(i)(j) = updateCell(board, i, j, true, false, false, false)
-          case 'b' => board.cells(i)(j) = updateCell(board, i, j, false, true, false, false)
-          case 'c' => board.cells(i)(j) = updateCell(board, i, j, false, false, true, false)
-          case 'd' => board.cells(i)(j) = updateCell(board, i, j, false, false, false, true)
-          case 'e' => board.cells(i)(j) = updateCell(board, i, j, true, true, false, false)
-          case 'f' => board.cells(i)(j) = updateCell(board, i, j, true, false, true, false)
-          case 'g' => board.cells(i)(j) = updateCell(board, i, j, true, false, false, true)
-          case 'h' => board.cells(i)(j) = updateCell(board, i, j, false, true, true, false)
-          case 'i' => board.cells(i)(j) = updateCell(board, i, j, false, true, false, true)
-          case 'j' => board.cells(i)(j) = updateCell(board, i, j, false, false, true, true)
-          case 'k' => board.cells(i)(j) = updateCell(board, i, j, true, true, true, false)
-          case 'l' => board.cells(i)(j) = updateCell(board, i, j, true, true, false, true)
-          case 'm' => board.cells(i)(j) = updateCell(board, i, j, true, false, true, true)
-          case 'n' => board.cells(i)(j) = updateCell(board, i, j, false, true, true, true)
-          case 'o' => board.cells(i)(j) = updateCell(board, i, j, true, true, true, true)
+          case 'a' => board.cells(row)(col) = updateCell(board, row, col, true, false, false, false)
+          case 'b' => board.cells(row)(col) = updateCell(board, row, col, false, true, false, false)
+          case 'c' => board.cells(row)(col) = updateCell(board, row, col, false, false, true, false)
+          case 'd' => board.cells(row)(col) = updateCell(board, row, col, false, false, false, true)
+          case 'e' => board.cells(row)(col) = updateCell(board, row, col, true, true, false, false)
+          case 'f' => board.cells(row)(col) = updateCell(board, row, col, true, false, true, false)
+          case 'g' => board.cells(row)(col) = updateCell(board, row, col, true, false, false, true)
+          case 'h' => board.cells(row)(col) = updateCell(board, row, col, false, true, true, false)
+          case 'i' => board.cells(row)(col) = updateCell(board, row, col, false, true, false, true)
+          case 'j' => board.cells(row)(col) = updateCell(board, row, col, false, false, true, true)
+          case 'k' => board.cells(row)(col) = updateCell(board, row, col, true, true, true, false)
+          case 'l' => board.cells(row)(col) = updateCell(board, row, col, true, true, false, true)
+          case 'm' => board.cells(row)(col) = updateCell(board, row, col, true, false, true, true)
+          case 'n' => board.cells(row)(col) = updateCell(board, row, col, false, true, true, true)
+          case 'o' => board.cells(row)(col) = updateCell(board, row, col, true, true, true, true)
           case _ => ()
         }
-        j += 1
+        col += 1
       }
-      i += 1
+      row += 1
     }
     for (line <- goals.split(END_OF_LINE)) {
       val elements = line.split(GOAL_SEP)
@@ -268,18 +267,18 @@ object Board {
     board
   }
 
-  def updateCell(board: Board, i: Int, j: Int, top: Boolean, right: Boolean, bottom: Boolean, left: Boolean): Cell = {
+  def updateCell(board: Board, row: Int, col: Int, top: Boolean, right: Boolean, bottom: Boolean, left: Boolean): Cell = {
     val cell = new Cell(top, right, bottom, left, null)
-    updateUpAndLeft(board, cell, i, j)
+    updateUpAndLeft(board, cell, row, col)
     cell
   }
 
-  def updateUpAndLeft(board: Board, newCell: Cell, i: Int, j: Int) {
-    if (i > 0) {
-      board.cells(i - 1)(j) = board.cells(i - 1)(j).withBottom(newCell.wallTop)
+  def updateUpAndLeft(board: Board, newCell: Cell, row: Int, col: Int) {
+    if (row > 0) {
+      board.cells(row - 1)(col) = board.cells(row - 1)(col).withBottom(newCell.wallTop)
     }
-    if (j > 0) {
-      board.cells(i)(j - 1) = board.cells(i)(j - 1).withRight(newCell.wallLeft)
+    if (col > 0) {
+      board.cells(row)(col - 1) = board.cells(row)(col - 1).withRight(newCell.wallLeft)
     }
   }
 
@@ -289,12 +288,12 @@ object Board {
   def boardToString(board: Board): String = {
     val result = new StringBuilder()
     val goals = new ListBuffer[Tuple4[Int,Int,Color.Color ,Symbol.Symbol]]()
-    for (i <- 0 to board.cells.length -1){
-      val row = board.cells(i)
+    for (rowId <- 0 to board.cells.length -1){
+      val row = board.cells(rowId)
 
-      for (j <- 0 to board.cells(i).length-1){
-        val c = row(j)
-        val walls = (c.wallTop, c.wallRight, c.wallBottom, c.wallLeft)
+      for (colId <- 0 to board.cells(rowId).length-1){
+        val cell = row(colId)
+        val walls = (cell.wallTop, cell.wallRight, cell.wallBottom, cell.wallLeft)
         result.append(
           walls match{
             case (true, false, false, false) => 'a'
@@ -316,8 +315,8 @@ object Board {
           }
         )
 
-        if (c.goal != null){
-          goals.append((i, j, c.goal.color, c.goal.symbol))
+        if (cell.goal != null){
+          goals.append((rowId, colId, cell.goal.color, cell.goal.symbol))
         }
 
       }
@@ -329,8 +328,8 @@ object Board {
     // serialize the goals
     goals.foreach { goal =>
       goal match{
-        case (x, y, col, symb) => {
-          result.append(x + GOAL_SEP + y + GOAL_SEP + col.toString + GOAL_SEP + symb.toString)
+        case (col, row, color, symb) => {
+          result.append(col + GOAL_SEP + row + GOAL_SEP + color.toString + GOAL_SEP + symb.toString)
           result.append(SERIALIZE_END_OF_LINE)
         }
       }

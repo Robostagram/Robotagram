@@ -170,7 +170,7 @@ object Gaming extends CookieLang {
                   try {
                     DbScore.insert(game.id, user.id, score, solution)
                     // switch to next game phase
-                    val phase2Game = game.withPhase(GAME_2)
+                    val phase2Game = game.toPhase(GAME_2)
                     // start the new timer for phase 2 
                     phase2Game.timer.start()
                     notifyRoom(roomName, SOLUTION_FOUND, Seq[String](user.name, score.toString))
@@ -230,8 +230,8 @@ object Gaming extends CookieLang {
     if (matches) {
       try {
         new Movement(Color.withName(getString(jsonMovement, "robot")),
-                   (jsonMovement \ "originRow").as[Int],
                    (jsonMovement \ "originColumn").as[Int],
+                   (jsonMovement \ "originRow").as[Int],
                    Direction.withName(getString(jsonMovement, "direction")))
       } catch {
         case e: Exception =>

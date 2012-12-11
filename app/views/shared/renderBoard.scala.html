@@ -3,16 +3,16 @@
     @import scala.collection.immutable.Map
 
 
-    @getRobot(x: Int, y: Int) = @{
-        robots.values.find(r => r.posX == x && r.posY == y)
+    @getRobot(col: Int, row: Int) = @{
+        robots.values.find(r => r.col == col && r.row == row)
     }
 
 
 <table id="boardGame">
-    @for(x:Int <- 0 until board.cells.length) {
+    @for(row:Int <- 0 until board.height) {
     <tr>
-        @for(y:Int <- 0 until board.cells(x).length) {
-            @shared.cell(board.cells(x)(y), getRobot(x, y), goal, x, y)
+        @for(col:Int <- 0 until board.width) {
+            @shared.cell(board.getCell(col, row), getRobot(col, row), goal, col, row)
         }
     </tr>
     }

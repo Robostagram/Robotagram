@@ -14,18 +14,18 @@ class TestRobotPositionGeneration extends Specification{
 
    "generate random robots list  produce non center postion" in {
       for(robot <- MockGame.robots.values){
-         if(robot.posX==7){ robot.posY must_!= 7}
-         if(robot.posX==7){ robot.posY must_!= 8}
-         if(robot.posX==8){ robot.posY must_!= 7}
-         if(robot.posX==8){ robot.posY must_!= 8}
+         if(robot.col==7){ robot.row must_!= 7}
+         if(robot.col==7){ robot.row must_!= 8}
+         if(robot.col==8){ robot.row must_!= 7}
+         if(robot.col==8){ robot.row must_!= 8}
       }
     }
 
     "produce unique position for each robot" in {
       var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
       for(robot <- MockGame.robots.values){
-        setPos.contains((robot.posX,robot.posY)) must beFalse
-        setPos+=((robot.posX,robot.posY))
+        setPos.contains((robot.col,robot.row)) must beFalse
+        setPos+=((robot.col,robot.row))
       }
     }
 

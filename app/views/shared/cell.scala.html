@@ -1,4 +1,4 @@
-@(c: Cell, robot: Option[Robot] = None, objective: Option[Goal] = None, x: Int, y: Int)
+@(c: Cell, robot: Option[Robot] = None, objective: Option[Goal] = None, col: Int, row: Int)
 
 @import models._
 
@@ -20,7 +20,7 @@
             .getOrElse("")
 }
 
-<td class="cell @renderWalls(c)" data-row="@x" data-column="@y" >
+<td class="cell @renderWalls(c)" data-row="@row" data-column="@col" >
 <div class="cell" >
 
     @if(c.goal != null && robot.isEmpty) {<div @renderIdForGoalObjective(c.goal, objective) class="symbol @renderGoalColor() @renderSymbol()"/>}

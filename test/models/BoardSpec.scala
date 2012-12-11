@@ -18,13 +18,9 @@ trait EmptySquareBoard extends Scope {
 class EmptyBoardSpec extends Specification {
   "An empty board of size n * m" should {
     "have n lines consisting of m empty cells" in new EmptyBoard {
-      board.height must be_==(height)
-      board.width must be_==(width)
-      board.cells.length must be_==(height)
-      board.cells(0).length must be_==(width)
-      for (row <- board.cells) {
-        for (cell <- row) {
-          cell must beEqualTo(EmptyCell)
+      for (col <- 0 until width) {
+        for (row <- 0 until height) {
+          board.getCell(col, row) must beEqualTo(EmptyCell)
         }
       }
     }
@@ -250,12 +246,12 @@ class EmptyBoardSpec extends Specification {
       board.findGoalPosition(goalR1) must be_==((-1,-1))
       board.findGoalPosition(goalB2) must be_==((-1,-1))
     }
-    "find (y,x) in board with goal set at (x,y)" in new EmptyBoard {
+    "find (x,y) in board with goal set at (x,y)" in new EmptyBoard {
       board.setGoal(xR1, yR1, goalR1)
-      board.findGoalPosition(goalR1) must be_==((yR1,xR1))
+      board.findGoalPosition(goalR1) must be_==((xR1,yR1))
       board.findGoalPosition(goalB2) must be_==((-1,-1))
       board.setGoal(xB2, yB2, goalB2)
-      board.findGoalPosition(goalB2) must be_==((yB2,xB2))
+      board.findGoalPosition(goalB2) must be_==((xB2,yB2))
     }
   }
   
@@ -276,8 +272,8 @@ class EmptyBoardSpec extends Specification {
       rotated.width must be_==(board.height)
       rotated.id must be_==(board.id)
       rotated.name must be_==(board.name)
-      rotated.findGoalPosition(goalR1) must be_==((4,7))
-      rotated.findGoalPosition(goalB2) must be_==((1,6))
+      rotated.findGoalPosition(goalR1) must be_==((7,4))
+      rotated.findGoalPosition(goalB2) must be_==((6,1))
     }
   }
   
@@ -301,10 +297,10 @@ class EmptyBoardSpec extends Specification {
       board.setGoal(4, 5, goalG3)
       board.setGoal(1, 6, goalY4)
       val shuffledBoard = board.transformQuarters((1,2,3))
-      shuffledBoard.findGoalPosition(goalR1) must be_==((1,2))
-      shuffledBoard.findGoalPosition(goalB2) must be_==((0,5))
-      shuffledBoard.findGoalPosition(goalG3) must be_==((5,4))
-      shuffledBoard.findGoalPosition(goalY4) must be_==((6,1))
+      shuffledBoard.findGoalPosition(goalR1) must be_==((2,1))
+      shuffledBoard.findGoalPosition(goalB2) must be_==((5,0))
+      shuffledBoard.findGoalPosition(goalG3) must be_==((4,5))
+      shuffledBoard.findGoalPosition(goalY4) must be_==((1,6))
     }
     
     "produce a board with NE and SW mirrored when x,y,z = 3,2,1" in new EmptySquareBoard {
@@ -313,10 +309,10 @@ class EmptyBoardSpec extends Specification {
       board.setGoal(4, 5, goalG3)
       board.setGoal(1, 6, goalY4)
       val shuffledBoard = board.transformQuarters((3,2,1))
-      shuffledBoard.findGoalPosition(goalR1) must be_==((1,2))
-      shuffledBoard.findGoalPosition(goalB2) must be_==((7,2))
-      shuffledBoard.findGoalPosition(goalG3) must be_==((5,4))
-      shuffledBoard.findGoalPosition(goalY4) must be_==((1,6))
+      shuffledBoard.findGoalPosition(goalR1) must be_==((2,1))
+      shuffledBoard.findGoalPosition(goalB2) must be_==((2,7))
+      shuffledBoard.findGoalPosition(goalG3) must be_==((4,5))
+      shuffledBoard.findGoalPosition(goalY4) must be_==((6,1))
     }
   }
   

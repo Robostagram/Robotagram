@@ -52,14 +52,14 @@ object DbGame{
     (
         goal.color.toString,
         goal.symbol.toString,
-        robots.get(Color.Blue).get.posX,
-        robots.get(Color.Blue).get.posY,
-        robots.get(Color.Red).get.posX,
-        robots.get(Color.Red).get.posY,
-        robots.get(Color.Green).get.posX,
-        robots.get(Color.Green).get.posY,
-        robots.get(Color.Yellow).get.posX,
-        robots.get(Color.Yellow).get.posY
+        robots.get(Color.Blue).get.col,
+        robots.get(Color.Blue).get.row,
+        robots.get(Color.Red).get.col,
+        robots.get(Color.Red).get.row,
+        robots.get(Color.Green).get.col,
+        robots.get(Color.Green).get.row,
+        robots.get(Color.Yellow).get.col,
+        robots.get(Color.Yellow).get.row
     )
   }
   
