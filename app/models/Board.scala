@@ -175,22 +175,22 @@ object Board {
     var robots = new HashMap[Color, Robot]()
     var setPos:Set[Tuple2[Int,Int]] = new HashSet[Tuple2[Int,Int]];
     for(c <- Color.values){
-      var posX:Int = Random.nextInt(board.width)
-      var posY:Int = Random.nextInt(board.height)
-      while(setPos.contains((posX,posY)) || unacceptableValue(board, posX, posY)){
-        posX = Random.nextInt(board.width)
-        posY = Random.nextInt(board.height)
+      var col:Int = Random.nextInt(board.width)
+      var row:Int = Random.nextInt(board.height)
+      while(setPos.contains((col,row)) || unacceptableValue(board, col, row)){
+        col = Random.nextInt(board.width)
+        row = Random.nextInt(board.height)
       }
-      setPos+=((posX,posY))
-      robots += ((c, new Robot(c,posX,posY)))
+      setPos+=((col,row))
+      robots += ((c, new Robot(c,col,row)))
     }
     robots
   }
 
 
   // detects middle (closed) square of the board, and goals
-  def unacceptableValue(board:Board, posX:Int, posY:Int):Boolean = {
-    if(board.cells(posX)(posY).goal != null) {
+  def unacceptableValue(board:Board, col:Int, row:Int):Boolean = {
+    if(board.cells(row)(col).goal != null) {
       return true
     }
     val h = board.height
@@ -201,14 +201,14 @@ object Board {
     var midH = h/2;
     var midW = w/2;
     if(w % 2 ==0){
-      resultW = posX==midW||posX==midW-1
+      resultW = col==midW||row==midW-1
     } else{
-      resultW = posX==(w-1)/2
+      resultW = col==(w-1)/2
     }
     if(h % 2 ==0){
-      resultH = posY==midH||posY==midH-1
+      resultH = row==midH||row==midH-1
     } else{
-      resultH = posY==(h-1)/2
+      resultH = row==(h-1)/2
     }
     resultW && resultH
   }
@@ -259,10 +259,10 @@ object Board {
     }
     for (line <- goals.split(END_OF_LINE)) {
       val elements = line.split(GOAL_SEP)
-      val x = Integer.parseInt(elements(0))
-      val y = Integer.parseInt(elements(1))
-      val oldCell = board.cells(x)(y)
-      board.cells(x)(y) = oldCell.withGoal(new Goal(Color.withName(elements(2)), Symbol.withName(elements(3))))
+      val row = Integer.parseInt(elements(0))
+      val col = Integer.parseInt(elements(1))
+      val oldCell = board.cells(row)(col)
+      board.cells(row)(col) = oldCell.withGoal(new Goal(Color.withName(elements(2)), Symbol.withName(elements(3))))
     }
     board
   }
