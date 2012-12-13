@@ -8,6 +8,36 @@ import anorm.SqlParser._
 import scala.Some
 
 case class DbScore(id: Pk[Long], score: Int, dateSubmitted:Date, playerName:String)
+case class DbRoomScores(score: Int, gameId: String, playerName:String)
+
+object DbRoomScores{
+  
+  val simple = {
+      get[Int]("scores.score") ~
+      get[String]("scores.game_id") ~
+      get[String]("users.name") map {
+      case score~gameId~playerName => DbRoomScores(score, gameId, playerName)
+    }
+  }
+  
+  def scoresInRoom(roomId: Long): Seq[DbRoomScores] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+          select scores.score, scores.game_id, users.name
+          from games
+          inner join scores
+            on scores.game_id = games.id
+          inner join users
+            on scores.user_id = users.id
+          where games.room_id = {roomId}
+          """
+      ).on(
+        'roomId -> roomId
+      ).as(DbRoomScores.simple *)
+    }
+  }
+
+}
 
 object DbScore{
 
@@ -41,8 +71,7 @@ object DbScore{
       ).as(DbScore.simple *)
     }
   }
-
-
+  
   /**
    * Insert a score of someone in a game.
    */
