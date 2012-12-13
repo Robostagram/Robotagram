@@ -15,6 +15,17 @@ trait EmptySquareBoard extends Scope {
   val board = new Board(1, "testSquareBoard", width, width)
 }
 
+trait EmptySquareBoardWithGoal extends EmptySquareBoard {
+  val goalR1 = new Goal(Color.Red, Symbol.ONE)
+  val goalB2 = new Goal(Color.Blue, Symbol.TWO)
+  val goalG3 = new Goal(Color.Green, Symbol.THREE)
+  val goalY4 = new Goal(Color.Yellow, Symbol.FOUR)
+  board.setGoal(2, 1, goalR1)
+  board.setGoal(5, 0, goalB2)
+  board.setGoal(4, 5, goalG3)
+  board.setGoal(1, 6, goalY4)
+} 
+
 class EmptyBoardSpec extends Specification {
   "An empty board of size n * m" should {
     "have n lines consisting of m empty cells" in new EmptyBoard {
@@ -286,16 +297,7 @@ class EmptyBoardSpec extends Specification {
   }
   
   "Calling transformQuarters(x,y,z) of a square board" should {
-    val goalR1 = new Goal(Color.Red, Symbol.ONE)
-    val goalB2 = new Goal(Color.Blue, Symbol.TWO)
-    val goalG3 = new Goal(Color.Green, Symbol.THREE)
-    val goalY4 = new Goal(Color.Yellow, Symbol.FOUR)
-    
-    "produce an equal board when x,y,z = 1,2,3" in new EmptySquareBoard {
-      board.setGoal(2, 1, goalR1)
-      board.setGoal(5, 0, goalB2)
-      board.setGoal(4, 5, goalG3)
-      board.setGoal(1, 6, goalY4)
+    "produce an equal board when x,y,z = 1,2,3" in new EmptySquareBoardWithGoal {
       val shuffledBoard = board.transformQuarters((1,2,3))
       shuffledBoard.findGoalPosition(goalR1) must be_==((2,1))
       shuffledBoard.findGoalPosition(goalB2) must be_==((5,0))
@@ -303,17 +305,38 @@ class EmptyBoardSpec extends Specification {
       shuffledBoard.findGoalPosition(goalY4) must be_==((1,6))
     }
     
-    "produce a board with NE and SW mirrored when x,y,z = 3,2,1" in new EmptySquareBoard {
-      board.setGoal(2, 1, goalR1)
-      board.setGoal(5, 0, goalB2)
-      board.setGoal(4, 5, goalG3)
-      board.setGoal(1, 6, goalY4)
+    "produce a board with NE and SW mirrored when x,y,z = 3,2,1" in new EmptySquareBoardWithGoal {
       val shuffledBoard = board.transformQuarters((3,2,1))
       shuffledBoard.findGoalPosition(goalR1) must be_==((2,1))
       shuffledBoard.findGoalPosition(goalB2) must be_==((2,7))
       shuffledBoard.findGoalPosition(goalG3) must be_==((4,5))
       shuffledBoard.findGoalPosition(goalY4) must be_==((6,1))
     }
+  }
+  
+  // unacceptable values
+  
+  "unacceptableValue" should {
+    "not accept cells with a goal" in new EmptySquareBoardWithGoal {
+      Board.unacceptableValue(board, 2, 1) must beTrue
+      Board.unacceptableValue(board, 5, 0) must beTrue
+      Board.unacceptableValue(board, 4, 5) must beTrue
+      Board.unacceptableValue(board, 1, 6) must beTrue
+    }
+    "not accept cells in the middle zone" in new EmptySquareBoardWithGoal {
+      Board.unacceptableValue(board, 3, 3) must beTrue
+      Board.unacceptableValue(board, 3, 4) must beTrue
+      Board.unacceptableValue(board, 4, 3) must beTrue
+      Board.unacceptableValue(board, 4, 4) must beTrue
+    }
+    "accept all empty cells not in the middle zone" in new EmptyBoard {
+      for {
+       row <- 1 until height
+       col <- 0 until width
+       if col != 2 || (row != 4 && row != 5)
+      } Board.unacceptableValue(board, col, row) must beFalse
+    } 
+    
   }
   
 }

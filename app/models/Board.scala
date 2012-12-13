@@ -201,7 +201,7 @@ object Board {
     var midH = h/2;
     var midW = w/2;
     if(w % 2 ==0){
-      resultW = col==midW||row==midW-1
+      resultW = col==midW||col==midW-1
     } else{
       resultW = col==(w-1)/2
     }
