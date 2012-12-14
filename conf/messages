@@ -105,10 +105,19 @@ game.solutionFound.announce=Announce solution
 game.solutionFound.improve=Improve solution
 game.solutionFound.retry=Retry from zero
 
+game.winner=The winner of this round is... 
+game.scores=Score (rounds won):
+
 game.endOfGame.title=Time is over !
-game.endOfGame.details=Another game is starting now ...
+game.endOfGame.details=Another game is going to start soon...
 game.endOfGame.giveup=Give up
 game.endOfGame.waiting=Waiting for the next game to start...
+
+# Score
+# =====
+score.player=Player
+score.best=Best score
+
 
 # Already in the same room in another window
 alreadyIn.title=Already in this room

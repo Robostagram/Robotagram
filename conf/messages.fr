@@ -102,10 +102,19 @@ game.solutionFound.announce=Annoncer ma solution
 game.solutionFound.improve=Améliorer ma solution
 game.solutionFound.retry=Recommencer depuis le début
 
+game.winner=Le gagnant de la manche est... 
+game.scores=Score (manches gagnées) :
+
 game.endOfGame.title=Le temps est écoulé !
-game.endOfGame.details=Une autre partie commence...
+game.endOfGame.details=Une autre partie va bientôt commencer...
 game.endOfGame.giveup=Abandonner
 game.endOfGame.waiting=En attente de démarrage de la partie suivante...
+
+# Score
+# =====
+score.player=Joueur
+score.best=Meilleur score
+
 
 # Already in the same room in another window
 alreadyIn.title=Déjà dans cette salle

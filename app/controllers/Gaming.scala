@@ -114,7 +114,7 @@ object Gaming extends CookieLang {
   // list of players and scores (persisted + players in the room)
   private def playersAndScores(roomName:String, gameId:String) : Seq[(String, Option[Int])] = {
     val wsRoom = WsManager.room(roomName).get
-    var scores: mutable.HashMap[String, Option[Int]] = new mutable.HashMap[String, Option[Int]]()
+    val scores: mutable.HashMap[String, Option[Int]] = new mutable.HashMap[String, Option[Int]]()
 
     DbScore.findByGame(gameId).foreach{s=>
       scores += ((s.playerName, Some(s.score)))

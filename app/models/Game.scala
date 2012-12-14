@@ -11,6 +11,7 @@ import java.util.{Date,Random}
 import play.api.Logger
 import controllers.Gaming
 import controllers.MessageID.TIME_UP
+import play.api.i18n.Messages
 
 
 class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val startDate:Date, val endDate:Date, val robots:Map[Color, Robot], val gamePhase: Phase){
@@ -33,30 +34,22 @@ class Game(val id:String, val roomId: Long, val board:Board, val goal: Goal, val
       // switch to next game phase unless already at the end of the cycle
       val endedGame = toPhase(SHOW_SOLUTION)
       endedGame.timer.start()
-      //TODO: update room scores, show them during game too
-      println(DbRoomScores.scoresInRoom(roomId).foldLeft(new HashMap[String, (String, Int)]) {
-        // first fold: first the winner of each game
-        (map: HashMap[String, (String, Int)], gameScore: DbRoomScores) => {
-          val gameId = gameScore.gameId
-          map.get(gameId) match  {
-            case None => map + (gameId -> (gameScore.playerName, gameScore.score))
-            case Some((playerName, score)) => if (score < gameScore.score) {
-              map
-            } else {
-              map + (gameId -> (gameScore.playerName, gameScore.score))
-            }
-          }
-        }
-      }.foldLeft(new HashMap[String, Int]) {
-        // second fold: count number of victories for each winner
-        (map: HashMap[String, Int], victory: (String, (String, Int))) => map.get(victory._2._1) match {
+      val winners = DbRoomScores.winnersOfRoomId(roomId)
+      val winner = winners.get(id) match {
+        case None => ""
+        case Some((username, _, _)) => username
+      }
+      val scores = winners.foldLeft(new HashMap[String, Int]) {
+        // fold to count number of victories for each winner
+        (map: HashMap[String, Int], victory: (String, (String, Int, Date))) => map.get(victory._2._1) match {
           case None => map + (victory._2._1 -> 1)
           case Some(count) => map + (victory._2._1 -> (count+1))
         }
-      })
+      }.map(pair => pair._1 + ": " + pair._2).toList
+      Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, winner :: scores)
+    } else {
+      Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, Seq())
     }
-    // announce game dead to the rooms
-    Gaming.notifyRoom(DbRoom.findById(roomId).get.name, TIME_UP, Seq())
   }
   
   // game init

@@ -95,12 +95,17 @@
             <h3>@Messages("game.endOfGame.title")</h3>
         </div>
         <div class="modal-body" align="center">
+            <p id="endOfGameWinner">@Messages("game.winner")</p>
+            <p>@Messages("game.scores")</p>
+            <table id="endOfGameScores">
+            </table>
+            <br>
             <p>@Messages("game.endOfGame.details")</p>
         </div>
         <div id="endOfGameModalFooter" class="modal-footer">
             <a href="@routes.Home.index" class="btn">@Messages("game.endOfGame.giveup")</a>
             @* "current" is the url for the current game in this room *@
-            <p id="waitingForGame">@Messages("game.endOfGame.waiting")</p>
+            <p id="waitingForGame" class="btn">@Messages("game.endOfGame.waiting")</p>
         </div>
     </div>
 </div>

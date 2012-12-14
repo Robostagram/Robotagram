@@ -679,6 +679,16 @@ var messageReceived = function(event){
             currentGame.gamePhase = PHASEID_SHOW_SOLUTION
             console.log("entered phase " + currentGame.gamePhase);
             notifyGameTimeUp();
+            var $endOfGameWinner = $("#endOfGameWinner");
+            var winner = d.args[0];
+            if(winner === "") {
+                winner = $_("game.nowinner");
+            }
+            $endOfGameWinner.append(" " + winner);
+            var $endOfGameScores = $("#endOfGameScores");
+            for (var i=1;i<d.args.length;i++) {
+                $endOfGameScores.append("<tr><td>" + d.args[i] + "</td></tr>");
+            }
         } else {
             activateNextGameLink();
             notifyGameTimeUp();

@@ -6,24 +6,27 @@ import java.util.Date
 import play.api.db.DB
 import anorm.SqlParser._
 import scala.Some
+import scala.collection.mutable.HashMap
+import scala.collection.Map
 
 case class DbScore(id: Pk[Long], score: Int, dateSubmitted:Date, playerName:String)
-case class DbRoomScores(score: Int, gameId: String, playerName:String)
+case class DbRoomScores(score: Int, gameId: String, playerName:String, date: Date)
 
 object DbRoomScores{
   
-  val simple = {
+  private val simple = {
       get[Int]("scores.score") ~
       get[String]("scores.game_id") ~
-      get[String]("users.name") map {
-      case score~gameId~playerName => DbRoomScores(score, gameId, playerName)
+      get[String]("users.name") ~
+      get[Date]("scores.submitted_on") map {
+      case score~gameId~playerName~date => DbRoomScores(score, gameId, playerName, date)
     }
   }
   
-  def scoresInRoom(roomId: Long): Seq[DbRoomScores] = {
+  private def scoresInRoom(roomId: Long): Seq[DbRoomScores] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select scores.score, scores.game_id, users.name
+          select scores.score, scores.game_id, users.name, scores.submitted_on
           from games
           inner join scores
             on scores.game_id = games.id
@@ -34,6 +37,21 @@ object DbRoomScores{
       ).on(
         'roomId -> roomId
       ).as(DbRoomScores.simple *)
+    }
+  }
+  
+  def winnersOfRoomId(roomId: Long): Map[String, (String, Int, Date)] = scoresInRoom(roomId).foldLeft(Map[String, (String, Int, Date)]()) {
+    // fold to find the author of shortest and first solution of each game
+    (map: Map[String, (String, Int, Date)], gameScore: DbRoomScores) => {
+      val gameId = gameScore.gameId
+      map.get(gameId) match  {
+        case None => map + (gameId -> (gameScore.playerName, gameScore.score, gameScore.date))
+        case Some((playerName, score, date)) => if (score < gameScore.score || (score == gameScore.score && date.before(gameScore.date)) ) {
+          map
+        } else {
+          map + (gameId -> (gameScore.playerName, gameScore.score, gameScore.date))
+        }
+      }
     }
   }
 

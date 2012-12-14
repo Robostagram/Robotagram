@@ -1,12 +1,12 @@
-@(scores: Seq[(String, Option[Int])])
+@(scores: Seq[(String, Option[Int])])(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
 
 @import models._
 
 <table class="table table-condensed">
     <thead>
         <tr>
-            <th>Player</th>
-            <th>Best score</th>
+            <th>@Messages("score.player")</th>
+            <th>@Messages("score.best")</th>
         </tr>
     </thead>
     <tbody id="leaderBoard">
