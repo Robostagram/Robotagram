@@ -4,14 +4,14 @@ import org.specs2.mutable._
 
 import play.api.test._
 import play.api.test.Helpers._
-import play.api.mvc.{Session, Cookies}
+import play.api.mvc.{Session, Cookies, AnyContentAsEmpty}
 
 class TestBoard extends Specification {
   "redirect to current game" in running(FakeApplication()) {
     {
       // FIXME : only works because we have that user in DB ...
       // maybe not fixme, tibal is in the default user inserted into an empty DB, seems acceptable for unit tests.
-      val req = RequestTestHelper.withAuthenticatedUser(FakeRequest(), "tibal")
+      val req = RequestTestHelper.withAuthenticatedUser(RequestTestHelper.fakeRequest, "tibal")
       val result = Gaming.currentGame("default").apply(req)
 
       status(result) mustEqual OK
@@ -20,7 +20,7 @@ class TestBoard extends Specification {
 
 
   "redirect to login page if not logged on" in {
-    val result = Gaming.currentGame("default").apply(FakeRequest())
+    val result = Gaming.currentGame("default").apply(RequestTestHelper.fakeRequest)
 
     status(result) mustNotEqual OK
     status(result) mustEqual SEE_OTHER
@@ -47,5 +47,6 @@ object RequestTestHelper {
     withSession(req, ("username" -> userName))
   }
 
+  def fakeRequest: FakeRequest[play.api.mvc.AnyContent] = FakeRequest("GET", "/", new FakeHeaders(), AnyContentAsEmpty)
 
 }

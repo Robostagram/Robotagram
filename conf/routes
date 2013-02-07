@@ -9,7 +9,6 @@ GET     /                           controllers.Home.index
 GET     /login                      controllers.Authentication.login(redirectTo: Option[String] ?= None)
 POST    /login                      controllers.Authentication.authenticate(redirectTo: Option[String])
 GET     /logout                     controllers.Authentication.logout
-POST    /logout                     controllers.Authentication.logout
 
 # Account
 GET     /account/register                   controllers.Account.register
@@ -34,11 +33,9 @@ GET     /rooms/:roomId/connect/:player                  controllers.Gaming.conne
 # ADMINISTRATOR FEATURES ... or debugging ...
 # admin home ... with and without slash (why ?)
 GET     /admin                                    controllers.Home.adminIndex
-GET     /admin/                                   controllers.Home.adminIndex
 
 # boards ... with and without slash (why ?)
 GET     /admin/boards                             controllers.Boards.index
-GET     /admin/boards/                            controllers.Boards.index
 GET     /admin/boards/:boardId                    controllers.Boards.preview(boardId : Long)
 
 # rooms
@@ -47,9 +44,7 @@ GET     /admin/rooms/:roomName/games/:gameId      controllers.Rooms.previewGame(
 
 # db management
 GET     /admin/reset                           controllers.Admin.reset
-GET     /admin/reset/                          controllers.Admin.reset
 GET     /admin/userList                        controllers.Admin.listUser
-GET     /admin/userList/                       controllers.Admin.listUser
 
 
 # APPLICATION WIDE ROUTES

@@ -1,16 +1,16 @@
 package models
 
-import play.api.libs.iteratee.{Enumerator, PushEnumerator}
+import play.api.libs.iteratee.Concurrent
 
-class WsPlayer(val name : String){
+class WsPlayer(val name: String){
 
-  val channel: PushEnumerator[String] = Enumerator.imperative[String]();
+  val (enum, channel) = Concurrent.broadcast[String]
 
   def send(message: String) {
     channel.push(message)
   }
 
   def sayGoodBye(){
-    channel.close()
+    channel.end()
   }
 }

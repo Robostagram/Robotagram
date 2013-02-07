@@ -210,7 +210,7 @@ object Gaming extends CookieLang {
         }
       notifyRoom(roomName, USER_REFRESH, Seq[String](player))
       // plug in the input and output ...
-      (incomingPlayerChannel, wsPlayer.channel) //TODO: add user to the room and notify everybody in the room (new player)
+      (incomingPlayerChannel, wsPlayer.enum) //TODO: add user to the room and notify everybody in the room (new player)
   }
 
   def logMessage(roomName:String, playerName:String, message:String){
