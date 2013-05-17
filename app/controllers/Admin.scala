@@ -9,12 +9,6 @@ import models._
 import java.util
 import scala.Some
 
-/**
- * Created with IntelliJ IDEA.
- * User: markus
- * Date: 18/11/12
- * Time: 19:33
- */
 object Admin extends CookieLang {
 
   def listUser = Secured.AdminAuthenticated {
