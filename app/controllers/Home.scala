@@ -8,7 +8,7 @@ object Home extends CookieLang {
 
   def index = Action { implicit request =>
     val user = User.fromRequest(request)
-    var roomsAndParticipants = WsManager.rooms.map(t => (t._1, t._2.size)).toSeq
+    val roomsAndParticipants = WsManager.rooms.map(t => (t._1, t._2.size)).toSeq
     Ok(views.html.home.index(user, roomsAndParticipants))
   }
 

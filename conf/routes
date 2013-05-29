@@ -5,16 +5,42 @@
 # Home page
 GET     /                           controllers.Home.index
 
+
+####################### SECURE SOCIAL ###################################
+
+# Login page
+GET     /login                      securesocial.controllers.LoginPage.login
+GET     /logout                     securesocial.controllers.LoginPage.logout
+
+# User Registration and password handling
+GET     /signup                     securesocial.controllers.Registration.startSignUp
+POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
+GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
+POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
+GET     /reset                      securesocial.controllers.Registration.startResetPassword
+POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
+GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
+POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
+GET     /password                   securesocial.controllers.PasswordChange.page
+POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
+
+# Providers entry points
+GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)
+POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
+
+####################### END SECURE SOCIAL ###############################
+
 # Authentication (redirectTo not in routes, to use as a querystring param)
-GET     /login                      controllers.Authentication.login(redirectTo: Option[String] ?= None)
-POST    /login                      controllers.Authentication.authenticate(redirectTo: Option[String])
-GET     /logout                     controllers.Authentication.logout
+#GET     /login                      controllers.Authentication.login(redirectTo: Option[String] ?= None)
+#POST    /login                      controllers.Authentication.authenticate(redirectTo: Option[String])
+#GET     /logout                     controllers.Authentication.logout
 
 # Account
-GET     /account/register                   controllers.Account.register
-POST    /account/register                   controllers.Account.createAccount
-GET     /account/created                    controllers.Account.accountCreated(username:String)
-GET     /account/activate                   controllers.Account.activateAccount(name : String, token : String)
+#GET     /account/register                   controllers.Account.register
+#POST    /account/register                   controllers.Account.createAccount
+#GET     /account/created                    controllers.Account.accountCreated(username:String)
+#GET     /account/activate                   controllers.Account.activateAccount(name : String, token : String)
 
 # Lang
 POST    /setLocale                          controllers.Localise.changeLocale
@@ -31,10 +57,10 @@ GET     /rooms/:roomId/connect/:player                  controllers.Gaming.conne
 
 
 # ADMINISTRATOR FEATURES ... or debugging ...
-# admin home ... with and without slash (why ?)
+# admin home ... with and without slash
 GET     /admin                                    controllers.Home.adminIndex
 
-# boards ... with and without slash (why ?)
+# boards ... with and without slash
 GET     /admin/boards                             controllers.Boards.index
 GET     /admin/boards/:boardId                    controllers.Boards.preview(boardId : Long)
 

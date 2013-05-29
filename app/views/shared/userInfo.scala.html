@@ -3,7 +3,7 @@
     <li>
         @user match {
             case Some(realUser) => { <a id="userName">@realUser.name</a></li>@shared.flags()<li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">@Messages("common.user.logout")</a> }
-            case _ => { </li>@shared.flags()<li><a id="loginLink" href="@controllers.routes.Authentication.login(None)">@Messages("common.user.logon")</a> }
+            case None => { </li>@shared.flags()<li><a id="loginLink" href="@controllers.routes.Authentication.login(None)">@Messages("common.user.logon")</a> }
         }
     </li>
 </ul>
