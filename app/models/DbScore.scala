@@ -8,6 +8,7 @@ import anorm.SqlParser._
 import scala.Some
 import scala.collection.mutable.HashMap
 import scala.collection.Map
+import securesocial.core.UserId
 
 case class DbScore(id: Pk[Long], score: Int, dateSubmitted:Date, playerName:String)
 case class DbRoomScores(score: Int, gameId: String, playerName:String, date: Date)
@@ -32,6 +33,7 @@ object DbRoomScores{
             on scores.game_id = games.id
           inner join users
             on scores.user_id = users.id
+              and scores.user_provider = users.provider
           where games.room_id = {roomId}
           """
       ).on(
@@ -81,6 +83,7 @@ object DbScore{
           from scores
           inner join users
             on scores.user_id = users.id
+              and scores.user_provider = users.provider
           where scores.game_id = {gameId}
           order by scores.score DESC, submitted_on ASC
           """
@@ -93,7 +96,7 @@ object DbScore{
   /**
    * Insert a score of someone in a game.
    */
-  def insert(gameId:String, userId:Long, score:Int, solution:String): Option[Long] = {
+  def insert(gameId:String, userId:UserId, score:Int, solution:String): Option[Long] = {
     DB.withConnection { implicit connection =>
 
     // Get the score id
@@ -103,10 +106,10 @@ object DbScore{
     SQL(
       """
      insert into scores (
-       id, submitted_on, solution, score, game_id, user_id
+       id, submitted_on, solution, score, game_id, user_id, user_provider
      )
      values (
-       {id}, {submittedOn}, {solution}, {score}, {gameId}, {userId}
+       {id}, {submittedOn}, {solution}, {score}, {gameId}, {userId}, {user_provider}
      )
       """
     ).on(
@@ -115,7 +118,8 @@ object DbScore{
       'solution -> solution,
       'score -> score,
       'gameId -> gameId,
-      'userId -> userId
+      'userId -> userId.id,
+      'user_provider -> userId.providerId
     ).executeInsert()
 
     Some(theId)

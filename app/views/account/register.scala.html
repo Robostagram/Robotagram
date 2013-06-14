@@ -4,34 +4,34 @@
 
 @_layout(Messages("register.title"), None)(null) {
 
-@helper.form(routes.Account.createAccount, 'class -> "form-horizontal"){
+@* @helper.form(routes.Account.createAccount, 'class -> "form-horizontal"){*@
     @*make it look like a modal, without js involved ... *@
-    <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
-        <div class="modal-body">
-            <fieldset>
-                <legend>@Messages("register.form.legend")</legend>
-                @for(err <- form.globalErrors){
-                <div class="alert alert-error">
-                    <a class="close" data-dismiss="alert">&times;</a>
-                    @err.message
-                </div>
-                }
-                <p>@Messages("register.form.intro")</p>
-                @helper.inputText(form("name"), '_label-> (Messages("register.form.name.label") + " : "), 'placeholder -> Messages("register.form.name.watermark"))
-                @helper.inputText(form("email1"), '_label-> (Messages("register.form.email.label") + " : "), 'placeholder -> Messages("register.form.email.watermark"))
-                @helper.inputText(form("email2"), '_label-> (Messages("register.form.emailConfirmation.label") + " : "), 'placeholder -> Messages("register.form.emailConfirmation.watermark"))
-                @helper.inputPassword(form("password1"), '_label-> (Messages("register.form.password.label") + " : "), 'placeholder -> Messages("register.form.password.watermark"))
-                @helper.inputPassword(form("password2"), '_label-> (Messages("register.form.passwordConfirmation.label") + " : "), 'placeholder -> Messages("register.form.passwordConfirmation.watermark"))
-            </fieldset>
-        </div>
-        <div class="modal-footer">
-            <a class="btn" href="@routes.Home.index">@Messages("register.leave")</a>
-            <input type="submit" id="play" class="btn btn-success" value="@Messages("register.createAccount")"/>
-        </div>
-    </div>
-    <script type="text/javascript">
-        //focus nickname field on page load
-        $("input#name").focus();
-    </script>
-    }
+    @*<div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">*@
+        @*<div class="modal-body">*@
+            @*<fieldset>*@
+                @*<legend>@Messages("register.form.legend")</legend>*@
+                @* @for(err <- form.globalErrors){*@
+                @*<div class="alert alert-error">*@
+                    @*<a class="close" data-dismiss="alert">&times;</a>*@
+                    @* @err.message*@
+                @*</div>*@
+                @*}*@
+                @*<p>@Messages("register.form.intro")</p>*@
+                @* @helper.inputText(form("name"), '_label-> (Messages("register.form.name.label") + " : "), 'placeholder -> Messages("register.form.name.watermark"))*@
+                @* @helper.inputText(form("email1"), '_label-> (Messages("register.form.email.label") + " : "), 'placeholder -> Messages("register.form.email.watermark"))*@
+                @* @helper.inputText(form("email2"), '_label-> (Messages("register.form.emailConfirmation.label") + " : "), 'placeholder -> Messages("register.form.emailConfirmation.watermark"))*@
+                @* @helper.inputPassword(form("password1"), '_label-> (Messages("register.form.password.label") + " : "), 'placeholder -> Messages("register.form.password.watermark"))*@
+                @* @helper.inputPassword(form("password2"), '_label-> (Messages("register.form.passwordConfirmation.label") + " : "), 'placeholder -> Messages("register.form.passwordConfirmation.watermark"))*@
+            @*</fieldset>*@
+        @*</div>*@
+        @*<div class="modal-footer">*@
+            @*<a class="btn" href="@routes.Home.index">@Messages("register.leave")</a>*@
+            @*<input type="submit" id="play" class="btn btn-success" value="@Messages("register.createAccount")"/>*@
+        @*</div>*@
+    @*</div>*@
+    @*<script type="text/javascript">*@
+        @*//focus nickname field on page load*@
+        @*$("input#name").focus();*@
+    @*</script>*@
+    @*}*@
 }

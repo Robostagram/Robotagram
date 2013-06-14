@@ -30,8 +30,8 @@ object Application extends CookieLang {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        Gaming.currentGame, Gaming.getGame, Gaming.gameStatus, Gaming.gameScores, Gaming.connectPlayer, Gaming.submitSolution,
-        Authentication.login, Authentication.logout, Authentication.authenticate
+        Gaming.currentGame, Gaming.getGame, Gaming.gameStatus, Gaming.gameScores, Gaming.connectPlayer, Gaming.submitSolution
+//        ,Authentication.login, Authentication.logout, Authentication.authenticate
       )
     ).as("text/javascript")
   }

@@ -1,4 +1,4 @@
-@(room: DbRoom, game:Game, scores: Seq[(String, Option[Int])], user: User)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
+@(room: DbRoom, game:Game, scores: Seq[(String, Option[Int])], user: DbUser)(implicit flash: Flash, request: RequestHeader, lang: Lang) @* implicits are needed ! *@
 
 @renderColor(color: Color.Value) = {@color.toString}
 
@@ -116,7 +116,7 @@
     var gameParameters = {
         roomId: "@room.name",
         gameId: "@game.id",
-        playerName: "@user.name",
+        playerName: "@user.fullName",
         duration: @game.durationInSeconds,
         secondsLeft: @game.secondsLeft,
         gamePhase: "@game.gamePhase.toString"

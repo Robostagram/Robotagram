@@ -1,4 +1,4 @@
-@(requestedRoom: String , requestedGame: String, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(requestedRoom: String , requestedGame: String, user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @_layout("This game is over", user)(null){
 

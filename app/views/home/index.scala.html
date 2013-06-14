@@ -1,4 +1,4 @@
-@(user: Option[User], roomsAndParticipants: Seq[(String, Int)])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[DbUser], roomsAndParticipants: Seq[(String, Int)])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @_layout(Messages("home.title"), user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">

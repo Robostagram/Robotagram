@@ -1,4 +1,4 @@
-@(user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 @_layout("SECRET ZONE", user)(null) {
 <div class="row" xmlns="http://www.w3.org/1999/html">
@@ -8,8 +8,8 @@
 
         <p>From here, you can go to : </p>
         <ul>
-            <li><a href="@controllers.routes.Admin.reset">Clean all the DB stored rooms, scores, users, boards<br>then load the default rooms, users and boards</a></li>
-            <li><a href="@controllers.routes.Admin.listUser">List of registered users</a></li>
+            @*<li><a href="@controllers.routes.Admin.reset">Clean all the DB stored rooms, scores, users, boards<br>then load the default rooms, users and boards</a></li>*@
+            @*<li><a href="@controllers.routes.Admin.listUser">List of registered users</a></li>*@
             <li><a href="@controllers.routes.Boards.index">list of board templates + preview&rarr;</a></li>
             <li><a href="@controllers.routes.Rooms.gamesByRoom("default")">latest games in room 'default'&rarr;</a></li>
             <li><a href="@controllers.routes.Rooms.gamesByRoom("default2")">latest games in room 'default2'&rarr;</a></li>

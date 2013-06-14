@@ -1,9 +1,9 @@
-@(user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 <ul id="userInfoBar" class="nav pull-right">
     <li>
         @user match {
-            case Some(realUser) => { <a id="userName">@realUser.name</a></li>@shared.flags()<li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">@Messages("common.user.logout")</a> }
-            case None => { </li>@shared.flags()<li><a id="loginLink" href="@controllers.routes.Authentication.login(None)">@Messages("common.user.logon")</a> }
+            case Some(realUser) => { <a id="userName">@realUser.fullName</a></li>@shared.flags()@*<li><a id="logoutLink" href="@controllers.routes.Authentication.logout()">@Messages("common.user.logout")</a>*@ }
+            case None => { </li>@shared.flags()@*<li><a id="loginLink" href="@controllers.routes.Authentication.login(None)">@Messages("common.user.logon")</a>*@ }
         }
-    </li>
+    @*</li>*@
 </ul>

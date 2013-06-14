@@ -1,4 +1,4 @@
-@(users: Seq[DbUser], user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(users: Seq[DbUser], user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 
 @_layout("List of users in database", user)(null) {
@@ -16,10 +16,10 @@
         <tbody>
         @for(u:DbUser <- users) {
             <tr >
-                <td>@u.name</td>
+                <td>@u.fullName</td>
                 <td>@u.email</td>
                 <td>@if(u.isAdmin) {admin}</td>
-                <td>@u.locale.getOrElse("")</td>
+                <td>@u.locale</td>
             </tr>
         }
         </tbody>

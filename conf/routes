@@ -69,8 +69,8 @@ GET     /admin/rooms/:roomName/games              controllers.Rooms.gamesByRoom(
 GET     /admin/rooms/:roomName/games/:gameId      controllers.Rooms.previewGame(roomName: String, gameId : String)
 
 # db management
-GET     /admin/reset                           controllers.Admin.reset
-GET     /admin/userList                        controllers.Admin.listUser
+# GET     /admin/reset                           controllers.Admin.reset
+# GET     /admin/userList                        controllers.Admin.listUser
 
 
 # APPLICATION WIDE ROUTES

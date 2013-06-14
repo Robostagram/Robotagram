@@ -1,4 +1,4 @@
-@(board: Board, user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(board: Board, user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 @import scala.collection.immutable.HashMap
 
 @_layout("Board preview #" + board.id + " - " + board.name, user)(null) {

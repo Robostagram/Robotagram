@@ -1,4 +1,4 @@
-@(room : DbRoom, games : Seq[DbGame], user: Option[User])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(room : DbRoom, games : Seq[DbGame], user: Option[DbUser])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
 
 @_layout("Games in the room", user)(null) {
