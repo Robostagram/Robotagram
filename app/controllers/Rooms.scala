@@ -2,9 +2,10 @@ package controllers
 
 import play.api.mvc._
 import models._
+import securesocial.core.SecureSocial
 
 // Room controller
-object Rooms extends CookieLang{
+object Rooms extends CookieLang with SecureSocial {
 
   // list the last n games of a room
   def gamesByRoom(roomName:String) = UserAwareAction { implicit request =>

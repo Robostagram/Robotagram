@@ -3,9 +3,8 @@ package controllers
 import play.api.mvc.{Action, Controller, Cookie, RequestHeader}
 import play.api.i18n.Lang
 import play.Play
-import securesocial.core.SecureSocial
 
-trait CookieLang extends Controller with SecureSocial {
+trait CookieLang extends Controller {
 
   override implicit def lang(implicit request: RequestHeader) = {
     request.cookies.get(LANG) match {

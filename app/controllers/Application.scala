@@ -2,9 +2,10 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 import play.api.Routes
+import securesocial.core.SecureSocial
 
 
-object Application extends CookieLang {
+object Application extends CookieLang with SecureSocial {
 
   //
   //  GET /assets/javascripts/routes.js

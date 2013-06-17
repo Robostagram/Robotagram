@@ -32,11 +32,11 @@ home.rooms={0,choice,0#Aucune salle disponible|1#Une salle disponible|1<{0,numbe
 # =====
 login.title=Robotagram - Identification
 login.form.legend=S''identifier
-login.form.intro=Saisissez votre pseudo/mot de passe
-login.form.nickname.label=Pseudo
-login.form.nickname.watermark=casimir69, boris456, etc ...
+login.form.username.label=Pseudo
+login.form.email.label=EMail
 login.form.password.label=Mot de passe
 login.notAMemberYet=Pas encore inscrit ?
+login.forgotPassword=Mot de passe oublié ?
 login.leave=Annuler
 login.play=Jouer !
 

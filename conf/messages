@@ -33,11 +33,11 @@ home.rooms={0,choice,0#No available rooms|1#One available room|1<{0,number,integ
 # =====
 login.title=Robotagram - Login
 login.form.legend=Login
-login.form.intro=Type in your username and password
-login.form.nickname.label=Nickname
-login.form.nickname.watermark=casimir69, boris456, etc ...
+login.form.username.label=Username
+login.form.email.label=EMail
 login.form.password.label=Password
 login.notAMemberYet=Not registered yet ?
+login.forgotPassword=Forgot your password ?
 login.leave=Leave
 login.play=Play !
 

@@ -1,36 +1,75 @@
-@(loginForm: Form[(String, String)], redirectTo: Option[String])(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(loginForm: Form[(String, String)], msg: Option[String])(implicit flash: Flash, request: RequestHeader, lang: Lang)
 
+@import securesocial.core.Registry
+@import securesocial.core.IdentityProvider
+@import securesocial.core.providers.UsernamePasswordProvider
+@import securesocial.core.AuthenticationMethod._
+@import securesocial.core.providers.utils.RoutesHelper
 @import helpers.CustomHelpers._
 
 @_layout(Messages("login.title"), None)(null) {
+    @msg.map { key =>
+        <div class="alert alert-error">
+            @Messages(key)
+        </div>
+    }
 
-    This should be the login form, see authetication/login.scala.html
-@* @helper.form(routes.Authentication.authenticate(redirectTo), 'class -> "form-horizontal"){*@
-    @**@
-    @*<div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">*@
-        @*<div class="modal-body">*@
-            @*<fieldset>*@
-                @*<legend>@Messages("login.form.legend")</legend>*@
-                @* @for(err <- loginForm.globalErrors){*@
-                @*<div class="alert alert-error">*@
-                    @*<a class="close" data-dismiss="alert">&times;</a>*@
-                    @* @err.message*@
-                @*</div>*@
-                @*}*@
-                @*<p>@Messages("login.form.intro")</p>*@
-                @* @helper.inputText(loginForm("nickname"), '_label-> (Messages("login.form.nickname.label") + " : "), 'placeholder -> Messages("login.form.nickname.watermark"))*@
-                @* @helper.inputPassword(loginForm("password"), '_label-> (Messages("login.form.password.label") + " : "))*@
-            @*</fieldset>*@
-            @*<p style="float:right;">@Messages("login.notAMemberYet") <a class="" href="@routes.Account.register"> @Messages("register.createAccount")</a></p>*@
-        @*</div>*@
-        @*<div class="modal-footer">*@
-            @*<a class="btn" href="@routes.Home.index">@Messages("login.leave")</a>*@
-            @*<input type="submit" id="play" class="btn btn-success" value="@Messages("login.play")"/>*@
-        @*</div>*@
-    @*</div>*@
-    @*<script type="text/javascript">*@
-        @*//focus nickname field on page load*@
-        @*$("input#nickname").focus();*@
-    @*</script>*@
-    @*}*@
+    @Registry.providers.all().values.filter(_.authMethod != UserPassword).foreach { provider =>
+        @if(provider.authMethod == OAuth1 || provider.authMethod == OAuth2) {
+            @defining("securesocial/images/providers/%s.png".format(provider.id)) { imageUrl =>
+                <a href="@provider.authenticationUrl"> <img src="@RoutesHelper.at(imageUrl)"/></a>
+            }
+        }
+    }
+
+    <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)"
+    class="form-horizontal" autocomplete="off" method="POST">
+        <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
+            <div class="modal-body">
+                <fieldset>
+                    <legend>@Messages("login.form.legend")</legend>
+                    @for(err <- loginForm.globalErrors) {
+                        <div class="alert alert-error">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            @err.message
+                        </div>
+                    }
+
+                    @if(UsernamePasswordProvider.withUserNameSupport) {
+                        @helper.inputText(
+                            loginForm("username"),
+                            '_label -> Messages("login.form.username.label"),
+                            'class -> "input-xlarge"
+                        )
+                    } else {
+                        @helper.inputText(
+                            loginForm("username"),
+                            '_label -> Messages("login.form.email.label"),
+                            'class -> "input-xlarge"
+                        )
+                    }
+
+                    @helper.inputPassword(
+                        loginForm("password"),
+                        '_label -> Messages("login.form.password.label"),
+                        'class -> "input-xlarge"
+                    )
+                </fieldset>
+                <div class="clearfix">
+                    <p><a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()">@Messages("login.forgotPassword") </a></p>
+                </div>
+                <div class="clearfix">
+                    <p><a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("login.notAMemberYet")</a></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn" href="@routes.Home.index()">@Messages("login.leave")</a>
+                <input type="submit" id="play" class="btn btn-success" value="@Messages("login.play")"/>
+            </div>
+        </div>
+        <script type="text/javascript">
+            //focus nickname field on page load
+            $("input#nickname").focus();
+        </script>
+    </form>
 }
