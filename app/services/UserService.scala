@@ -10,6 +10,7 @@ import play.api.db.DB
 import securesocial.core.UserId
 import anorm.~
 import securesocial.core.providers.Token
+import org.joda.time.DateTime
 
 class UserService(application: Application) extends UserServicePlugin(application) {
 
@@ -17,7 +18,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
   /**
    * Parse a User from a ResultSet
    */
-  val simple = {
+  val userParser = {
     get[String]("users.id") ~
       get[String]("users.provider") ~
       get[String]("users.firstName") ~
@@ -39,6 +40,17 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
     }
   }
 
+  val tokenParser = {
+    get[String]("tokens.uuid") ~
+      get[String]("tokens.email") ~
+      get[Boolean]("tokens.isSignUp") ~
+      get[Long]("tokens.creationTime") ~
+      get[Long]("tokens.expirationTime") map {
+      case uuid ~ email ~ isSignUp ~ creationTime ~ expirationTime =>
+        Token(uuid, email, new DateTime(creationTime), new DateTime(expirationTime), isSignUp)
+    }
+  }
+
   def toPasswordInfo(hasher: Option[String], password: Option[String], salt: Option[String]): Option[PasswordInfo] = password match {
     case None => None
     case Some(pass) => hasher match {
@@ -49,6 +61,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
 
   //endregion
 
+  //region User
   /**
    * Finds a user that matches the specified id
    *
@@ -67,7 +80,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
         ).on(
           'id -> id.id,
           'provider -> id.providerId
-        ).as(simple.singleOpt)
+        ).as(userParser.singleOpt)
     }
   }
 
@@ -93,7 +106,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
         ).on(
           'email -> email,
           'provider -> provider
-        ).as(simple.singleOpt)
+        ).as(userParser.singleOpt)
     }
   }
 
@@ -105,9 +118,8 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
   def save(user: Identity): DbUser = {
     find(user.id) match {
       case Some(dbUser: DbUser) => update(dbUser)
-      case _ => create(user.asInstanceOf) //TODO is it really
+      case _ => create(user)
     }
-    find(user.id).get
   }
 
   /**
@@ -136,17 +148,17 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
    *
    * @return None if user cannot be updated
    */
-  private def create(user: DbUser): DbUser = {
+  private def create(user: Identity): DbUser = {
     DB.withConnection {
       implicit connection =>
       // Insert the user
-        withUserValues(SQL(
+        withIdentityValues(SQL(
           """
            INSERT INTO users (
-             id, provider, firstName, lastName, fullName, email, avatarUrl, authMethod, isAdmin, locale, hasher, password, salt
+             id, provider, firstName, lastName, fullName, email, avatarUrl, authMethod, hasher, password, salt
            )
            values (
-             {id}, {provider}, {firstName}, {lastName}, {fullName}, {email}, {avatarUrl}, {authMethod}, {isAdmin}, {locale}, {hasher}, {password}, {salt}
+             {id}, {provider}, {firstName}, {lastName}, {fullName}, {email}, {avatarUrl}, {authMethod}, {hasher}, {password}, {salt}
            )
           """
         ), user).executeInsert()
@@ -156,6 +168,13 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
   }
 
   private def withUserValues(query: SqlQuery, user: DbUser): SimpleSql[Row] = {
+    withIdentityValues(query, user).on(
+      'isAdmin -> user.isAdmin,
+      'locale -> user.locale
+    )
+  }
+
+  private def withIdentityValues(query: SqlQuery, user: Identity): SimpleSql[Row] = {
     query.on(
       'id -> user.id.id,
       'provider -> user.id.providerId,
@@ -164,9 +183,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
       'fullName -> user.fullName,
       'email -> user.email,
       'avatarUrl -> user.avatarUrl.getOrElse("/assets/images/symbols/robot.png"),
-      'authMethod -> user.authMethod,
-      'isAdmin -> user.isAdmin,
-      'locale -> user.locale,
+      'authMethod -> user.authMethod.method,
       // PasswordInfo part
       'hasher -> user.passwordInfo.map(_.hasher),
       'password -> user.passwordInfo.map(_.password),
@@ -174,6 +191,9 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
     )
   }
 
+  //endregion User
+
+  //region token
   /**
    * Saves a token.  This is needed for users that
    * are creating an account in the system instead of using one in a 3rd party system.
@@ -185,7 +205,40 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
    * @return A string with a uuid that will be embedded in the welcome email.
    */
   def save(token: Token) {
-    // implement me
+    findToken(token.uuid) match {
+      case Some(tok: Token) => update(token)
+      case _ => create(token)
+    }
+  }
+
+  private def update(token: Token) {
+    DB.withConnection {
+      implicit connection =>
+        withTokenValues(SQL(
+          """
+           UPDATE tokens
+            SET uuid = {uuid}, email = {email}, isSignUp = {isSignUp}, creationTime =  {creationTime}, expirationTime = {expirationTime}
+            WHERE upper(uuid) = upper({uuid})
+          """
+        ), token).executeUpdate()
+    }
+  }
+
+  private def create(token: Token) {
+    DB.withConnection {
+      implicit connection =>
+      // Insert the user
+        withTokenValues(SQL(
+          """
+           INSERT INTO tokens (
+             uuid, email, isSignUp, creationTime, expirationTime
+           )
+           values (
+             {uuid}, {email}, {isSignUp}, {creationTime}, {expirationTime}
+           )
+          """
+        ), token).executeInsert()
+    }
   }
 
 
@@ -195,12 +248,21 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
    * Note: If you do not plan to use the UsernamePassword provider just provide en empty
    * implementation
    *
-   * @param token the token id
+   * @param uuid the token uuid
    * @return
    */
-  def findToken(token: String): Option[Token] = {
-    // implement me
-    None
+  def findToken(uuid: String): Option[Token] = {
+    DB.withConnection {
+      implicit connection =>
+        SQL( """
+        SELECT uuid, email, isSignUp, creationTime, expirationTime
+        FROM tokens
+        WHERE upper(uuid) = upper({uuid})
+             """
+        ).on(
+          'uuid -> uuid
+        ).as(tokenParser.singleOpt)
+    }
   }
 
   /**
@@ -212,7 +274,16 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
    * @param uuid the token id
    */
   def deleteToken(uuid: String) {
-    // implement me
+    DB.withConnection {
+      implicit connection =>
+        SQL( """
+        DELETE FROM tokens
+        WHERE upper(uuid) = upper({uuid})
+             """
+        ).on(
+          'uuid -> uuid
+        )
+    }
   }
 
   /**
@@ -223,6 +294,28 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
    *
    */
   def deleteExpiredTokens() {
-    // implement me
+    val now: Long = System.currentTimeMillis()
+    DB.withConnection {
+      implicit connection =>
+        SQL( """
+        DELETE FROM tokens
+        WHERE expirationTime < {now}
+             """
+        ).on(
+          'now -> now
+        )
+    }
   }
+
+  private def withTokenValues(query: SqlQuery, token: Token): SimpleSql[Row] = {
+    query.on(
+      'uuid -> token.uuid,
+      'isSignUp -> token.isSignUp,
+      'creationTime -> token.creationTime.getMillis,
+      'expirationTime -> token.expirationTime.getMillis,
+      'email -> token.email
+    )
+  }
+
+  //endregion   token
 }

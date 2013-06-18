@@ -5,17 +5,31 @@
 -- USERS
 -- =====
 create table users (
-  id                        bigint not null primary key,
-  name                      varchar(255) not null unique,
-  email                     varchar(255) not null unique,
-  password                  varchar(255) not null,
-  isAdmin                   boolean not null default 'false',
-  created_on                timestamp not null,
-  activation_token          varchar(255) not null,
-  activated_on              timestamp,
-  locale                    varchar(5)
+  id                    varchar(255) not null,
+  provider              varchar(255) not null,
+  firstName             varchar(255) not null,
+  lastName              varchar(255) not null,
+  fullName              varchar(255) not null,
+  email                 varchar(255) not null unique,
+  avatarUrl             varchar(255) not null,
+  authMethod            varchar(15) not null,
+  isAdmin               boolean not null default 'false',
+  locale                varchar(5) default 'en',
+  password              varchar(255),
+  hasher                varchar(255),
+  salt                  varchar(255),
+  PRIMARY KEY(id, provider)
 );
-create sequence users_seq start with 1000;
+
+-- TOKENS
+-- =====
+create table tokens (
+  uuid                  varchar(255) not null primary key,
+  email                 varchar(255) not null,
+  isSignUp              boolean not null default 'false',
+  creationTime          bigint  not null,
+  expirationTime        bigint  not null,
+);
 
 
 -- BOARDS : the boards ...
@@ -72,9 +86,10 @@ create table scores (
     score                   int,
     -- FK
     game_id                 varchar(127) not null,
-    user_id                 bigint not null,
+    user_id                 varchar(255) not null,
+    user_provider           varchar(255) not null,
     FOREIGN KEY (game_id) REFERENCES games (id),
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id, user_provider) REFERENCES users (id, provider)
 );
 create sequence scores_seq start with 1000;
 
@@ -85,6 +100,8 @@ create sequence scores_seq start with 1000;
 drop sequence if exists scores_seq;
 drop table if exists scores;
 
+drop table if exists tokens;
+
 drop table if exists games;
 
 drop sequence if exists rooms_seq;
@@ -93,5 +110,4 @@ drop table if exists rooms;
 drop sequence if exists boards_seq;
 drop table if exists boards;
 
-drop sequence if exists users_seq;
 drop table if exists users;
