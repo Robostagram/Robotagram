@@ -47,24 +47,28 @@ login.authenticationRequired=You must be authentified to access the page you req
 
 # Account
 # =======
-# Register / create an account
-register.title=Registration
+# signup / create an account
+signup.title=Inscription
+signup.email.label=Your e-mail
+signup.createAccount=Create an account
+signup.cancel=Cancel
+signup.legend=Sign up
+signup.username.label=Username
+signup.firstname.label=Firstname
+signup.lastname.label=Lastname
+signup.password1.label=Your password
+signup.password2.label=Password (again)
+
 register.form.legend=Sign in
 register.form.intro=Please fill in the following information in order to create your account.
 
-register.form.name.label=Username
 register.form.name.watermark=Maurice28, TomSawyer99 etc
-register.form.email.label=Your e-mail
 register.form.email.watermark=hermione.granger@hogwarts.co.uk
 register.form.emailConfirmation.label=E-mail (again)
 register.form.emailConfirmation.watermark=same as above
-register.form.password.label=Your password
 register.form.password.watermark=something only you should know
-register.form.passwordConfirmation.label=Password (again)
 register.form.passwordConfirmation.watermark=same as above
 
-register.leave=Cancel
-register.createAccount=Create an account
 register.result.success=Your account has been created
 register.result.failure=Your account could not be created
 

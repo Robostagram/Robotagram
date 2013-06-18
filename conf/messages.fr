@@ -44,8 +44,18 @@ login.result.success=Vous êtes identifié
 logout.result.success=Vous êtes déconnecté
 login.authenticationRequired=Vous devez vous identifier pour accéder à la page demandée.
 
-# Register / create an account
-register.title=Inscription
+# signup / create an account
+signup.title=Inscription
+signup.email.label=E-mail
+signup.createAccount=Créer un compte
+signup.cancel=Annuler
+signup.legend=S''inscrire
+signup.username.label=Pseudo
+signup.firstname.label=Prénom
+signup.lastname.label=Nom
+signup.password1.label=Mot de passe
+signup.password2.label=Mot de passe (confirmation)
+
 register.form.legend=S''inscrire
 register.form.intro=Les informations suivantes sont nécessaires pour s''inscrire.
 
