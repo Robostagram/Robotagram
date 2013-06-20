@@ -1,0 +1,15 @@
+@()(implicit flash: Flash, request: RequestHeader, lang: Lang)
+
+@_layout(Messages("notAuthorized.title"), None)(null) {
+    <div class="page-header">
+        <h1>@Messages("notAuthorized.title")</h1>
+    </div>
+
+    <div class="alert alert-error">
+        @Messages("notAuthorized.message")
+    </div>
+
+    <div style="text-align: center;">
+        <img src="/assets/images/notAuthorized.gif">
+    </div>
+}

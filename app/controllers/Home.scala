@@ -1,9 +1,8 @@
 package controllers
 
 import models._
-import securesocial.core.SecureSocial
 
-object Home extends CookieLang with SecureSocial {
+object Home extends LocaleAwareSecureSocial {
 
   def index = UserAwareAction {
     implicit request =>
@@ -11,7 +10,7 @@ object Home extends CookieLang with SecureSocial {
       Ok(views.html.home.index(DbUser.fromRequest(), roomsAndParticipants))
   }
 
-  def adminIndex = UserAwareAction  {
+  def adminIndex = UserAwareAction {
     implicit request => {
       Ok(views.html.home.adminIndex(DbUser.fromRequest()))
     }

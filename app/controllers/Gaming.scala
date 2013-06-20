@@ -11,7 +11,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.Logger
 import collection.mutable
-import securesocial.core.SecureSocial
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsUndefined
 import play.api.libs.json.JsString
@@ -20,7 +19,7 @@ import play.api.libs.json.JsNumber
 import models.Movement
 import play.api.libs.json.JsObject
 
-object Gaming extends CookieLang with SecureSocial {
+object Gaming extends LocaleAwareSecureSocial {
 
   val lock: Lock = new Lock()
 

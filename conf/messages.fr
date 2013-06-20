@@ -40,10 +40,6 @@ login.forgotPassword=Mot de passe oublié ?
 login.leave=Annuler
 login.play=Jouer !
 
-login.result.success=Vous êtes identifié
-logout.result.success=Vous êtes déconnecté
-login.authenticationRequired=Vous devez vous identifier pour accéder à la page demandée.
-
 # signup / create an account
 signup.title=Inscription
 signup.email.label=E-mail
@@ -56,45 +52,17 @@ signup.lastname.label=Nom
 signup.password1.label=Mot de passe
 signup.password2.label=Mot de passe (confirmation)
 
-register.form.legend=S''inscrire
-register.form.intro=Les informations suivantes sont nécessaires pour s''inscrire.
+# Reset/change password
+password.title=Mot de passe
+password.reset.legend=Réinitialiser le mot de passe
+password.reset.btn=Réinitialiser
 
-register.form.name.label=Pseudo
-register.form.name.watermark=Maurice28, TomSawyer99 etc
-register.form.email.label=E-mail
-register.form.email.watermark=hermione.granger@hogwarts.co.uk
-register.form.emailConfirmation.label=E-mail (confirmation)
-register.form.emailConfirmation.watermark=confirmer l''adresse e-mail
-register.form.password.label=Mot de passe
-register.form.password.watermark=chut! C''est un secret
-register.form.passwordConfirmation.label=Mot de passe (confirmation)
-register.form.passwordConfirmation.watermark=confirmer le mot de passe
-
-register.leave=Annuler
-register.createAccount=Créer un compte
-register.result.success=Votre compte a été créé
-register.result.failure=Votre compte n''a pas pu être créé
-
-register.accountCreated.title=Compte créé
-register.accountCreated.header=On y est presque
-register.accountCreated.message=Votre compte a bien été créé avec le pseudo "{0}".
-register.accountCreated.emailVerification=Votre compte n'est pas encore activé car nous voudrions d''abord vérifier votre adresse e-mail. Vérifiez votre boite aux lettres et cliquez sur le lien pour activer votre compte.
-
-# Account activation
-activateAccount.accountActivated.title=Compte activé
-activateAccount.accountActivated.header=Compte activé avec succès
-activateAccount.accountActivated.message=Votre adresse e-mail est confirmée et votre compte est désormais actif. Vous pouvez vous connecter en tant que "{0}".
-activateAccount.accountActivated.joinGame=Rejoindre une partie
-
-activateAccount.accountActivationFailed.title=Echec d'activation du compte
-activateAccount.accountActivationFailed.header=Le compte n''a pas été activé
-activateAccount.accountActivationFailed.message=Le compte "{0}" n''a pas pu être activé. Avez-vous bien utilisé le lien que vous avez reçu par e-mail ?
-
-activateAccount.result.success=Votre compte est maintenant actif. Venez jouer avec nous !
-activateAccount.result.failure.unknownUser=Le compte que vous essayez d''activer n''a pas l'air d'exister.
-activateAccount.result.failure.accountAlreadyActive=Le compte que vous essayez d''activer est déjà actif. Essayez de vous connecter.
-activateAccount.result.failure=Le compte n''a pas pu être activé.
-
+passwordChange.title=Mot de passe
+passwordChange.legend=Changer le mot de passe
+passwordChange.currentPassword=Mot de passe actuel
+passwordChange.newPassword1=Nouveau mot de passe
+passwordChange.newPassword2=Nouveau mot de passe (confirmation)
+passwordChange.btn=Changer
 
 # Game
 # ====

@@ -20,7 +20,7 @@ case class DbUserAccountActivation(id: UserId, firstName: String, lastName: Stri
                                    oAuth1Info: Option[OAuth1Info] = None, oAuth2Info: Option[OAuth2Info] = None, passwordInfo: Option[PasswordInfo] = None)
 
 object DbUser {
-  def fromRequest(locale: Option[String] = None, isAdmin: Boolean = false)(implicit request: RequestWithUser[AnyContent]): Option[DbUser] = {
+  def fromRequest[A](locale: Option[String] = None, isAdmin: Boolean = false)(implicit request: RequestWithUser[A]): Option[DbUser] = {
     request.user.map(_ match {
       case user: DbUser => user
       case SocialUser(id, firstName, lastName, fullName, email, avatar, authMethod, oauth1, oauth2, passInfo) => DbUser(id, firstName, lastName, fullName, email, avatar, authMethod, isAdmin, locale.getOrElse("EN"), oauth1, oauth2, passInfo)
@@ -44,7 +44,7 @@ object DbUser {
           'provider -> id.providerId
         ).executeUpdate()
 
-        UserService.find(id).get.asInstanceOf
+        UserService.find(id).get.asInstanceOf[DbUser]
       }
     }
   }

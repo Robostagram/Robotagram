@@ -1,11 +1,15 @@
-@()(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
+@(user: Option[DbUser] = None)(implicit flash: Flash, request: RequestHeader, lang: Lang)@* implicits are needed ! *@
 
+@defining(user match {
+        case Some(aUser) => aUser.locale
+        case None => lang.code
+    }){ selectedLang =>
 <li class="dropdown">
     <a id="userLanguage" href="#" class="dropdown-toggle" data-toggle="dropdown" title="@Messages("common.user.language.select")">
-        <img id="flag" src="@routes.Assets.at("images/flags/" + lang.code + ".png")" alt="@lang.code">
+        <img id="flag" src="@routes.Assets.at("images/flags/" + selectedLang + ".png")" alt="@selectedLang">
     </a>
     <ul id="languageList" class="dropdown-menu">
-        @for(lang2 <- controllers.CookieLang.AVAILABLE_LANGS if lang2 != lang.code) {
+        @for(lang2 <- controllers.LocaleAwareSecureSocial.AVAILABLE_LANGS if lang2 != selectedLang) {
         <li class="languageFlag">
             @helper.form(routes.Localise.changeLocale) {
                 <input type="hidden" name="locale" value="@lang2">
@@ -15,3 +19,4 @@
         }
     </ul>
 </li>
+}

@@ -1,23 +1,24 @@
 package controllers
 
-import play.api.mvc.{Action, Controller, Cookie, RequestHeader}
+import securesocial.core.SecureSocial
 import play.api.i18n.Lang
 import play.Play
+import play.api.mvc._
+import scala.Some
+import LocaleAwareSecureSocial.LANG
 
-trait CookieLang extends Controller {
-
+trait LocaleAwareSecureSocial extends SecureSocial {
   override implicit def lang(implicit request: RequestHeader) = {
-    request.cookies.get(LANG) match {
+    request.session.get(LANG) match {
       case None => super.lang(request)
-      case Some(cookie) => Lang(cookie.value)
+      case Some(cookie) => Lang(cookie)
     }
   }
-  
-  protected val LANG = "lang"
-  protected val HOME_URL = "/"
 }
 
-object CookieLang {
+object LocaleAwareSecureSocial {
   // ugly but Lang.availables from Play java API is not accessible in Scala...
   val AVAILABLE_LANGS = Play.application().configuration().getString("application.langs").split(",")
+  val LANG = "lang"
+  val HOME_URL = "/"
 }

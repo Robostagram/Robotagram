@@ -8,12 +8,6 @@
     }
 
 @_layout(Messages("signup.title"), None)(null) {
-    @request.flash.get("error").map { msg =>
-        <div class="alert alert-error">
-            @Messages(msg)
-        </div>
-    }
-
     <form action="@securesocial.core.providers.utils.RoutesHelper.handleSignUp(token).absoluteURL(IdentityProvider.sslEnabled)"
     class="form-horizontal"
     autocomplete= "off"

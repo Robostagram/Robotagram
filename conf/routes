@@ -29,19 +29,6 @@ GET     /authenticate/:provider     securesocial.controllers.ProviderController.
 POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
 
-####################### END SECURE SOCIAL ###############################
-
-# Authentication (redirectTo not in routes, to use as a querystring param)
-#GET     /login                      controllers.Authentication.login(redirectTo: Option[String] ?= None)
-#POST    /login                      controllers.Authentication.authenticate(redirectTo: Option[String])
-#GET     /logout                     controllers.Authentication.logout
-
-# Account
-#GET     /account/register                   controllers.Account.register
-#POST    /account/register                   controllers.Account.createAccount
-#GET     /account/created                    controllers.Account.accountCreated(username:String)
-#GET     /account/activate                   controllers.Account.activateAccount(name : String, token : String)
-
 # Lang
 POST    /setLocale                          controllers.Localise.changeLocale
 

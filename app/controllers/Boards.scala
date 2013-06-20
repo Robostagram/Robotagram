@@ -2,11 +2,10 @@ package controllers
 
 
 import models.{DbUser, Board, DbBoard}
-import securesocial.core.SecureSocial
 
 
 // stupid controller just to test what we have in db ... and display it
-object Boards extends CookieLang with SecureSocial {
+object Boards extends LocaleAwareSecureSocial {
 
   def index = UserAwareAction {
     implicit request =>

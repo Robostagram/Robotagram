@@ -2,7 +2,7 @@
 <ul id="userInfoBar" class="nav pull-right">
     <li>
         @user match {
-            case Some(realUser) => { <a id="userName">@realUser.fullName</a></li>@shared.flags()<li><a id="logoutLink" href="@securesocial.controllers.routes.LoginPage.logout()">@Messages("common.user.logout")</a> }
+            case Some(realUser) => { <a id="userName">@realUser.fullName</a></li>@shared.flags(user)<li><a id="logoutLink" href="@securesocial.controllers.routes.LoginPage.logout()">@Messages("common.user.logout")</a> }
             case None => { </li>@shared.flags()<li><a id="loginLink" href="@securesocial.controllers.routes.LoginPage.login()">@Messages("common.user.logon")</a> }
         }
     @*</li>*@

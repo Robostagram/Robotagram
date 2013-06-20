@@ -5,7 +5,7 @@ import play.api.Routes
 import securesocial.core.SecureSocial
 
 
-object Application extends CookieLang with SecureSocial {
+object Application extends Controller {
 
   //
   //  GET /assets/javascripts/routes.js

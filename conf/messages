@@ -41,10 +41,6 @@ login.forgotPassword=Forgot your password ?
 login.leave=Leave
 login.play=Play !
 
-login.result.success=You are now logged in
-logout.result.success=You have been logged out
-login.authenticationRequired=You must be authentified to access the page you requested.
-
 # Account
 # =======
 # signup / create an account
@@ -59,39 +55,17 @@ signup.lastname.label=Lastname
 signup.password1.label=Your password
 signup.password2.label=Password (again)
 
-register.form.legend=Sign in
-register.form.intro=Please fill in the following information in order to create your account.
+# Reset/change password
+password.title=Password
+password.reset.legend=Reset password
+password.reset.btn=Reset
 
-register.form.name.watermark=Maurice28, TomSawyer99 etc
-register.form.email.watermark=hermione.granger@hogwarts.co.uk
-register.form.emailConfirmation.label=E-mail (again)
-register.form.emailConfirmation.watermark=same as above
-register.form.password.watermark=something only you should know
-register.form.passwordConfirmation.watermark=same as above
-
-register.result.success=Your account has been created
-register.result.failure=Your account could not be created
-
-register.accountCreated.title=Account created
-register.accountCreated.header=Just one last step
-register.accountCreated.message=Your account was created successfully with the name "{0}".
-register.accountCreated.emailVerification=Your account is not activated yet, because we need to verify your e-mail address. Check your mailbox and click on the link to activate your account.
-
-# Account activation
-activateAccount.accountActivated.title=Account activated
-activateAccount.accountActivated.header=Account successfully activated
-activateAccount.accountActivated.message=Your e-mail address has been confirmed and your account is now active. You can now log on as "{0}".
-activateAccount.accountActivated.joinGame=Join a game
-
-activateAccount.accountActivationFailed.title=Account activation failure
-activateAccount.accountActivationFailed.header=Account not activated
-activateAccount.accountActivationFailed.message=The account "{0}" could not be activated. Did you use the link from the e-mail you received ?
-
-activateAccount.result.success=Your account is now active. Come and play !
-activateAccount.result.failure.unknownUser=The account you are trying to activate does not seem to exist.
-activateAccount.result.failure.accountAlreadyActive=The account you are trying to activate is already active. Try logging on.
-activateAccount.result.failure=The account could not be activated.
-
+passwordChange.title=Password
+passwordChange.legend=Change password
+passwordChange.currentPassword=Current password
+passwordChange.newPassword1=New password
+passwordChange.newPassword2=New password (again)
+passwordChange.btn=Change
 
 # Game
 # ====
