@@ -1,15 +1,20 @@
 @()(implicit flash: Flash, request: RequestHeader, lang: Lang)
 
-@_layout(Messages("notAuthorized.title"), None)(null) {
-    <div class="page-header">
-        <h1>@Messages("notAuthorized.title")</h1>
-    </div>
+    @_layout(Messages("notAuthorized.title"), None)(null) {
+        <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
+            <div class="modal-body">
+                <legend>@Messages("notAuthorized.title")</legend>
 
-    <div class="alert alert-error">
-        @Messages("notAuthorized.message")
-    </div>
+                <div class="alert alert-error">
+                    @Messages("notAuthorized.message")
+                </div>
 
-    <div style="text-align: center;">
-        <img src="/assets/images/notAuthorized.gif">
-    </div>
-}
+                <div style="text-align: center;">
+                    <img src="/assets/images/notAuthorized.gif">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("login.form.legend")</a>
+            </div>
+        </div>
+    }

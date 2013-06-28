@@ -28,6 +28,9 @@ home.join=Rejoindre une partie!
 # example of pluralization taken from play samples computer-database
 home.rooms={0,choice,0#Aucune salle disponible|1#Une salle disponible|1<{0,number,integer} salles disponibles}
 
+notAuthorized.title=Pas authentifié
+notAuthorized.message=Vous devez être authentifié pour accéder à cette page.
+
 # Login
 # =====
 login.title=Robotagram - Identification

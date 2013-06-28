@@ -34,7 +34,7 @@ object Gaming extends LocaleAwareSecureSocial {
           // user is already in a game in this room? close his previous WS channel
           val dbUser: Option[DbUser] = DbUser.fromRequest()
           dbUser match {
-            case None => Results.NotFound
+            case None => Ok(views.html.authentication.notAuthorized())
             case Some(aUser) => {
               wsRoom.players.get(aUser.fullName).map(_.sayGoodBye())
               val g = Game.getActiveInRoomOrCreateRandom(room.id.get)
@@ -43,7 +43,7 @@ object Gaming extends LocaleAwareSecureSocial {
             }
           }
         }
-      }.getOrElse(Results.NotFound) //no room with that id
+      }.getOrElse(Results.NotFound) //TODO no room with that id
   }
 
   // kick a player from all rooms he's connected to

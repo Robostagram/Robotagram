@@ -28,6 +28,8 @@ home.join=Join a game!
 # example of pluralization taken from play samples computer-database
 home.rooms={0,choice,0#No available rooms|1#One available room|1<{0,number,integer} available rooms}
 
+notAuthorized.title=Not authenticated
+notAuthorized.message=You must be logged in to access this page.
 
 # Login
 # =====

@@ -18,7 +18,7 @@ object DbRoomScores{
   private val simple = {
       get[Int]("scores.score") ~
       get[String]("scores.game_id") ~
-      get[String]("users.name") ~
+      get[String]("users.fullName") ~
       get[Date]("scores.submitted_on") map {
       case score~gameId~playerName~date => DbRoomScores(score, gameId, playerName, date)
     }
@@ -27,7 +27,7 @@ object DbRoomScores{
   private def scoresInRoom(roomId: Long): Seq[DbRoomScores] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select scores.score, scores.game_id, users.name, scores.submitted_on
+          select scores.score, scores.game_id, users.fullName, scores.submitted_on
           from games
           inner join scores
             on scores.game_id = games.id
@@ -68,7 +68,7 @@ object DbScore{
       get[Pk[Long]]("scores.id") ~
       get[Int]("scores.score") ~
       get[Date]("scores.submitted_on") ~
-      get[String]("users.name") map {
+      get[String]("users.fullName") map {
       case id~score~submittedOn~playerName => DbScore(id, score, submittedOn, playerName)
     }
   }
@@ -79,7 +79,7 @@ object DbScore{
   def findByGame(gameId:String): Seq[DbScore] = {
     DB.withConnection { implicit connection =>
       SQL("""
-          select scores.id, scores.score, scores.submitted_on, users.name
+          select scores.id, scores.score, scores.submitted_on, users.fullName
           from scores
           inner join users
             on scores.user_id = users.id

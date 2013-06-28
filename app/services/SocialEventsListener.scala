@@ -12,7 +12,7 @@ class SocialEventsListener(application: Application) extends EventListener {
 
   def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = event match {
     case e: LoginEvent => Some(withUserLocale(e.user, session))
-    case e: SignUpEvent => Some(withUserLocale(e.user, session))
+    case e: SignUpEvent => Some(session)
     case _ => None
     //      case e: LogoutEvent => "logout"
     //      case e: PasswordResetEvent => "password reset"
