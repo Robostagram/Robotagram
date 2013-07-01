@@ -14,20 +14,22 @@
         </div>
     }
 
-    @Registry.providers.all().values.filter(_.authMethod != UserPassword).foreach { provider =>
-        @if(provider.authMethod == OAuth1 || provider.authMethod == OAuth2) {
-            @defining("securesocial/images/providers/%s.png".format(provider.id)) { imageUrl =>
-                <a href="@provider.authenticationUrl"> <img src="@RoutesHelper.at(imageUrl)"/></a>
-            }
-        }
-    }
-
-    <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)"
-    class="form-horizontal" autocomplete="off" method="POST">
-        <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
+    <div style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1; max-width: 100%;" class="modal">
+        <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)"
+        class="form-horizontal" autocomplete="off" method="POST">
             <div class="modal-body">
+                <legend>@Messages("login.providers.legend")</legend>
+
+                @for(provider <- Registry.providers.all().values
+                    if provider.authMethod == OAuth1 || provider.authMethod == OAuth2) {
+                    @defining("images/providers/%s.png".format(provider.id)) { imageUrl =>
+                        <a href="@provider.authenticationUrl"> <img src="@RoutesHelper.at(imageUrl)" style="height: 64px; width: 64px;"/></a>
+                    }
+                }
+                <br/>
+                <br/>
+                <legend>@Messages("login.form.legend")</legend>
                 <fieldset>
-                    <legend>@Messages("login.form.legend")</legend>
                     @for(err <- loginForm.globalErrors) {
                         <div class="alert alert-error">
                             <a class="close" data-dismiss="alert">&times;</a>
@@ -66,10 +68,10 @@
                 <a class="btn" href="@routes.Home.index()">@Messages("login.leave")</a>
                 <input type="submit" id="play" class="btn btn-success" value="@Messages("login.play")"/>
             </div>
-        </div>
-        <script type="text/javascript">
-            //focus nickname field on page load
-            $("input#nickname").focus();
-        </script>
-    </form>
+            <script type="text/javascript">
+                //focus nickname field on page load
+                $("input#nickname").focus();
+            </script>
+        </form>
+    </div>
 }

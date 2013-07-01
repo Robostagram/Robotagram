@@ -2,7 +2,7 @@
 
 # App identity
 # ============
-app.name=Robotagramme
+app.name=Robotagram
 app.footer=Utilisation de <a href="http://glyphicons.com/">glyphicons</a> avec la licence gratuite <a href="http://creativecommons.org/licenses/by/3.0/deed.en" title="Creative Commons Attribution 3.0 Unported (CC BY 3.0)">Creative Commons Attribution 3.0 Unported (CC BY 3.0)</a><br/>Utilisation de <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> et <a href="http://www.playframework.org/">Play! 2</a> avec la licence <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a><br/>
 
 
@@ -20,7 +20,7 @@ common.user.language.switchTo=Passer en {0}
 
 # Home
 # ====
-home.title=Robotagramme
+home.title=Robotagram
 home.welcome=Bienvenue
 # app.name is inserted before that
 home.introduction= est un jeu trop glucose.
@@ -34,6 +34,7 @@ notAuthorized.message=Vous devez être authentifié pour accéder à cette page.
 # Login
 # =====
 login.title=Robotagram - Identification
+login.providers.legend=S''identifier avec
 login.form.legend=S''identifier
 login.form.username.label=Pseudo
 login.form.email.label=EMail
@@ -83,7 +84,7 @@ game.solutionFound.announce=Annoncer ma solution
 game.solutionFound.improve=Améliorer ma solution
 game.solutionFound.retry=Recommencer depuis le début
 
-game.winner=Le gagnant de la manche est... 
+game.winner=Le gagnant de la manche est...
 game.scores=Score (manches gagnées) :
 
 game.endOfGame.title=Le temps est écoulé !

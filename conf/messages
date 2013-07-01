@@ -34,6 +34,7 @@ notAuthorized.message=You must be logged in to access this page.
 # Login
 # =====
 login.title=Robotagram - Login
+login.providers.legend=Login with
 login.form.legend=Login
 login.form.username.label=Username
 login.form.email.label=EMail
@@ -85,7 +86,7 @@ game.solutionFound.announce=Announce solution
 game.solutionFound.improve=Improve solution
 game.solutionFound.retry=Retry from zero
 
-game.winner=The winner of this round is... 
+game.winner=The winner of this round is...
 game.scores=Score (rounds won):
 
 game.endOfGame.title=Time is over !
